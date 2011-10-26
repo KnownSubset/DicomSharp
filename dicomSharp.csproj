@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>dicomcs</AssemblyName>
+    <AssemblyOriginatorKeyFile>dicomcs.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>org.dicomcs.scp.DcmSrv</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>true</SignAssembly>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug-2K5|AnyCPU' ">
+    <OutputPath>bin\Debug-2K5\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>NET_2_0</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-2K5|AnyCPU' ">
+    <OutputPath>bin\Release-2K5\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>NET_2_0</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net">
+      <Name>log4net</Name>
+      <HintPath>lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib">
+      <Name>mscorlib</Name>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\BaseDataset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\Command.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\Dataset.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmDecodeParam.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmEncodeParam.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmHandlerI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmObjectFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmObjectHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmParseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmParserFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmStreamHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\DcmValueException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\FileFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\FileMetaInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\FragmentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\PersonName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\SQElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\StringElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\data\ValueElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\dict\Status.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\dict\Tags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\dict\UIDs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\dict\VRs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\Implementation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AAbort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AAssociateAC.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AAssociateRJ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AAssociateRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AAssociateRQAC.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AcceptorPolicy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\ActiveAssociation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AReleaseRP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AReleaseRQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\Association.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AssociationFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AssociationListenerI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\AsyncOpsWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\BasicSCU.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DataSourceI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DcmServiceBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DcmServiceException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DcmServiceI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DcmServiceRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\Dimse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DimseListenerI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DimseReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\DimseWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\ExtNegotiation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\ExtNegotiatorI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\Fsm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\FutureRSP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\Multicaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\PDataTF.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\PduException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\PduI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\PresContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\RoleSelection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\net\UnparsedPdu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\scp\AcceptorPolicyService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\scp\DcmSrv.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\scp\StoreSCP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\server\DcmHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\server\DcmHandlerI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\server\Server.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\server\ServerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\BEBinaryReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\BEBinaryWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\ByteBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\LF_ThreadPool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\StringUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\Tokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="org\dicomcs\util\UIDGenerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="dicomcs.snk" />
+    <None Include="test\dicomcs\data\LoadDcmFile.cs">
+      <SubType>Code</SubType>
+    </None>
+    <None Include="test\dicomcs\net\TestSCU.cs">
+      <SubType>Code</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\2.0\log4net.dll" />
+    <Content Include="lib\2.0\log4net.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
