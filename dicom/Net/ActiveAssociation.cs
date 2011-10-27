@@ -26,15 +26,15 @@
 // 7/22/08: Solved bug by Maarten JB van Ettinger. A deadlock has been removed (changed lines 152-153, 178-187).
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.Collections;
 	using System.Reflection;
 	using System.Threading;
-	using org.dicomcs.net;
-	using org.dicomcs.data;
-	using org.dicomcs.util;
+	using Dicom.Net;
+	using Dicom.Data;
+	using Dicom.Utility;
 	using log4net;
 
 	/// <summary>

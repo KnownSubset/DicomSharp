@@ -25,10 +25,10 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
-	using org.dicomcs.util;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// 

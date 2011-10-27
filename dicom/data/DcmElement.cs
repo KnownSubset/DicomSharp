@@ -25,15 +25,15 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.IO;
 	using System.Text;
 	using System.Reflection;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 
 	public class DcmElement : IComparable
 	{
@@ -181,7 +181,7 @@ namespace org.dicomcs.data
 			int vr1 = vr();
 			ByteBuffer bb = GetByteBuffer();
 			String val = StringUtils.PromptValue( vr1, bb, 64 );
-			String tmp = org.dicomcs.dict.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + length() + ",[" + val + "]";
+			String tmp = Dicom.Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + length() + ",[" + val + "]";
 			return tmp;
 		}
 						

@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs.util
+namespace Dicom.Utility
 {
 	using System;
 	using System.Threading;

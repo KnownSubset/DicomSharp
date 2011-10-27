@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.IO;

@@ -25,14 +25,14 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.Collections;
-	using org.dicomcs;
-	using org.dicomcs.dict;
-	using org.dicomcs.net;
-	using org.dicomcs.util;
+	using Dicom;
+	using Dicom.Dictionary;
+	using Dicom.Net;
+	using Dicom.Utility;
 	
 	/// <summary> 
 	/// Defines association acceptance/rejection behavior.

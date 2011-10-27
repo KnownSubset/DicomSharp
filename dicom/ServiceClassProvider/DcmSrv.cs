@@ -25,12 +25,12 @@
 //
 #endregion
 
-namespace org.dicomcs.scp
+namespace Dicom.ServiceClassProvider
 {
 	using System;
-	using org.dicomcs.dict;
-	using org.dicomcs.net;
-	using org.dicomcs.server;
+	using Dicom.Dictionary;
+	using Dicom.Net;
+	using Dicom.Server;
 
 	public class DcmSrv
 	{

@@ -25,14 +25,14 @@
 //
 #endregion
 
-namespace org.dicomcs.scp
+namespace Dicom.ServiceClassProvider
 {
 	using System;
 	using System.IO;
 	using System.Reflection;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.net;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Net;
 	
 	/// <summary>
 	/// SCP for C-STORE

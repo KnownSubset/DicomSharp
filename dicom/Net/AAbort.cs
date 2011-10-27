@@ -25,11 +25,11 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.IO;
-	using org.dicomcs.util;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// </summary>

@@ -26,7 +26,7 @@
 // List of Tags update by Marcel de Wijs.
 #endregion
 
-namespace org.dicomcs.dict
+namespace Dicom.Dictionary
 {
 	using System;
 	using System.Text;

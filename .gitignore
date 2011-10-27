@@ -1,6 +1,8 @@
 bin
 lib
 test
+.idea
+*.iml
 */bin/*
 */obj/*
 _ReSharper*

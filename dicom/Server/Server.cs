@@ -26,7 +26,7 @@
 #endregion
 
 [assembly: log4net.Config.DOMConfigurator(ConfigFileExtension="config")]
-namespace org.dicomcs.server
+namespace Dicom.Server
 {
 	using System;
 	using System.IO;

@@ -25,12 +25,12 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
-	using org.dicomcs.net;
-	using org.dicomcs.util;
-	using org.dicomcs.data;
+	using Dicom.Net;
+	using Dicom.Utility;
+	using Dicom.Data;
 	
 	/// <summary>
 	/// Association related object factory

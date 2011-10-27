@@ -26,7 +26,7 @@
 // 8/29/08: Added BasicSCU by Maarten JB van Ettinger based on TestSCU. Added a couple of SCU functions.
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.Collections;
@@ -35,9 +35,9 @@ namespace org.dicomcs.net
 	using System.Text;
 	using System.Threading;
 	using System.Net.Sockets;
-	using org.dicomcs.dict;
-	using org.dicomcs.data;
-	using org.dicomcs.net;
+	using Dicom.Dictionary;
+	using Dicom.Data;
+	using Dicom.Net;
 
 	/// <summary>
 	/// Summary description for BasicSCU.

@@ -25,11 +25,11 @@
 //
 #endregion
 
-namespace org.dicomcs.server
+namespace Dicom.Server
 {
 	using System;
-	using org.dicomcs.net;
-	using org.dicomcs.server;
+	using Dicom.Net;
+	using Dicom.Server;
 		
 	public interface DcmHandlerI : Server.HandlerI
 	{

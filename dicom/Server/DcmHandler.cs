@@ -25,12 +25,12 @@
 //
 #endregion
 
-namespace org.dicomcs.server
+namespace Dicom.Server
 {
 	using System;
 	using System.Collections;
 	using System.Threading;
-	using org.dicomcs.net;
+	using Dicom.Net;
 	
 	/// <summary> <description>
 	/// 

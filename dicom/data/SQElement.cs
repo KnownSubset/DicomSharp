@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Text;
 	using System.Collections;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
+	using Dicom.Data;
+	using Dicom.Dictionary;
 	
 	/// <summary>
 	/// </summary>
@@ -100,7 +100,7 @@ namespace org.dicomcs.data
 		
 		public override System.String ToString()
 		{
-			StringBuilder sb = new StringBuilder( org.dicomcs.dict.Tags.ToHexString(tag()));
+			StringBuilder sb = new StringBuilder( Dicom.Dictionary.Tags.ToHexString(tag()));
 			sb.Append(",SQ");
 			if (!IsEmpty())
 			{

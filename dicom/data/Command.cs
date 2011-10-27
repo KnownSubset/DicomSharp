@@ -25,14 +25,14 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.IO;
 	using System.Text;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// Defines behavior of <code>Command</code> container objects.

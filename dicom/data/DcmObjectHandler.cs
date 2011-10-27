@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Collections;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// DcmHandler, parsing DICOM data into Object memory block

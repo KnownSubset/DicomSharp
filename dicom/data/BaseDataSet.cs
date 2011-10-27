@@ -25,15 +25,15 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Text;
 	using System.Reflection;
 	using System.Collections;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	public abstract class BaseDataset : DcmObject
 	{

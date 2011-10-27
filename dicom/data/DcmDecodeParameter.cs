@@ -26,11 +26,11 @@
 // 7/31/08: Edited by Maarten JB van Ettinger. Changes strings to use UIDs from UIDs class (added line 32, changed lines 73, 75, 77, 79).
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
-	using org.dicomcs.util;
-	using org.dicomcs.dict;
+	using Dicom.Utility;
+	using Dicom.Dictionary;
 	
 
 	public class DcmDecodeParam

@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Text;
 	using System.Reflection;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	public abstract class ValueElement : DcmElement
 	{		
@@ -255,7 +255,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 1) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " SS #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " SS #" + data.length());
 				return new SS(tag, EMPTY_VALUE);
 			}
 			return new SS(tag, data);
@@ -325,7 +325,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 1) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " US #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " US #" + data.length());
 				return new US(tag, EMPTY_VALUE);
 			}
 			return new US(tag, data);
@@ -405,7 +405,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 3) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " SL #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " SL #" + data.length());
 				return new SL(tag, EMPTY_VALUE);
 			}
 			return new SL(tag, data);
@@ -462,7 +462,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 3) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " UL #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " UL #" + data.length());
 				return new UL(tag, EMPTY_VALUE);
 			}
 			return new UL(tag, data);
@@ -527,7 +527,7 @@ namespace org.dicomcs.data
 			{
 				if (index >= vm())
 					return null;
-				return org.dicomcs.dict.Tags.ToHexString(GetTag(index));
+				return Dicom.Dictionary.Tags.ToHexString(GetTag(index));
 			}
 			
 			public override String[] GetStrings(Encoding encoding)
@@ -548,7 +548,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 3) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " AT #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " AT #" + data.length());
 				return new AT(tag, EMPTY_VALUE);
 			}
 			return new AT(tag, data);
@@ -636,7 +636,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 3) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " FL #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " FL #" + data.length());
 				return new FL(tag, EMPTY_VALUE);
 			}
 			
@@ -722,7 +722,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 7) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " FD #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " FD #" + data.length());
 				return new FD(tag, EMPTY_VALUE);
 			}
 			return new FD(tag, data);
@@ -843,7 +843,7 @@ namespace org.dicomcs.data
 		{
 			if ((data.length() & 1) != 0)
 			{
-				log.Warn("Ignore illegal value of " + org.dicomcs.dict.Tags.ToHexString(tag) + " OW #" + data.length());
+				log.Warn("Ignore illegal value of " + Dicom.Dictionary.Tags.ToHexString(tag) + " OW #" + data.length());
 				return new OW(tag, EMPTY_VALUE);
 			}
 			return new OW(tag, data);

@@ -25,11 +25,11 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
+	using Dicom.Data;
+	using Dicom.Dictionary;
 	
 	public class FileMetaInfo : DcmObject
 	{

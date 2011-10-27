@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.Collections;
-	using org.dicomcs.dict;
-	using org.dicomcs.net;
-	using org.dicomcs.util;
+	using Dicom.Dictionary;
+	using Dicom.Net;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// 

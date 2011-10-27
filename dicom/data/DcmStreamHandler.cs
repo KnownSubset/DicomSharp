@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.IO;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// Stream format of DICOM data

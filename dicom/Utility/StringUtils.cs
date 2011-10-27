@@ -25,12 +25,12 @@
 //
 #endregion
 
-namespace org.dicomcs.util
+namespace Dicom.Utility
 {
 	using System;
 	using System.Reflection;
 	using System.Text;
-	using org.dicomcs.dict;
+	using Dicom.Dictionary;
 	
 	/// <summary>
 	/// String utility class

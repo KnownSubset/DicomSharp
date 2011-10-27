@@ -26,15 +26,15 @@
 // 7/22/08: Changed by Maarten JB van Ettinger. Added function that will read in all elements (added lines 409-413).
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Text;
 	using System.IO;
 	using System.Reflection;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	
 	public class DcmParser
 	{

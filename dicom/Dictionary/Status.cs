@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs.dict
+namespace Dicom.Dictionary
 {
 	using System;
 	using System.Reflection;

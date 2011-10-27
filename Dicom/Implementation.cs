@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs
+namespace Dicom
 {
 	using System.Collections;
 	using System;

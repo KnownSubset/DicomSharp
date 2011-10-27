@@ -26,15 +26,15 @@
 // 7/23/08: Solved bug by Marcel de Wijs. virtual changed into override (changed lines 128, 206).
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
 	using System.Collections;
 	using System.Text;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 		
 	/// <summary>
 	/// </summary>
@@ -74,7 +74,7 @@ namespace org.dicomcs.data
 			ByteBuffer data = (ByteBuffer) m_list[index];
 
 			if ((0 == index)
-			&&  (this.tag() == org.dicomcs.dict.Tags.PixelData)
+			&&  (this.tag() == Dicom.Dictionary.Tags.PixelData)
 			&&  (data.length() == (end * offsetSize)))
 			{
 				uint nOffsetCorrection = 0;
@@ -110,7 +110,7 @@ namespace org.dicomcs.data
 			ByteBuffer data = (ByteBuffer) m_list[index];
 
 			if ((0 == index)
-				&&  (this.tag() == org.dicomcs.dict.Tags.PixelData)
+				&&  (this.tag() == Dicom.Dictionary.Tags.PixelData)
 				&&  (data.length() == (end * offsetSize)))
 			{
 				uint nOffsetCorrection = 0;
@@ -228,7 +228,7 @@ namespace org.dicomcs.data
 			{
 				if ((data.length() & 3) != 0)
 				{
-					log.warn("Ignore odd length fragment of " + org.dicomcs.dict.Tags.toString(tag) + " OF #" + data.length());
+					log.warn("Ignore odd length fragment of " + Dicom.Dictionary.Tags.toString(tag) + " OF #" + data.length());
 					data = null;
 				}
 				base.AddDataFragment(data);
@@ -264,7 +264,7 @@ namespace org.dicomcs.data
 			{
 				if ((data.length() & 1) != 0)
 				{
-					log.Warn("Ignore odd length fragment of " + org.dicomcs.dict.Tags.ToHexString(tag()) + " OW #" + data.length());
+					log.Warn("Ignore odd length fragment of " + Dicom.Dictionary.Tags.ToHexString(tag()) + " OW #" + data.length());
 					data = null;
 				}
 				base.AddDataFragment(data);
@@ -303,7 +303,7 @@ namespace org.dicomcs.data
 		
 		public override String ToString()
 		{
-			System.Text.StringBuilder sb = new StringBuilder(org.dicomcs.dict.Tags.ToHexString(tag()));
+			System.Text.StringBuilder sb = new StringBuilder(Dicom.Dictionary.Tags.ToHexString(tag()));
 			sb.Append(",").Append(VRs.ToString(vr()));
 			if (!IsEmpty())
 			{

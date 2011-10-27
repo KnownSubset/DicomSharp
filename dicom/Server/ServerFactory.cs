@@ -25,10 +25,10 @@
 //
 #endregion
 
-namespace org.dicomcs.server
+namespace Dicom.Server
 {
 	using System;
-	using org.dicomcs.net;
+	using Dicom.Net;
 	
 	/// <summary>
 	/// Create servers, i.e., active service/object

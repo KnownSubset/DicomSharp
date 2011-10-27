@@ -25,11 +25,11 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
-	using org.dicomcs.data;
-	using Tags = org.dicomcs.dict.Tags;
+	using Dicom.Data;
+	using Tags = Dicom.Dictionary.Tags;
 	
 	/// <summary>
 	/// Dicom data object factory

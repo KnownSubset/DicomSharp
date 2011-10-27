@@ -25,14 +25,14 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.IO;
 	using System.Reflection;
 	using System.Text;
-	using org.dicomcs.data;
-	using Tags = org.dicomcs.dict.Tags;
+	using Dicom.Data;
+	using Tags = Dicom.Dictionary.Tags;
 	
 	/// <summary>
 	/// Implementation of <code>Dataset</code> container objects.

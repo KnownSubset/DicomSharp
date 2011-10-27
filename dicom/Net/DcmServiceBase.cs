@@ -25,13 +25,13 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.Reflection;
-	using org.dicomcs.data;
-	using org.dicomcs.dict;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Dictionary;
+	using Dicom.Utility;
 	using log4net;
 	
 	public class DcmServiceBase : DcmServiceI
@@ -276,25 +276,25 @@ namespace org.dicomcs.net
 		
 		protected virtual void  DoCStore(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual MultiDimseRsp DoCGet(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual MultiDimseRsp DoCFind(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual MultiDimseRsp DoCMove(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
@@ -306,37 +306,37 @@ namespace org.dicomcs.net
 		
 		protected virtual Dataset DoNEventReport(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual Dataset DoNGet(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual Dataset DoNSet(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual Dataset DoNAction(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual Dataset DoNCreate(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		
 		protected virtual Dataset DoNDelete(ActiveAssociation assoc, Dimse rq, Command rspCmd)
 		{
-			org.dicomcs.data.Dataset generatedAux = rq.Dataset; // read out dataset
+			Dicom.Data.Dataset generatedAux = rq.Dataset; // read out dataset
 			throw defEx;
 		}
 		

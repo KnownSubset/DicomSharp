@@ -25,10 +25,10 @@
 //
 #endregion
 
-namespace org.dicomcs.util
+namespace Dicom.Utility
 {
 	using System;
-	using org.dicomcs;
+	using Dicom;
 	
 	public class UIDGenerator
 	{

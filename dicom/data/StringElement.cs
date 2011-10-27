@@ -25,12 +25,12 @@
 //
 #endregion
 
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
 	using System.Text;
 	using System.Reflection;
-	using org.dicomcs.util;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// String element

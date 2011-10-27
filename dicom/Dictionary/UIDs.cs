@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs.dict
+namespace Dicom.Dictionary
 {
 	using System;
 	using System.Reflection;
@@ -623,19 +623,19 @@ namespace org.dicomcs.dict
 		/// </summary>
 		public const String OphthalmicTomographyImageStorage = "1.2.840.10008.5.1.4.1.1.77.1.5.4";
 
-		/// <summary>SOPClass: Text SR Storage – Trial (Retired)
+		/// <summary>SOPClass: Text SR Storage ï¿½ Trial (Retired)
 		/// </summary>
 		public const String TextSRStorageTrialRetired = "1.2.840.10008.5.1.4.1.1.88.1";
 
-		/// <summary>SOPClass: Audio SR Storage – Trial (Retired)
+		/// <summary>SOPClass: Audio SR Storage ï¿½ Trial (Retired)
 		/// </summary>
 		public const String AudioSRStorageTrialRetired = "1.2.840.10008.5.1.4.1.1.88.2";
 
-		/// <summary>SOPClass: Detail SR Storage – Trial (Retired)
+		/// <summary>SOPClass: Detail SR Storage ï¿½ Trial (Retired)
 		/// </summary>
 		public const String DetailSRStorageTrialRetired = "1.2.840.10008.5.1.4.1.1.88.3";
 
-		/// <summary>SOPClass: Comprehensive SR Storage – Trial (Retired)
+		/// <summary>SOPClass: Comprehensive SR Storage ï¿½ Trial (Retired)
 		/// </summary>
 		public const String ComprehensiveSRStorageTrialRetired = "1.2.840.10008.5.1.4.1.1.88.4";
 		

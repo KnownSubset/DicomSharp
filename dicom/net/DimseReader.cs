@@ -26,15 +26,15 @@
 // 7/22/08: Solved bug by Maarten JB van Ettinger. A exception has been removed (changed line 294).
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.IO;
 	using System.Reflection;
 	using System.Threading;
-	using org.dicomcs.data;
-	using org.dicomcs.net;
-	using org.dicomcs.util;
+	using Dicom.Data;
+	using Dicom.Net;
+	using Dicom.Utility;
 	
 	/// <summary>
 	/// DIMSE message reader

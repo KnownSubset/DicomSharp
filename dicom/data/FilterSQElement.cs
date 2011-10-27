@@ -21,11 +21,11 @@
 /// *
 /// ***************************************************************************
 /// </summary>
-namespace org.dicomcs.data
+namespace Dicom.Data
 {
 	using System;
-	using DcmEncodeParam = org.dicomcs.data.DcmEncodeParam;
-	using VRs = org.dicomcs.dict.VRs;
+	using DcmEncodeParam = Dicom.Data.DcmEncodeParam;
+	using VRs = Dicom.Dictionary.VRs;
 	
 	/// <summary>
 	/// </summary>

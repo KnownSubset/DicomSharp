@@ -25,7 +25,7 @@
 //
 #endregion
 
-namespace org.dicomcs.net
+namespace Dicom.Net
 {
 	using System;
 	using System.IO;
@@ -33,7 +33,7 @@ namespace org.dicomcs.net
 	using System.Net.Sockets;
 	using System.Collections;
 	using System.Reflection;
-	using org.dicomcs.util;
+	using Dicom.Utility;
 	using log4net;
 
 	/// <summary>
