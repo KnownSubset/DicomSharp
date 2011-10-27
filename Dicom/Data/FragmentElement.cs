@@ -1,12 +1,12 @@
 #region Copyright
 
 // 
-// This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
+// This library is based on Dicom# see http://sourceforge.net/projects/dicom-cs/
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
 //
 // Modifications Copyright (C) 2002,2008 Fang Yang. All rights reserved.
 // 
-// This file is part of dicomcs, see http://www.sourceforge.net/projects/dicom-cs
+// This file is part of dicomSharp, see https://github.com/KnownSubset/DicomSharp
 //
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-// Fang Yang (yangfang@email.com)
+// Nathan Dauber (nathan.dauber@gmail.com)
 //
 // 7/23/08: Solved bug by Marcel de Wijs. virtual changed into override (changed lines 128, 206).
 
