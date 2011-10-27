@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -24,195 +25,158 @@
 // Fang Yang (yangfang@email.com)
 //
 // 7/23/08: Solved bug by Marcel de Wijs. virtual changed into override (changed lines 128, 206).
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	using System.Reflection;
-	using System.Runtime.InteropServices;
-	using System.Collections;
-	using System.Text;
-	using Dicom.Dictionary;
-	using Dicom.Utility;
-		
-	/// <summary>
-	/// </summary>
-	public abstract class FragmentElement : DcmElement
-	{		
-		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using Dicom.Dictionary;
+using Dicom.Utility;
+using log4net;
 
-		private ArrayList m_list = new ArrayList();
-		
-		/// <summary>
-		/// Creates a new instance of ElementImpl 
-		/// </summary>
-		public FragmentElement(uint tag):base(tag)
-		{
-		}
-		
-		public override int vm()
-		{
-			return m_list.Count;
-		}
-		
-		public override bool HasDataFragments()
-		{
-			return true;
-		}
-		
-		public override ByteBuffer GetDataFragment(int index)
-		{
-			if (index >= vm())
-			{
-				return null;
-			}
+namespace Dicom.Data {
+    /// <summary>
+    /// </summary>
+    public abstract class FragmentElement : DcmElement {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-			int offsetSize = Marshal.SizeOf(typeof(uint)),
-				end = m_list.Count-1;
+        private readonly ArrayList m_list = new ArrayList();
 
-			ByteBuffer data = (ByteBuffer) m_list[index];
+        /// <summary>
+        /// Creates a new instance of ElementImpl 
+        /// </summary>
+        public FragmentElement(uint tag) : base(tag) {}
 
-			if ((0 == index)
-			&&  (this.tag() == Dicom.Dictionary.Tags.PixelData)
-			&&  (data.length() == (end * offsetSize)))
-			{
-				uint nOffsetCorrection = 0;
-				ByteBuffer mybuffy = new ByteBuffer((int)data.Length, data.GetOrder());
+        public override int vm() {
+            return m_list.Count;
+        }
 
-				for (int i = 1; i < end; i++ )
-				{
-					uint sizeofElement = (uint)((ByteBuffer)m_list[i]).length();
+        public override bool HasDataFragments() {
+            return true;
+        }
 
-					nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
+        public override ByteBuffer GetDataFragment(int index) {
+            if (index >= vm()) {
+                return null;
+            }
 
-					mybuffy.Write((i * offsetSize), (int)nOffsetCorrection);
-				}
+            int offsetSize = Marshal.SizeOf(typeof (uint)),
+                end = m_list.Count - 1;
 
-				// set the data to return.
-				data = mybuffy;
-				data.Position = 0;
-			}
+            var data = (ByteBuffer) m_list[index];
 
-			return data;
-		}
-		
-		public override ByteBuffer GetDataFragment(int index, ByteOrder byteOrder)
-		{
-			if (index >= vm())
-			{
-				return null;
-			}
+            if ((0 == index)
+                && (tag() == Dictionary.Tags.PixelData)
+                && (data.length() == (end*offsetSize))) {
+                uint nOffsetCorrection = 0;
+                var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
 
-			int offsetSize = Marshal.SizeOf(typeof(uint)),
-				end = m_list.Count-1;
+                for (int i = 1; i < end; i++) {
+                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
 
-			ByteBuffer data = (ByteBuffer) m_list[index];
+                    nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
 
-			if ((0 == index)
-				&&  (this.tag() == Dicom.Dictionary.Tags.PixelData)
-				&&  (data.length() == (end * offsetSize)))
-			{
-				uint nOffsetCorrection = 0;
-				ByteBuffer mybuffy = new ByteBuffer((int)data.Length, data.GetOrder());
+                    mybuffy.Write((i*offsetSize), (int) nOffsetCorrection);
+                }
 
-				for (int i = 1; i < end; i++ )
-				{
-					uint sizeofElement = (uint)((ByteBuffer)m_list[i]).length();
+                // set the data to return.
+                data = mybuffy;
+                data.Position = 0;
+            }
 
-					nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
+            return data;
+        }
 
-					mybuffy.Write((i * offsetSize), (int)nOffsetCorrection);
-				}
+        public override ByteBuffer GetDataFragment(int index, ByteOrder byteOrder) {
+            if (index >= vm()) {
+                return null;
+            }
 
-				// set the data to return.
-				data = mybuffy;
-				data.Position = 0;
-			}
+            int offsetSize = Marshal.SizeOf(typeof (uint)),
+                end = m_list.Count - 1;
 
-			if (data.GetOrder() != byteOrder)
-			{
-				SwapOrder(data);
-			}
-			return data;
-		}
-		
-		public override int GetDataFragmentLength(int index)
-		{
-			if (index >= vm())
-			{
-				return 0;
-			}
-			ByteBuffer data = (ByteBuffer) m_list[index];
-			return (data.length() + 1) & (~ 1);
-		}
-		
-		public override String GetString(int index, Encoding encoding)
-		{
-			return GetBoundedString(Int32.MaxValue, index, encoding);
-		}
-		
-		public override System.String GetBoundedString(int maxLen, int index, Encoding encoding)
-		{
-			if (index >= vm())
-			{
-				return null;
-			}
-			return StringUtils.PromptValue(vr(), GetDataFragment(index), maxLen);
-		}
-		
-		public virtual System.String[] GetStrings(Encoding encoding)
-		{
-			return GetBoundedStrings(System.Int32.MaxValue, encoding);
-		}
-		
-		public override System.String[] GetBoundedStrings(int maxLen, Encoding encoding)
-		{
-			System.String[] a = new System.String[vm()];
-			for (int i = 0; i < a.Length; ++i)
-				a[i] = StringUtils.PromptValue(vr(), GetDataFragment(i), maxLen);
-			return a;
-		}
-		
-		public virtual int CalcLength()
-		{
-			int len = 8;
-			for (int i = 0, n = vm(); i < n; ++i)
-				len += GetDataFragmentLength(i) + 8;
-			return len;
-		}
-		
-		public override void  AddDataFragment(ByteBuffer data)
-		{
-			m_list.Add(data != null?data:EMPTY_VALUE);
-		}
-		
-		protected internal virtual void  SwapOrder(ByteBuffer data)
-		{
-			data.SetOrder(Swap(data.GetOrder()));
-		}
-		
-		/// <summary>
-		/// OB
-		/// </summary>
-		private sealed class OB : FragmentElement
-		{
-			internal OB(uint tag):base(tag)
-			{
-			}
-			
-			public override int vr()
-			{
-				return VRs.OB;
-			}
-		}
-		
-		public static DcmElement CreateOB(uint tag)
-		{
-			return new FragmentElement.OB(tag);
-		}
-		
-		/*
+            var data = (ByteBuffer) m_list[index];
+
+            if ((0 == index)
+                && (tag() == Dictionary.Tags.PixelData)
+                && (data.length() == (end*offsetSize))) {
+                uint nOffsetCorrection = 0;
+                var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
+
+                for (int i = 1; i < end; i++) {
+                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
+
+                    nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
+
+                    mybuffy.Write((i*offsetSize), (int) nOffsetCorrection);
+                }
+
+                // set the data to return.
+                data = mybuffy;
+                data.Position = 0;
+            }
+
+            if (data.GetOrder() != byteOrder) {
+                SwapOrder(data);
+            }
+            return data;
+        }
+
+        public override int GetDataFragmentLength(int index) {
+            if (index >= vm()) {
+                return 0;
+            }
+            var data = (ByteBuffer) m_list[index];
+            return (data.length() + 1) & (~ 1);
+        }
+
+        public override String GetString(int index, Encoding encoding) {
+            return GetBoundedString(Int32.MaxValue, index, encoding);
+        }
+
+        public override String GetBoundedString(int maxLen, int index, Encoding encoding) {
+            if (index >= vm()) {
+                return null;
+            }
+            return StringUtils.PromptValue(vr(), GetDataFragment(index), maxLen);
+        }
+
+        public virtual String[] GetStrings(Encoding encoding) {
+            return GetBoundedStrings(Int32.MaxValue, encoding);
+        }
+
+        public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
+            var a = new String[vm()];
+            for (int i = 0; i < a.Length; ++i) {
+                a[i] = StringUtils.PromptValue(vr(), GetDataFragment(i), maxLen);
+            }
+            return a;
+        }
+
+        public virtual int CalcLength() {
+            int len = 8;
+            for (int i = 0, n = vm(); i < n; ++i) {
+                len += GetDataFragmentLength(i) + 8;
+            }
+            return len;
+        }
+
+        public override void AddDataFragment(ByteBuffer data) {
+            m_list.Add(data != null ? data : EMPTY_VALUE);
+        }
+
+        protected internal virtual void SwapOrder(ByteBuffer data) {
+            data.SetOrder(Swap(data.GetOrder()));
+        }
+
+        public static DcmElement CreateOB(uint tag) {
+            return new OB(tag);
+        }
+
+        /*
 		private sealed class OF:FragmentElement
 		{
 			internal OF(uint tag):base(tag)
@@ -245,74 +209,83 @@ namespace Dicom.Data
 			return new FragmentElement.OF(tag);
 		}
 		*/
-		
-		/// <summary>
-		/// OW
-		/// </summary>
-		private sealed class OW:FragmentElement
-		{
-			internal OW(uint tag):base(tag)
-			{
-			}
-			
-			public override int vr()
-			{
-				return VRs.OW;
-			}
-			
-			public override void  AddDataFragment(ByteBuffer data)
-			{
-				if ((data.length() & 1) != 0)
-				{
-					log.Warn("Ignore odd length fragment of " + Dicom.Dictionary.Tags.ToHexString(tag()) + " OW #" + data.length());
-					data = null;
-				}
-				base.AddDataFragment(data);
-			}
-			
-			protected internal void  SwapOrder(ByteBuffer data)
-			{
-				SwapWords(data);
-			}
-		}
-		
-		public static DcmElement CreateOW(uint tag)
-		{
-			return new FragmentElement.OW(tag);
-		}
-		
-		/// <summary>
-		/// UN
-		/// </summary>
-		private sealed class UN : FragmentElement
-		{
-			internal UN(uint tag):base(tag)
-			{
-			}
-			
-			public override int vr()
-			{
-				return VRs.UN;
-			}
-		}
-		
-		public static DcmElement CreateUN(uint tag)
-		{
-			return new FragmentElement.UN(tag);
-		}
-		
-		public override String ToString()
-		{
-			System.Text.StringBuilder sb = new StringBuilder(Dicom.Dictionary.Tags.ToHexString(tag()));
-			sb.Append(",").Append(VRs.ToString(vr()));
-			if (!IsEmpty())
-			{
-				 for (int i = 0, n = vm(); i < n; ++i)
-				{
-					sb.Append("\n\tFrag-").Append(i + 1).Append(",#").Append(GetDataFragmentLength(i)).Append("[").Append(StringUtils.PromptValue(vr(), GetDataFragment(i), 64)).Append("]");
-				}
-			}
-			return sb.ToString();
-		}
-	}
+
+        public static DcmElement CreateOW(uint tag) {
+            return new OW(tag);
+        }
+
+        public static DcmElement CreateUN(uint tag) {
+            return new UN(tag);
+        }
+
+        public override String ToString() {
+            var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
+            sb.Append(",").Append(VRs.ToString(vr()));
+            if (!IsEmpty()) {
+                for (int i = 0, n = vm(); i < n; ++i) {
+                    sb.Append("\n\tFrag-").Append(i + 1).Append(",#").Append(GetDataFragmentLength(i)).Append("[").
+                        Append(StringUtils.PromptValue(vr(), GetDataFragment(i), 64)).Append("]");
+                }
+            }
+            return sb.ToString();
+        }
+
+        #region Nested type: OB
+
+        /// <summary>
+        /// OB
+        /// </summary>
+        private sealed class OB : FragmentElement {
+            internal OB(uint tag) : base(tag) {}
+
+            public override int vr() {
+                return VRs.OB;
+            }
+        }
+
+        #endregion
+
+        #region Nested type: OW
+
+        /// <summary>
+        /// OW
+        /// </summary>
+        private sealed class OW : FragmentElement {
+            internal OW(uint tag) : base(tag) {}
+
+            public override int vr() {
+                return VRs.OW;
+            }
+
+            public override void AddDataFragment(ByteBuffer data) {
+                if ((data.length() & 1) != 0) {
+                    log.Warn("Ignore odd length fragment of " + Dictionary.Tags.ToHexString(tag()) + " OW #" +
+                             data.length());
+                    data = null;
+                }
+                base.AddDataFragment(data);
+            }
+
+            protected internal void SwapOrder(ByteBuffer data) {
+                SwapWords(data);
+            }
+        }
+
+        #endregion
+
+        #region Nested type: UN
+
+        /// <summary>
+        /// UN
+        /// </summary>
+        private sealed class UN : FragmentElement {
+            internal UN(uint tag) : base(tag) {}
+
+            public override int vr() {
+                return VRs.UN;
+            }
+        }
+
+        #endregion
+    }
 }

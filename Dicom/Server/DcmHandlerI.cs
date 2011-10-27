@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,17 +24,14 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Server
-{
-	using System;
-	using Dicom.Net;
-	using Dicom.Server;
-		
-	public interface DcmHandlerI : Server.HandlerI
-	{
-		void  AddAssociationListener(AssociationListenerI l);
-		void  RemoveAssociationListener(AssociationListenerI l);
-	}
+using Dicom.Net;
+
+namespace Dicom.Server {
+    public interface DcmHandlerI : Server.HandlerI {
+        void AddAssociationListener(AssociationListenerI l);
+        void RemoveAssociationListener(AssociationListenerI l);
+    }
 }

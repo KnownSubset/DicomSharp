@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,40 +24,30 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Server
-{
-	using System;
-	using Dicom.Net;
-	
-	/// <summary>
-	/// Create servers, i.e., active service/object
-	/// </summary>
-	public class ServerFactory
-	{
-		private static ServerFactory s_instance = new ServerFactory();
+using Dicom.Net;
 
-		public static ServerFactory Instance
-		{
-			get
-			{
-				return s_instance;
-			}			
-		}
+namespace Dicom.Server {
+    /// <summary>
+    /// Create servers, i.e., active service/object
+    /// </summary>
+    public class ServerFactory {
+        private static readonly ServerFactory s_instance = new ServerFactory();
 
-		private ServerFactory()
-		{
-		}
+        private ServerFactory() {}
 
-		public virtual Server newServer(Server.HandlerI handler)
-		{
-			return new Server(handler);
-		}
-		
-		public virtual DcmHandlerI newDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services)
-		{
-			return new DcmHandler(policy, services);
-		}
-	}
+        public static ServerFactory Instance {
+            get { return s_instance; }
+        }
+
+        public virtual Server newServer(Server.HandlerI handler) {
+            return new Server(handler);
+        }
+
+        public virtual DcmHandlerI newDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
+            return new DcmHandler(policy, services);
+        }
+    }
 }

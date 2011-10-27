@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,37 +24,29 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// </summary>
-	public class RoleSelection
-	{
-		public virtual String SOPClassUID
-		{
-			get { return m_asuid; }			
-		}
-		
-		private String	m_asuid;
-		private bool			m_isScu;
-		private bool			m_isScp;
-		
-		/// <summary>Creates a new instance of RoleSelection 
-		/// </summary>
-		internal RoleSelection(String asuid, bool scu, bool scp)
-		{
-			this.m_asuid = asuid;
-			this.m_isScu = scu;
-			this.m_isScp = scp;
-		}
-		
-		/*
+using System;
+using Dicom.Utility;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public class RoleSelection {
+        private readonly String m_asuid;
+        private readonly bool m_isScp;
+        private readonly bool m_isScu;
+
+        /// <summary>Creates a new instance of RoleSelection 
+        /// </summary>
+        internal RoleSelection(String asuid, bool scu, bool scp) {
+            m_asuid = asuid;
+            m_isScu = scu;
+            m_isScp = scp;
+        }
+
+        /*
 		internal RoleSelection(BinaryReader din, int len)
 		{
 			int uidLen = din.ReadUInt16();
@@ -66,42 +59,42 @@ namespace Dicom.Net
 			this.m_isScp = din.ReadBoolean();
 		}*/
 
-		internal RoleSelection(ByteBuffer bb, int len)
-		{
-			int uidLen = bb.ReadInt16();
-			if (uidLen + 4 != len)
-			{
-				throw new PduException("SCP/SCU role selection sub-item length: " + len + " mismatch UID-length:" + uidLen, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
-			}
-			this.m_asuid = bb.ReadString(uidLen);
-			this.m_isScu = bb.ReadBoolean();
-			this.m_isScp = bb.ReadBoolean();
-		}
-		
-		public bool scu()
-		{
-			return m_isScu;
-		}
-		
-		public bool scp()
-		{
-			return m_isScp;
-		}
-		
-		internal int length()
-		{
-			return 4 + m_asuid.Length;
-		}
-		
-		internal void  WriteTo(ByteBuffer bb)
-		{
-			bb.Write((System.Byte) 0x54);
-			bb.Write((System.Byte) 0);
-			bb.Write((System.Int16) length());
-			bb.Write((System.Int16) m_asuid.Length);
-			bb.Write(m_asuid);
-			bb.Write(m_isScu);
-			bb.Write(m_isScp);
-		}
-	}
+        internal RoleSelection(ByteBuffer bb, int len) {
+            int uidLen = bb.ReadInt16();
+            if (uidLen + 4 != len) {
+                throw new PduException(
+                    "SCP/SCU role selection sub-item length: " + len + " mismatch UID-length:" + uidLen,
+                    new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+            }
+            m_asuid = bb.ReadString(uidLen);
+            m_isScu = bb.ReadBoolean();
+            m_isScp = bb.ReadBoolean();
+        }
+
+        public virtual String SOPClassUID {
+            get { return m_asuid; }
+        }
+
+        public bool scu() {
+            return m_isScu;
+        }
+
+        public bool scp() {
+            return m_isScp;
+        }
+
+        internal int length() {
+            return 4 + m_asuid.Length;
+        }
+
+        internal void WriteTo(ByteBuffer bb) {
+            bb.Write((Byte) 0x54);
+            bb.Write((Byte) 0);
+            bb.Write((Int16) length());
+            bb.Write((Int16) m_asuid.Length);
+            bb.Write(m_asuid);
+            bb.Write(m_isScu);
+            bb.Write(m_isScp);
+        }
+    }
 }

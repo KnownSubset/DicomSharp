@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,67 +24,55 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Utility
-{
-	using System;
-	using Dicom;
-	
-	public class UIDGenerator
-	{
-		public static UIDGenerator Instance
-		{
-			get
-			{
-				return new UIDGenerator();
-			}			
-		}
+using System;
+using System.Net;
+using System.Text;
 
-		static UIDGenerator()
-		{
-			{
-				System.String tmp;
-				try
-				{
-					tmp = System.Net.Dns.GetHostByName(System.Net.Dns.GetHostName()).AddressList[0].ToString();
-				}
-				catch (System.Exception e)
-				{
-					tmp = "127.0.0.1";
-				}
-				IP = tmp;
-			}
-		}
-		
-		private static System.String IP;
-		
-		
-		/// <summary>
-		/// Creates a new instance of UIDGenerator
-		/// </summary>
-		private UIDGenerator()
-		{
-		}
-		
-		public virtual String createUID()
-		{
-			return createUID(Implementation.ClassUID);
-		}
-		
-		public virtual String createUID(System.String root)
-		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder(64).Append(root).Append('.');
-			sb.Append( IP.Replace( ".", "" ) );
-			String str = DateTime.Now.ToString( "yyyyMMddHHmmssffffff" );
-			sb.Append( str );
-			return sb.ToString();
-		}
+namespace Dicom.Utility {
+    public class UIDGenerator {
+        private static readonly String IP;
 
-		public static void Main()
-		{
-			String uid = UIDGenerator.Instance.createUID();
-			Console.Write( uid );
-		}
-	}
+        static UIDGenerator() {
+            {
+                String tmp;
+                try {
+                    tmp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
+                }
+                catch (Exception e) {
+                    tmp = "127.0.0.1";
+                }
+                IP = tmp;
+            }
+        }
+
+
+        /// <summary>
+        /// Creates a new instance of UIDGenerator
+        /// </summary>
+        private UIDGenerator() {}
+
+        public static UIDGenerator Instance {
+            get { return new UIDGenerator(); }
+        }
+
+        public virtual String createUID() {
+            return createUID(Implementation.ClassUID);
+        }
+
+        public virtual String createUID(String root) {
+            StringBuilder sb = new StringBuilder(64).Append(root).Append('.');
+            sb.Append(IP.Replace(".", ""));
+            String str = DateTime.Now.ToString("yyyyMMddHHmmssffffff");
+            sb.Append(str);
+            return sb.ToString();
+        }
+
+        public static void Main() {
+            String uid = Instance.createUID();
+            Console.Write(uid);
+        }
+    }
 }

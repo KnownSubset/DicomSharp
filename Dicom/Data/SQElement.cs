@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,93 +24,79 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	using System.Text;
-	using System.Collections;
-	using Dicom.Data;
-	using Dicom.Dictionary;
-	
-	/// <summary>
-	/// </summary>
-	public class SQElement : DcmElement
-	{		
-		private ArrayList m_list = new ArrayList();
-		private Dataset parent;
-		private int totlen = - 1;
-		
-		/// <summary>
-		/// Creates a new instance of ElementImpl 
-		/// </summary>
-		public SQElement(uint tag, Dataset parent):base(tag)
-		{
-			this.parent = parent;
-		}
-		
-		public override int vr()
-		{
-			return VRs.SQ;
-		}
-		
-		public override int vm()
-		{
-			return m_list.Count;
-		}
-		
-		public override bool HasItems()
-		{
-			return true;
-		}
-		
-		public override Dataset GetItem(int index)
-		{
-			if (index >= vm())
-			{
-				return null;
-			}
-			return (Dataset) m_list[index];
-		}
-		
-		public override void  AddItem(Dataset item)
-		{
-			m_list.Add(item);
-		}
-		
-		public override Dataset AddNewItem()
-		{
-			Dataset item = new Dataset(parent);
-			m_list.Add(item);
-			return item;
-		}
-		
-		public virtual int CalcLength(DcmEncodeParam param)
-		{
-			totlen = param.undefSeqLen?8:0;
-			 for (int i = 0, n = vm(); i < n; ++i)
-				totlen += GetItem(i).CalcLength(param) + (param.undefItemLen?16:8);
-			return totlen;
-		}
-		
-		public override int length()
-		{
-			return totlen;
-		}
-		
-		public override System.String ToString()
-		{
-			StringBuilder sb = new StringBuilder( Dicom.Dictionary.Tags.ToHexString(tag()));
-			sb.Append(",SQ");
-			if (!IsEmpty())
-			{
-				for (int i = 0, n = vm(); i < n; ++i)
-				{
-					sb.Append("\n\tItem-").Append(i + 1).Append(GetItem(i));
-				}
-			}
-			return sb.ToString();
-		}
-	}
+using System;
+using System.Collections;
+using System.Text;
+using Dicom.Dictionary;
+
+namespace Dicom.Data {
+    /// <summary>
+    /// </summary>
+    public class SQElement : DcmElement {
+        private readonly ArrayList m_list = new ArrayList();
+        private readonly Dataset parent;
+        private int totlen = - 1;
+
+        /// <summary>
+        /// Creates a new instance of ElementImpl 
+        /// </summary>
+        public SQElement(uint tag, Dataset parent) : base(tag) {
+            this.parent = parent;
+        }
+
+        public override int vr() {
+            return VRs.SQ;
+        }
+
+        public override int vm() {
+            return m_list.Count;
+        }
+
+        public override bool HasItems() {
+            return true;
+        }
+
+        public override Dataset GetItem(int index) {
+            if (index >= vm()) {
+                return null;
+            }
+            return (Dataset) m_list[index];
+        }
+
+        public override void AddItem(Dataset item) {
+            m_list.Add(item);
+        }
+
+        public override Dataset AddNewItem() {
+            var item = new Dataset(parent);
+            m_list.Add(item);
+            return item;
+        }
+
+        public virtual int CalcLength(DcmEncodeParam param) {
+            totlen = param.undefSeqLen ? 8 : 0;
+            for (int i = 0, n = vm(); i < n; ++i) {
+                totlen += GetItem(i).CalcLength(param) + (param.undefItemLen ? 16 : 8);
+            }
+            return totlen;
+        }
+
+        public override int length() {
+            return totlen;
+        }
+
+        public override String ToString() {
+            var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
+            sb.Append(",SQ");
+            if (!IsEmpty()) {
+                for (int i = 0, n = vm(); i < n; ++i) {
+                    sb.Append("\n\tItem-").Append(i + 1).Append(GetItem(i));
+                }
+            }
+            return sb.ToString();
+        }
+    }
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,19 +24,18 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	
-	/// <summary>
-	/// </summary>
-	public interface PduI
-	{
-		void  WriteTo( Stream outs );
+using System;
+using System.IO;
 
-		String ToString(bool verbose);
-	}
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public interface PduI {
+        void WriteTo(Stream outs);
+
+        String ToString(bool verbose);
+    }
 }

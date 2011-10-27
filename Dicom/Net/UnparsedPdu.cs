@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,105 +24,93 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using System.Reflection;
-	using System.Text;
-	using Dicom.Utility;
+using System;
+using System.IO;
+using System.Reflection;
+using Dicom.Utility;
+using log4net;
 
-	/// <summary>
-	/// </summary>
-	public class UnparsedPdu{		
-		private static readonly log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public class UnparsedPdu {
+        internal const long MAX_LENGTH = 1048576L; // 1 MB
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly byte[] buf;
+        private readonly int len;
+        private readonly int m_type;
 
-		internal const long MAX_LENGTH = 1048576L; // 1 MB
-		private byte[] buf;
-		private int m_type;
-		private int len;
-		
-		/// <summary>
-		/// Creates a new instance of RawPdu 
-		/// </summary>
-		public UnparsedPdu(Stream ins, byte[] buf)
-		{
-			if (buf == null || buf.Length < 6)
-			{
-				buf = new byte[10];
-			}
-			ReadFully(ins, buf, 0, 6);
-			this.m_type = buf[0] & 0xFF;
-			this.len = ((buf[2] & 0xff) << 24) | ((buf[3] & 0xff) << 16) | ((buf[4] & 0xff) << 8) | ((buf[5] & 0xff) << 0);
-			if ((len & 0xFFFFFFFF) > MAX_LENGTH)
-			{
-				SkipFully(ins, len & 0xFFFFFFFFL);
-				this.buf = null;
-				return ;
-			}
-			if (buf.Length < 6 + len)
-			{
-				this.buf = new byte[6 + len];
-				Array.Copy(buf, 0, this.buf, 0, 6);
-			}
-			else
-			{
-				this.buf = buf;
-			}
+        /// <summary>
+        /// Creates a new instance of RawPdu 
+        /// </summary>
+        public UnparsedPdu(Stream ins, byte[] buf) {
+            if (buf == null || buf.Length < 6) {
+                buf = new byte[10];
+            }
+            ReadFully(ins, buf, 0, 6);
+            m_type = buf[0] & 0xFF;
+            len = ((buf[2] & 0xff) << 24) | ((buf[3] & 0xff) << 16) | ((buf[4] & 0xff) << 8) | ((buf[5] & 0xff) << 0);
+            if ((len & 0xFFFFFFFF) > MAX_LENGTH) {
+                SkipFully(ins, len & 0xFFFFFFFFL);
+                this.buf = null;
+                return;
+            }
+            if (buf.Length < 6 + len) {
+                this.buf = new byte[6 + len];
+                Array.Copy(buf, 0, this.buf, 0, 6);
+            }
+            else {
+                this.buf = buf;
+            }
 
-			//ins.Read( this.buf, 6, len);
-			ReadFully( ins, this.buf, 6, len );
-		}
-		
-		new public int GetType()
-		{
-			return m_type;
-		}
-		
-		public int length()
-		{
-			return len;
-		}
-		
-		public byte[] buffer()
-		{
-			return buf;
-		}
-		
-		public override String ToString()
-		{
-			return "Pdu[type=" + m_type + ", length=" + (len & 0xFFFFFFFFL) + "]";
-		}
-		
-		internal static void SkipFully(Stream ins, long len)
-		{
-			long n = 0;
-			while (n < len)
-			{
-				Int64 pos = ins.Position;
-				pos = ins.Seek(len - n, SeekOrigin.Current) - pos;
-				long count = pos;
-				if (count < 0)
-					throw new EndOfStreamException();
-				n += count;
-			}
-		}
-		
-		internal static void ReadFully(Stream ins, byte[] b, int off, int len)
-		{
-			int n = 0;
-			
-			while (n < len)
-			{
-				int count = ins.Read( b, off + n, len - n);
-				if (count < 0)
-					throw new EndOfStreamException();
-				n += count;
-			}
+            //ins.Read( this.buf, 6, len);
+            ReadFully(ins, this.buf, 6, len);
+        }
 
-			StringUtils.dumpBytes( "UnparsedPdu", b, off, n);
-		}				
-	}
+        public new int GetType() {
+            return m_type;
+        }
+
+        public int length() {
+            return len;
+        }
+
+        public byte[] buffer() {
+            return buf;
+        }
+
+        public override String ToString() {
+            return "Pdu[type=" + m_type + ", length=" + (len & 0xFFFFFFFFL) + "]";
+        }
+
+        internal static void SkipFully(Stream ins, long len) {
+            long n = 0;
+            while (n < len) {
+                Int64 pos = ins.Position;
+                pos = ins.Seek(len - n, SeekOrigin.Current) - pos;
+                long count = pos;
+                if (count < 0) {
+                    throw new EndOfStreamException();
+                }
+                n += count;
+            }
+        }
+
+        internal static void ReadFully(Stream ins, byte[] b, int off, int len) {
+            int n = 0;
+
+            while (n < len) {
+                int count = ins.Read(b, off + n, len - n);
+                if (count < 0) {
+                    throw new EndOfStreamException();
+                }
+                n += count;
+            }
+
+            StringUtils.dumpBytes("UnparsedPdu", b, off, n);
+        }
+    }
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,16 +24,13 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	
-	/// <summary>
-	/// </summary>
-	public interface DimseListenerI
-	{
-		void  DimseReceived(Association assoc, Dimse dimse);
-	}
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public interface DimseListenerI {
+        void DimseReceived(Association assoc, Dimse dimse);
+    }
 }

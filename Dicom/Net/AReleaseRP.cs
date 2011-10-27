@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,55 +24,49 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	public sealed class AReleaseRP : PduI
-	{
-		private readonly static AReleaseRP instance = new AReleaseRP();
+using System;
+using System.IO;
+using Dicom.Utility;
 
-		public static AReleaseRP Instance
-		{
-			get { return instance; }			
-		}
-		
-		public AReleaseRP()
-		{
-		}
-		
-		public static AReleaseRP Parse(UnparsedPdu raw)
-		{
-			if (raw.length() != 4)
-			{
-				throw new PduException("Illegal A-RELEASE-RQ " + raw, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
-			}
-			return instance;
-		}
-		
-		private static byte[] BYTES = new byte[]{6, 0, 0, 0, 0, 4, 0, 0, 0, 0};
-		
-		public void  WriteTo(Stream outs)
-		{
-			outs.Write(BYTES, 0, BYTES.Length);
-			StringUtils.dumpBytes( "AReleaseRP", BYTES, 0, BYTES.Length);
-		}
-		
-		public System.String ToString(bool verbose)
-		{
-			return ToString();
-		}
-		
-		public override System.String ToString()
-		{
-			return "A-RELEASE-RP";
-		}
-	}
+namespace Dicom.Net {
+    /// <summary>
+    /// 
+    /// </summary>
+    public sealed class AReleaseRP : PduI {
+        private static readonly AReleaseRP instance = new AReleaseRP();
+
+        private static readonly byte[] BYTES = new byte[] {6, 0, 0, 0, 0, 4, 0, 0, 0, 0};
+
+        public static AReleaseRP Instance {
+            get { return instance; }
+        }
+
+        #region PduI Members
+
+        public void WriteTo(Stream outs) {
+            outs.Write(BYTES, 0, BYTES.Length);
+            StringUtils.dumpBytes("AReleaseRP", BYTES, 0, BYTES.Length);
+        }
+
+        public String ToString(bool verbose) {
+            return ToString();
+        }
+
+        #endregion
+
+        public static AReleaseRP Parse(UnparsedPdu raw) {
+            if (raw.length() != 4) {
+                throw new PduException("Illegal A-RELEASE-RQ " + raw,
+                                       new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+            }
+            return instance;
+        }
+
+        public override String ToString() {
+            return "A-RELEASE-RP";
+        }
+    }
 }

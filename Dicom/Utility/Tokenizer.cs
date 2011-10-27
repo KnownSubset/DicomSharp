@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,96 +24,83 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Utility
-{
-	using System;
+using System;
+using System.Collections;
 
-	public class Tokenizer
-	{
-		private System.Collections.ArrayList elements;
-		private string source;
-		private string delimiters = ",;\\ \t\n\r";		
+namespace Dicom.Utility {
+    public class Tokenizer {
+        private readonly ArrayList elements;
+        private readonly string source;
+        private string delimiters = ",;\\ \t\n\r";
 
-		public Tokenizer(string source)
-		{			
-			this.elements = new System.Collections.ArrayList();
-			this.source = source;
-			this.ReTokenize();
-		}
+        public Tokenizer(string source) {
+            elements = new ArrayList();
+            this.source = source;
+            ReTokenize();
+        }
 
-		public Tokenizer(string source, string delimiters)
-		{
-			this.elements = new System.Collections.ArrayList();
-			this.delimiters = delimiters;
-			this.source = source;
-			this.ReTokenize();
-		}
+        public Tokenizer(string source, string delimiters) {
+            elements = new ArrayList();
+            this.delimiters = delimiters;
+            this.source = source;
+            ReTokenize();
+        }
 
-		public int Count
-		{
-			get
-			{
-				return (this.elements.Count);
-			}
-		}
+        public int Count {
+            get { return (elements.Count); }
+        }
 
-		public bool HasMoreTokens()
-		{
-			return (this.elements.Count > 0);			
-		}
+        public bool HasMoreTokens() {
+            return (elements.Count > 0);
+        }
 
-		public string NextToken()
-		{			
-			string result;
-			if ((source == "")
-            ||  (this.elements.Count == 0)) throw new System.Exception();
-			else
-			{
-				result = (string) this.elements[0];
-				this.elements.RemoveAt(0);				
-				return result;					
-			}			
-		}
+        public string NextToken() {
+            string result;
+            if ((source == "")
+                || (elements.Count == 0)) {
+                throw new Exception();
+            }
+            else {
+                result = (string) elements[0];
+                elements.RemoveAt(0);
+                return result;
+            }
+        }
 
-		public string NextToken(string delimiters)
-		{
-			this.delimiters = delimiters;
-			return NextToken();
-		}
+        public string NextToken(string delimiters) {
+            this.delimiters = delimiters;
+            return NextToken();
+        }
 
-		public void ReTokenize()
-		{
-			int prev_index = 0;
+        public void ReTokenize() {
+            int prev_index = 0;
 
-			for (int index=0;index < this.source.Length;index++)
-			{
-				if (this.delimiters.IndexOf(this.source[index]) >= 0)
-				{
-					this.elements.Add(this.source.Substring(prev_index, index - prev_index));
-					this.elements.Add(new string(this.source[index], 1));
+            for (int index = 0; index < source.Length; index++) {
+                if (delimiters.IndexOf(source[index]) >= 0) {
+                    elements.Add(source.Substring(prev_index, index - prev_index));
+                    elements.Add(new string(source[index], 1));
 
-					prev_index = index + 1;
-				}
-			}
+                    prev_index = index + 1;
+                }
+            }
 
-			if (prev_index != this.source.Length)
-			{
-				this.elements.Add(this.source.Substring(prev_index, this.source.Length - prev_index));
-			}
-			
-			this.RemoveEmptyStrings();
-		}
+            if (prev_index != source.Length) {
+                elements.Add(source.Substring(prev_index, source.Length - prev_index));
+            }
 
-		private void RemoveEmptyStrings()
-		{
-			for (int index=0; index < this.elements.Count; index++)
-				if ((string)this.elements[index]== "")
-				{
-					this.elements.RemoveAt(index);
-					index--;
-				}
-		}
-	}
+            RemoveEmptyStrings();
+        }
+
+        private void RemoveEmptyStrings() {
+            for (int index = 0; index < elements.Count; index++) {
+                if ((string) elements[index] == "") {
+                    elements.RemoveAt(index);
+                    index--;
+                }
+            }
+        }
+    }
 }

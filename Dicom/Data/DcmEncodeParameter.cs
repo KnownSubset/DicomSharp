@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,31 +24,29 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	using Dicom.Utility;
-	
-	public class DcmEncodeParam : DcmDecodeParam
-	{
-		public readonly bool skipGroupLen;
-		
-		public readonly bool undefSeqLen;
-		
-		public readonly bool undefItemLen;
-		
-		public DcmEncodeParam(ByteOrder byteOrder, bool explicitVR, bool deflated, bool encapsulated, bool skipGroupLen, bool undefSeqLen, bool undefItemLen):base(byteOrder, explicitVR, deflated, encapsulated)
-		{
-			this.skipGroupLen = skipGroupLen;
-			this.undefSeqLen = undefSeqLen;
-			this.undefItemLen = undefItemLen;
-		}
-		
-		public override String ToString()
-		{
-			return base.ToString() + ",grLen" + (skipGroupLen?'-':'+') + ",sqLen:" + (undefSeqLen?"-1":"##") + ",itemLen:" + (undefItemLen?"-1":"##");
-		}
-	}
+using System;
+using Dicom.Utility;
+
+namespace Dicom.Data {
+    public class DcmEncodeParam : DcmDecodeParam {
+        public readonly bool skipGroupLen;
+
+        public readonly bool undefItemLen;
+        public readonly bool undefSeqLen;
+
+        public DcmEncodeParam(ByteOrder byteOrder, bool explicitVR, bool deflated, bool encapsulated, bool skipGroupLen,
+                              bool undefSeqLen, bool undefItemLen) : base(byteOrder, explicitVR, deflated, encapsulated) {
+            this.skipGroupLen = skipGroupLen;
+            this.undefSeqLen = undefSeqLen;
+            this.undefItemLen = undefItemLen;
+        }
+
+        public override String ToString() {
+            return base.ToString() + ",grLen" + (skipGroupLen ? '-' : '+') + ",sqLen:" + (undefSeqLen ? "-1" : "##") +
+                   ",itemLen:" + (undefItemLen ? "-1" : "##");
+        }
+    }
 }

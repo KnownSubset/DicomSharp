@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,54 +24,48 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// </summary>
-	public sealed class AReleaseRQ : PduI
-	{
-		private readonly static AReleaseRQ s_instance = new AReleaseRQ();
+using System;
+using System.IO;
+using Dicom.Utility;
 
-		public static AReleaseRQ Instance
-		{
-			get { return s_instance; }			
-		}
-		
-		public AReleaseRQ()
-		{
-		}
-				
-		public static AReleaseRQ Parse(UnparsedPdu raw)
-		{
-			if (raw.length() != 4)
-			{
-				throw new PduException("Illegal A-RELEASE-RP " + raw, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
-			}
-			return s_instance;
-		}
-		
-		private static byte[] BYTES = new byte[]{5, 0, 0, 0, 0, 4, 0, 0, 0, 0};
-		
-		public void  WriteTo(Stream outs)
-		{
-			outs.Write(BYTES, 0, BYTES.Length);
-			StringUtils.dumpBytes( "AReleaseRQ", BYTES, 0, BYTES.Length);
-		}
-		
-		public String ToString(bool verbose)
-		{
-			return ToString();
-		}
-		
-		public override String ToString()
-		{
-			return "A-RELEASE-RQ";
-		}
-	}
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public sealed class AReleaseRQ : PduI {
+        private static readonly AReleaseRQ s_instance = new AReleaseRQ();
+
+        private static readonly byte[] BYTES = new byte[] {5, 0, 0, 0, 0, 4, 0, 0, 0, 0};
+
+        public static AReleaseRQ Instance {
+            get { return s_instance; }
+        }
+
+        #region PduI Members
+
+        public void WriteTo(Stream outs) {
+            outs.Write(BYTES, 0, BYTES.Length);
+            StringUtils.dumpBytes("AReleaseRQ", BYTES, 0, BYTES.Length);
+        }
+
+        public String ToString(bool verbose) {
+            return ToString();
+        }
+
+        #endregion
+
+        public static AReleaseRQ Parse(UnparsedPdu raw) {
+            if (raw.length() != 4) {
+                throw new PduException("Illegal A-RELEASE-RP " + raw,
+                                       new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+            }
+            return s_instance;
+        }
+
+        public override String ToString() {
+            return "A-RELEASE-RQ";
+        }
+    }
 }

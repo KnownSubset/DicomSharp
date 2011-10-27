@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,48 +24,43 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.Collections;
-	using Dicom.Dictionary;
-	using Dicom.Net;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DcmServiceRegistry : Hashtable
-	{
-		
-		public DcmServiceRegistry()
-		{
-			Add(UIDs.Verification, DcmServiceBase.VERIFICATION_SCP);
-		}
-		
-		public virtual bool Bind(String uid, DcmServiceI service)
-		{
-			if (service == null)
-				throw new System.NullReferenceException();
-			
-			if (Contains(StringUtils.CheckUID(uid)))
-				return false;
-			
-			Add(uid, service);
-			return true;
-		}
-		
-		public virtual void UnBind(String uid)
-		{
-			Remove(uid);
-		}
-		
-		public virtual DcmServiceI Lookup(String uid)
-		{
-			DcmServiceI retval = (DcmServiceI) this[StringUtils.CheckUID(uid)];
-			return retval != null?retval:DcmServiceBase.NO_SUCH_SOP_CLASS_SCP;
-		}		
-	}
+using System;
+using System.Collections;
+using Dicom.Dictionary;
+using Dicom.Utility;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DcmServiceRegistry : Hashtable {
+        public DcmServiceRegistry() {
+            Add(UIDs.Verification, DcmServiceBase.VERIFICATION_SCP);
+        }
+
+        public virtual bool Bind(String uid, DcmServiceI service) {
+            if (service == null) {
+                throw new NullReferenceException();
+            }
+
+            if (Contains(StringUtils.CheckUID(uid))) {
+                return false;
+            }
+
+            Add(uid, service);
+            return true;
+        }
+
+        public virtual void UnBind(String uid) {
+            Remove(uid);
+        }
+
+        public virtual DcmServiceI Lookup(String uid) {
+            var retval = (DcmServiceI) this[StringUtils.CheckUID(uid)];
+            return retval != null ? retval : DcmServiceBase.NO_SUCH_SOP_CLASS_SCP;
+        }
+    }
 }

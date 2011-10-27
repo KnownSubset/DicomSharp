@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,75 +24,71 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Server
-{
-	using System;
-	using System.Collections;
-	using System.Threading;
-	using Dicom.Net;
-	
-	/// <summary> <description>
-	/// 
-	/// </summary>
-	public class DcmHandler : DcmHandlerI
-	{
-		private readonly static AssociationFactory assocFact = AssociationFactory.Instance;
-		
-		private AcceptorPolicy policy;
-		private DcmServiceRegistry services;
-		private ArrayList listeners = new ArrayList();
-		
-		private int requestTO = 5000;
-		
+using System;
+using System.Collections;
+using System.Net.Sockets;
+using Dicom.Net;
 
-		public DcmHandler(AcceptorPolicy policy, DcmServiceRegistry services)
-		{
-			if (policy == null)
-				throw new System.NullReferenceException();
-			
-			if (services == null)
-				throw new System.NullReferenceException();
-			
-			this.policy = policy;
-			this.services = services;
-		}
-		
-		public virtual void  Handle( Object socket )
-		{
-			Association assoc = assocFact.NewAcceptor( (System.Net.Sockets.TcpClient)socket );
-			for( IEnumerator enu = listeners.GetEnumerator(); enu.MoveNext(); )
-			{
-				assoc.AddAssociationListener((AssociationListenerI) enu.Current);
-			}
-			
-			if (assoc.Accept(policy, requestTO) is AAssociateAC)
-			{
-				ActiveAssociation active = assocFact.NewActiveAssociation(assoc, services);
-				active.Start();
-			}
-		}
-		
-		public virtual void  AddAssociationListener(AssociationListenerI l)
-		{
-			lock(listeners)
-			{
-				listeners.Add(l);
-			}
-		}
-		
-		public virtual void  RemoveAssociationListener(AssociationListenerI l)
-		{
-			lock(listeners)
-			{
-				listeners.Remove(l);
-			}
-		}
-		
-		public virtual bool IsSockedClosedByHandler()
-		{
-			return true;
-		}		
-	}
+namespace Dicom.Server {
+    /// <summary> <description>
+    /// 
+    /// </summary>
+    public class DcmHandler : DcmHandlerI {
+        private static readonly AssociationFactory assocFact = AssociationFactory.Instance;
+        private readonly ArrayList listeners = new ArrayList();
+
+        private readonly AcceptorPolicy policy;
+        private readonly DcmServiceRegistry services;
+
+        private int requestTO = 5000;
+
+
+        public DcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
+            if (policy == null) {
+                throw new NullReferenceException();
+            }
+
+            if (services == null) {
+                throw new NullReferenceException();
+            }
+
+            this.policy = policy;
+            this.services = services;
+        }
+
+        #region DcmHandlerI Members
+
+        public virtual void Handle(Object socket) {
+            Association assoc = assocFact.NewAcceptor((TcpClient) socket);
+            for (IEnumerator enu = listeners.GetEnumerator(); enu.MoveNext();) {
+                assoc.AddAssociationListener((AssociationListenerI) enu.Current);
+            }
+
+            if (assoc.Accept(policy, requestTO) is AAssociateAC) {
+                ActiveAssociation active = assocFact.NewActiveAssociation(assoc, services);
+                active.Start();
+            }
+        }
+
+        public virtual void AddAssociationListener(AssociationListenerI l) {
+            lock (listeners) {
+                listeners.Add(l);
+            }
+        }
+
+        public virtual void RemoveAssociationListener(AssociationListenerI l) {
+            lock (listeners) {
+                listeners.Remove(l);
+            }
+        }
+
+        public virtual bool IsSockedClosedByHandler() {
+            return true;
+        }
+
+        #endregion
+    }
 }

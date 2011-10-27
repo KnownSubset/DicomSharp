@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dicomSharp", "dicomSharp.csproj", "{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dicomSharpTests", "test\dicomSharpTests.csproj", "{31575BAB-D3BD-4D6D-8EE5-0A0C4AECDD98}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug-2K5|Any CPU = Debug-2K5|Any CPU
@@ -14,10 +12,6 @@ Global
 		{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}.Debug-2K5|Any CPU.Build.0 = Debug-2K5|Any CPU
 		{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}.Release-2K5|Any CPU.ActiveCfg = Release-2K5|Any CPU
 		{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}.Release-2K5|Any CPU.Build.0 = Release-2K5|Any CPU
-		{31575BAB-D3BD-4D6D-8EE5-0A0C4AECDD98}.Debug-2K5|Any CPU.ActiveCfg = Debug-2K5|Any CPU
-		{31575BAB-D3BD-4D6D-8EE5-0A0C4AECDD98}.Debug-2K5|Any CPU.Build.0 = Debug-2K5|Any CPU
-		{31575BAB-D3BD-4D6D-8EE5-0A0C4AECDD98}.Release-2K5|Any CPU.ActiveCfg = Release-2K5|Any CPU
-		{31575BAB-D3BD-4D6D-8EE5-0A0C4AECDD98}.Release-2K5|Any CPU.Build.0 = Release-2K5|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

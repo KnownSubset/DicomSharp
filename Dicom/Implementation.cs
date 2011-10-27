@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,32 +24,27 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom
-{
-	using System.Collections;
-	using System;
-	
-	public class Implementation
-	{
-		public static Hashtable rb = new Hashtable();
+using System;
+using System.Collections;
 
-		static Implementation()
-		{
-		
-			rb.Add( "dicomcs.ImplementationClassUID", "1.2.40.1.6.8.168" );
-			rb.Add( "dicomcs.ImplementationVersionName", "dicomcs20021018" );
-		}
+namespace Dicom {
+    public class Implementation {
+        public static Hashtable rb = new Hashtable();
 
-		public static String ClassUID
-		{
-			get { return (String)rb["dicomcs.ImplementationClassUID"]; }			
-		}
+        static Implementation() {
+            rb.Add("dicomcs.ImplementationClassUID", "1.2.40.1.6.8.168");
+            rb.Add("dicomcs.ImplementationVersionName", "dicomcs20021018");
+        }
 
-		public static String VersionName
-		{
-			get { return (String)rb["dicomcs.ImplementationVersionName"]; }			
-		}
-	}
+        public static String ClassUID {
+            get { return (String) rb["dicomcs.ImplementationClassUID"]; }
+        }
+
+        public static String VersionName {
+            get { return (String) rb["dicomcs.ImplementationVersionName"]; }
+        }
+    }
 }

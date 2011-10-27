@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,48 +24,41 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	
-	public class FileFormat
-	{
-		
-		public bool hasPreamble;
+using System;
 
-		public bool hasFileMetaInfo;
-		
-		public DcmDecodeParam decodeParam;
-		
-		public FileFormat(bool hasPreamble, bool hasFileMetaInfo, DcmDecodeParam decodeParam)
-		{
-			if (hasPreamble && !hasFileMetaInfo)
-			{
-				throw new System.ArgumentException("Preamble without FMI");
-			}
-			this.hasPreamble = hasPreamble;
-			this.hasFileMetaInfo = hasFileMetaInfo;
-			this.decodeParam = decodeParam;
-		}
-		
-		public override System.String ToString()
-		{
-			return "FileFormat[" + (hasFileMetaInfo?(hasPreamble?"Part 10,":"FMI without preamble,"):"Stream, ") + decodeParam.ToString() + "]";
-		}
-		
-		public static FileFormat DICOM_FILE = new FileFormat(true, true, DcmDecodeParam.EVR_LE);
-		public static FileFormat DICOM_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.EVR_LE);
-		public static FileFormat EVR_LE_STREAM = new FileFormat(false, false, DcmDecodeParam.EVR_LE);
-		public static FileFormat EVR_BE_FILE = new FileFormat(true, true, DcmDecodeParam.EVR_BE);
-		public static FileFormat EVR_BE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.EVR_BE);
-		public static FileFormat EVR_BE_STREAM = new FileFormat(false, false, DcmDecodeParam.EVR_BE);
-		public static FileFormat IVR_BE_FILE = new FileFormat(true, true, DcmDecodeParam.IVR_BE);
-		public static FileFormat IVR_BE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.IVR_BE);
-		public static FileFormat IVR_BE_STREAM = new FileFormat(false, false, DcmDecodeParam.IVR_BE);
-		public static FileFormat IVR_LE_FILE = new FileFormat(true, true, DcmDecodeParam.IVR_LE);
-		public static FileFormat IVR_LE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.IVR_LE);
-		public static FileFormat ACRNEMA_STREAM = new FileFormat(false, false, DcmDecodeParam.IVR_LE);
-	}
+namespace Dicom.Data {
+    public class FileFormat {
+        public static FileFormat DICOM_FILE = new FileFormat(true, true, DcmDecodeParam.EVR_LE);
+        public static FileFormat DICOM_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.EVR_LE);
+        public static FileFormat EVR_LE_STREAM = new FileFormat(false, false, DcmDecodeParam.EVR_LE);
+        public static FileFormat EVR_BE_FILE = new FileFormat(true, true, DcmDecodeParam.EVR_BE);
+        public static FileFormat EVR_BE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.EVR_BE);
+        public static FileFormat EVR_BE_STREAM = new FileFormat(false, false, DcmDecodeParam.EVR_BE);
+        public static FileFormat IVR_BE_FILE = new FileFormat(true, true, DcmDecodeParam.IVR_BE);
+        public static FileFormat IVR_BE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.IVR_BE);
+        public static FileFormat IVR_BE_STREAM = new FileFormat(false, false, DcmDecodeParam.IVR_BE);
+        public static FileFormat IVR_LE_FILE = new FileFormat(true, true, DcmDecodeParam.IVR_LE);
+        public static FileFormat IVR_LE_FILE_WO_PREAMBLE = new FileFormat(false, true, DcmDecodeParam.IVR_LE);
+        public static FileFormat ACRNEMA_STREAM = new FileFormat(false, false, DcmDecodeParam.IVR_LE);
+        public DcmDecodeParam decodeParam;
+        public bool hasFileMetaInfo;
+        public bool hasPreamble;
+
+        public FileFormat(bool hasPreamble, bool hasFileMetaInfo, DcmDecodeParam decodeParam) {
+            if (hasPreamble && !hasFileMetaInfo) {
+                throw new ArgumentException("Preamble without FMI");
+            }
+            this.hasPreamble = hasPreamble;
+            this.hasFileMetaInfo = hasFileMetaInfo;
+            this.decodeParam = decodeParam;
+        }
+
+        public override String ToString() {
+            return "FileFormat[" + (hasFileMetaInfo ? (hasPreamble ? "Part 10," : "FMI without preamble,") : "Stream, ") +
+                   decodeParam + "]";
+        }
+    }
 }

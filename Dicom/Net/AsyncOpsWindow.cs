@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,65 +24,57 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	public class AsyncOpsWindow
-	{
-		public virtual int MaxOpsInvoked
-		{
-			get { return maxOpsInvoked; }
-		}
-		public virtual int MaxOpsPerformed
-		{
-			get { return maxOpsPerformed; }
-		}
-		
-		private int maxOpsInvoked;
-		private int maxOpsPerformed;
-		internal static AsyncOpsWindow DEFAULT = new AsyncOpsWindow(1, 1);
-		
-		/// <summary>
-		/// Creates a new instance of AsyncOpsWindow 
-		/// </summary>
-		internal AsyncOpsWindow(int maxOpsInvoked, int maxOpsPerformed)
-		{
-			this.maxOpsInvoked = maxOpsInvoked;
-			this.maxOpsPerformed = maxOpsPerformed;
-		}
-		
-		internal AsyncOpsWindow(ByteBuffer bb, int len)
-		{
-			if (len != 4)
-			{
-				throw new PduException("Illegal length of AsyncOpsWindow sub-item: " + len, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
-			}
-			this.maxOpsInvoked = bb.ReadInt16();
-			this.maxOpsPerformed = bb.ReadInt16();
-		}
-		
-		
-		
-		internal void  WriteTo(ByteBuffer bb)
-		{
-			bb.Write((System.Byte) 0x53);
-			bb.Write((System.Byte) 0);
-			bb.Write((System.Int16) 4);
-			bb.Write((System.Int16) maxOpsInvoked);
-			bb.Write((System.Int16) maxOpsPerformed);
-		}
-		
-		public override System.String ToString()
-		{
-			return "AsyncOpsWindow[maxOpsInvoked=" + maxOpsInvoked + ",maxOpsPerformed=" + maxOpsPerformed + "]";
-		}
-	}
+using System;
+using Dicom.Utility;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AsyncOpsWindow {
+        internal static AsyncOpsWindow DEFAULT = new AsyncOpsWindow(1, 1);
+        private readonly int maxOpsInvoked;
+        private readonly int maxOpsPerformed;
+
+        /// <summary>
+        /// Creates a new instance of AsyncOpsWindow 
+        /// </summary>
+        internal AsyncOpsWindow(int maxOpsInvoked, int maxOpsPerformed) {
+            this.maxOpsInvoked = maxOpsInvoked;
+            this.maxOpsPerformed = maxOpsPerformed;
+        }
+
+        internal AsyncOpsWindow(ByteBuffer bb, int len) {
+            if (len != 4) {
+                throw new PduException("Illegal length of AsyncOpsWindow sub-item: " + len,
+                                       new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+            }
+            maxOpsInvoked = bb.ReadInt16();
+            maxOpsPerformed = bb.ReadInt16();
+        }
+
+        public virtual int MaxOpsInvoked {
+            get { return maxOpsInvoked; }
+        }
+
+        public virtual int MaxOpsPerformed {
+            get { return maxOpsPerformed; }
+        }
+
+
+        internal void WriteTo(ByteBuffer bb) {
+            bb.Write((Byte) 0x53);
+            bb.Write((Byte) 0);
+            bb.Write((Int16) 4);
+            bb.Write((Int16) maxOpsInvoked);
+            bb.Write((Int16) maxOpsPerformed);
+        }
+
+        public override String ToString() {
+            return "AsyncOpsWindow[maxOpsInvoked=" + maxOpsInvoked + ",maxOpsPerformed=" + maxOpsPerformed + "]";
+        }
+    }
 }

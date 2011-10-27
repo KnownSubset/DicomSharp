@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,38 +24,29 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using Dicom.Net;
-	using Dicom.Utility;
-	
-	/// <summary>
-	/// </summary>
-	public class ExtNegotiation
-	{
-		public virtual String SOPClassUID
-		{
-			get { return asuid; }			
-		}
-		
-		private String asuid;
-		private byte[] m_info;
-		
-		/// <summary>
-		/// Creates a new instance of ExtNegotiation 
-		/// </summary>
-		internal ExtNegotiation(String asuid, byte[] info)
-		{
-			this.asuid = asuid;
-			this.m_info = new byte[info.Length];
-			info.CopyTo(this.m_info, 0);
-		}
-		
-		/*
+using System;
+using Dicom.Utility;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// </summary>
+    public class ExtNegotiation {
+        private readonly String asuid;
+        private readonly byte[] m_info;
+
+        /// <summary>
+        /// Creates a new instance of ExtNegotiation 
+        /// </summary>
+        internal ExtNegotiation(String asuid, byte[] info) {
+            this.asuid = asuid;
+            m_info = new byte[info.Length];
+            info.CopyTo(m_info, 0);
+        }
+
+        /*
 		internal ExtNegotiation(BinaryReader din, int len)
 		{
 			int uidLen = din.ReadUInt16();
@@ -64,34 +56,34 @@ namespace Dicom.Net
 		}
 		*/
 
-		internal ExtNegotiation(ByteBuffer bb, int len)
-		{
-			int uidLen = bb.ReadInt16();
-			this.asuid = bb.ReadString(uidLen);
-			this.m_info = new byte[len - uidLen - 2];
-			bb.Read( m_info, 0, m_info.Length );
-		}
+        internal ExtNegotiation(ByteBuffer bb, int len) {
+            int uidLen = bb.ReadInt16();
+            asuid = bb.ReadString(uidLen);
+            m_info = new byte[len - uidLen - 2];
+            bb.Read(m_info, 0, m_info.Length);
+        }
 
-		public byte[] info()
-		{
-			byte[] tmp = new byte[m_info.Length];
-			Array.Copy( m_info, 0, tmp, 0, m_info.Length);
-			return tmp;
-		}
-		
-		internal int length()
-		{
-			return 2 + asuid.Length + m_info.Length;
-		}
-		
-		internal void  WriteTo(ByteBuffer bb)
-		{
-			bb.Write((Byte) 0x56);
-			bb.Write((Byte) 0);
-			bb.Write((Int16) length());
-			bb.Write((Int16) asuid.Length);
-			bb.Write(asuid);
-			bb.Write(m_info);
-		}
-	}
+        public virtual String SOPClassUID {
+            get { return asuid; }
+        }
+
+        public byte[] info() {
+            var tmp = new byte[m_info.Length];
+            Array.Copy(m_info, 0, tmp, 0, m_info.Length);
+            return tmp;
+        }
+
+        internal int length() {
+            return 2 + asuid.Length + m_info.Length;
+        }
+
+        internal void WriteTo(ByteBuffer bb) {
+            bb.Write((Byte) 0x56);
+            bb.Write((Byte) 0);
+            bb.Write((Int16) length());
+            bb.Write((Int16) asuid.Length);
+            bb.Write(asuid);
+            bb.Write(m_info);
+        }
+    }
 }

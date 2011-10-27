@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,54 +24,44 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.Collections;
-	using Dicom.Dictionary;
-	
-	/// <summary>
-	/// *
-	/// </summary>
-	public class AAssociateRQ : AAssociateRQAC
-	{
-		
-		public static AAssociateRQ Parse(UnparsedPdu raw)
-		{
-			return (AAssociateRQ) new AAssociateRQ().Init(raw);
-		}
-		
-		public AAssociateRQ()
-		{
-		}
-		
-		protected override int type()
-		{
-			return 1;
-		}
-		
-		protected override int pctype()
-		{
-			return 0x20;
-		}
-		
-		protected override String TypeAsString()
-		{
-			return "AAssociateRQ";
-		}
-		
-		protected override void  Append(PresContext pc, System.Text.StringBuilder sb)
-		{
-			sb.Append("\n\tpc-").Append(pc.pcid()).Append(":\tas=").Append(UIDs.GetName(pc.AbstractSyntaxUID));
-			for( IEnumerator enu = pc.TransferSyntaxUIDs.GetEnumerator(); enu.MoveNext(); )
-				sb.Append("\n\t\tts=").Append(UIDs.GetName((String) enu.Current));
-		}
-		
-		protected override void  AppendPresCtxSummary(System.Text.StringBuilder sb)
-		{
-			sb.Append("\n\tpresCtx:\toffered=").Append(presCtxs.Count);
-		}
-	}
+using System;
+using System.Collections;
+using System.Text;
+using Dicom.Dictionary;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// *
+    /// </summary>
+    public class AAssociateRQ : AAssociateRQAC {
+        public static AAssociateRQ Parse(UnparsedPdu raw) {
+            return (AAssociateRQ) new AAssociateRQ().Init(raw);
+        }
+
+        protected override int type() {
+            return 1;
+        }
+
+        protected override int pctype() {
+            return 0x20;
+        }
+
+        protected override String TypeAsString() {
+            return "AAssociateRQ";
+        }
+
+        protected override void Append(PresContext pc, StringBuilder sb) {
+            sb.Append("\n\tpc-").Append(pc.pcid()).Append(":\tas=").Append(UIDs.GetName(pc.AbstractSyntaxUID));
+            for (IEnumerator enu = pc.TransferSyntaxUIDs.GetEnumerator(); enu.MoveNext();) {
+                sb.Append("\n\t\tts=").Append(UIDs.GetName((String) enu.Current));
+            }
+        }
+
+        protected override void AppendPresCtxSummary(StringBuilder sb) {
+            sb.Append("\n\tpresCtx:\toffered=").Append(presCtxs.Count);
+        }
+    }
 }

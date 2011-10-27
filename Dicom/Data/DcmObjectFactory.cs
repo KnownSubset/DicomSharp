@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,68 +24,59 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	using Dicom.Data;
-	using Tags = Dicom.Dictionary.Tags;
-	
-	/// <summary>
-	/// Dicom data object factory
-	/// </summary>
-	public class DcmObjectFactory
-	{
-		private static DcmObjectFactory s_instance = new DcmObjectFactory();
+using System;
+using Dicom.Dictionary;
 
-		public static DcmObjectFactory Instance
-		{
-			get{ return s_instance; }			
-		}
+namespace Dicom.Data {
+    /// <summary>
+    /// Dicom data object factory
+    /// </summary>
+    public class DcmObjectFactory {
+        private static readonly DcmObjectFactory s_instance = new DcmObjectFactory();
 
-		/// <summary>
-		/// Creates a new instance of DcmParserFactory
-		/// </summary>
-		private DcmObjectFactory()
-		{
-		}
-		
-		public virtual Command NewCommand()
-		{
-			return new Command();
-		}
-		
-		public virtual Dataset NewDataset()
-		{
-			return new Dataset();
-		}
-		
-		public virtual FileMetaInfo NewFileMetaInfo(System.String sopClassUID, System.String sopInstanceUID, System.String transferSyntaxUID, System.String ClassUID, System.String VersName)
-		{
-			return new FileMetaInfo().Init(sopClassUID, sopInstanceUID, transferSyntaxUID, ClassUID, VersName);
-		}
-		
-		public virtual FileMetaInfo NewFileMetaInfo(System.String sopClassUID, System.String sopInstanceUID, System.String transferSyntaxUID)
-		{
-			return new FileMetaInfo().Init(sopClassUID, sopInstanceUID, transferSyntaxUID, Implementation.ClassUID, Implementation.VersionName);
-		}
-		
-		public virtual PersonName NewPersonName(System.String s)
-		{
-			return new PersonName(s);
-		}
-		
-		public virtual FileMetaInfo NewFileMetaInfo(Dataset ds, System.String transferSyntaxUID)
-		{
-			try
-			{
-				return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUID, null), ds.GetString(Tags.SOPInstanceUID, null), transferSyntaxUID, Implementation.ClassUID, Implementation.VersionName);
-			}
-			catch (DcmValueException ex)
-			{
-				throw new System.ArgumentException(ex.Message);
-			}
-		}
-	}
+        /// <summary>
+        /// Creates a new instance of DcmParserFactory
+        /// </summary>
+        private DcmObjectFactory() {}
+
+        public static DcmObjectFactory Instance {
+            get { return s_instance; }
+        }
+
+        public virtual Command NewCommand() {
+            return new Command();
+        }
+
+        public virtual Dataset NewDataset() {
+            return new Dataset();
+        }
+
+        public virtual FileMetaInfo NewFileMetaInfo(String sopClassUID, String sopInstanceUID, String transferSyntaxUID,
+                                                    String ClassUID, String VersName) {
+            return new FileMetaInfo().Init(sopClassUID, sopInstanceUID, transferSyntaxUID, ClassUID, VersName);
+        }
+
+        public virtual FileMetaInfo NewFileMetaInfo(String sopClassUID, String sopInstanceUID, String transferSyntaxUID) {
+            return new FileMetaInfo().Init(sopClassUID, sopInstanceUID, transferSyntaxUID, Implementation.ClassUID,
+                                           Implementation.VersionName);
+        }
+
+        public virtual PersonName NewPersonName(String s) {
+            return new PersonName(s);
+        }
+
+        public virtual FileMetaInfo NewFileMetaInfo(Dataset ds, String transferSyntaxUID) {
+            try {
+                return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUID, null),
+                                               ds.GetString(Tags.SOPInstanceUID, null), transferSyntaxUID,
+                                               Implementation.ClassUID, Implementation.VersionName);
+            }
+            catch (DcmValueException ex) {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+    }
 }

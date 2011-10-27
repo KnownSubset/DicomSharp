@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,35 +24,31 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	
-	public interface DcmHandlerI
-	{
-		DcmDecodeParam DcmDecodeParam
-		{
-			set;			
-		}
+using Dicom.Utility;
 
-		void  StartCommand();
-		void  EndCommand();
-		void  StartDcmFile();
-		void  EndDcmFile();
-		void  StartFileMetaInfo(byte[] preamble);
-		void  EndFileMetaInfo();
-		void  StartDataset();
-		void  EndDataset();
-		void  StartElement(uint tag, int vr, long pos);
-		void  EndElement();
-		void  StartSequence(int length);
-		void  EndSequence(int length);
-		void  StartItem(int id, long pos, int length);
-		void  EndItem(int len);
-		void  Value(dicomcs.util.ByteBuffer bb);
-		void  Value(byte[] data, int Start, int length);
-		void  Fragment(int id, long pos, byte[] data, int Start, int length);
-	}
+namespace Dicom.Data {
+    public interface DcmHandlerI {
+        DcmDecodeParam DcmDecodeParam { set; }
+
+        void StartCommand();
+        void EndCommand();
+        void StartDcmFile();
+        void EndDcmFile();
+        void StartFileMetaInfo(byte[] preamble);
+        void EndFileMetaInfo();
+        void StartDataset();
+        void EndDataset();
+        void StartElement(uint tag, int vr, long pos);
+        void EndElement();
+        void StartSequence(int length);
+        void EndSequence(int length);
+        void StartItem(int id, long pos, int length);
+        void EndItem(int len);
+        void Value(ByteBuffer bb);
+        void Value(byte[] data, int Start, int length);
+        void Fragment(int id, long pos, byte[] data, int Start, int length);
+    }
 }

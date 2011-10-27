@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,84 +24,72 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using Dicom.Dictionary;
-	using Dicom.Net;
-	using Dicom.Data;
-	
-	/// <summary> 
-	/// </summary>
-	public class DcmServiceException : Exception
-	{
-		public virtual int Status
-		{
-			get { return status; }
-		}
-		public virtual int ErrorID
-		{
-			get { return errorID; }
-			set { this.errorID = value; }
-		}
-		public virtual int EventTypeID
-		{
-			get { return eventTypeID; }
-			set { this.eventTypeID = value; }
-		}
-		public virtual int ActionTypeID
-		{
-			get { return actionTypeID; }
-			set { this.actionTypeID = value; }
-		}
-		
-		private readonly int status;
-		private int errorID = - 1;
-		private int actionTypeID = - 1;
-		private int eventTypeID = - 1;
-		
-		public DcmServiceException(int status)
-		{
-			this.status = status;
-		}
-		
-		public DcmServiceException(int status, String msg):base(msg)
-		{
-			this.status = status;
-		}
-		
-		public DcmServiceException(int status, String msg, Exception cause):base(msg, cause)
-		{
-			this.status = status;
-		}
-		
-		public DcmServiceException(int status, Exception cause):base("", cause)
-		{
-			this.status = status;
-		}
-		
-		public virtual void  WriteTo(Command cmd)
-		{
-			cmd.PutUS(Tags.Status, status);
-			String msg = Message;
-			if (msg != null && msg.Length > 0)
-			{
-				cmd.PutLO(Tags.ErrorComment, msg.Length > 64?msg.Substring(0, (64) - (0)):msg);
-			}
-			if (errorID >= 0)
-			{
-				cmd.PutUS(Tags.ErrorID, errorID);
-			}
-			if (actionTypeID >= 0)
-			{
-				cmd.PutUS(Tags.ActionTypeID, actionTypeID);
-			}
-			if (eventTypeID >= 0)
-			{
-				cmd.PutUS(Tags.EventTypeID, eventTypeID);
-			}
-		}
-	}
+using System;
+using Dicom.Data;
+using Dicom.Dictionary;
+
+namespace Dicom.Net {
+    /// <summary> 
+    /// </summary>
+    public class DcmServiceException : Exception {
+        private readonly int status;
+        private int actionTypeID = - 1;
+        private int errorID = - 1;
+        private int eventTypeID = - 1;
+
+        public DcmServiceException(int status) {
+            this.status = status;
+        }
+
+        public DcmServiceException(int status, String msg) : base(msg) {
+            this.status = status;
+        }
+
+        public DcmServiceException(int status, String msg, Exception cause) : base(msg, cause) {
+            this.status = status;
+        }
+
+        public DcmServiceException(int status, Exception cause) : base("", cause) {
+            this.status = status;
+        }
+
+        public virtual int Status {
+            get { return status; }
+        }
+
+        public virtual int ErrorID {
+            get { return errorID; }
+            set { errorID = value; }
+        }
+
+        public virtual int EventTypeID {
+            get { return eventTypeID; }
+            set { eventTypeID = value; }
+        }
+
+        public virtual int ActionTypeID {
+            get { return actionTypeID; }
+            set { actionTypeID = value; }
+        }
+
+        public virtual void WriteTo(Command cmd) {
+            cmd.PutUS(Tags.Status, status);
+            String msg = Message;
+            if (msg != null && msg.Length > 0) {
+                cmd.PutLO(Tags.ErrorComment, msg.Length > 64 ? msg.Substring(0, (64) - (0)) : msg);
+            }
+            if (errorID >= 0) {
+                cmd.PutUS(Tags.ErrorID, errorID);
+            }
+            if (actionTypeID >= 0) {
+                cmd.PutUS(Tags.ActionTypeID, actionTypeID);
+            }
+            if (eventTypeID >= 0) {
+                cmd.PutUS(Tags.EventTypeID, eventTypeID);
+            }
+        }
+    }
 }

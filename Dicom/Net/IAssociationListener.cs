@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,22 +24,21 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	public interface AssociationListenerI
-	{
-		void  Write(Association src, PduI Pdu);
-		void  Received(Association src, PduI Pdu);
-		void  Write(Association src, Dimse dimse);
-		void  Received(Association src, Dimse dimse);
-		void  Error(Association src, System.IO.IOException ioe);
-		void  Close(Association src);
-	}
+using System.IO;
+
+namespace Dicom.Net {
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface AssociationListenerI {
+        void Write(Association src, PduI Pdu);
+        void Received(Association src, PduI Pdu);
+        void Write(Association src, Dimse dimse);
+        void Received(Association src, Dimse dimse);
+        void Error(Association src, IOException ioe);
+        void Close(Association src);
+    }
 }

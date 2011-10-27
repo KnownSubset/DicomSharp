@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,154 +24,125 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	using System.IO;
-	using System.Collections;
-	using Dicom.Net;
-	
-	/// <summary> 
-	/// 
-	/// </summary>
-	public class FutureRSP : DimseListenerI, AssociationListenerI
-	{
-		private long setAfterCloseTO = 500;
-		
-		private bool closed = false;
-		private bool ready = false;
-		private Dimse rsp = null;
-		private ArrayList pending = new ArrayList();
-		private System.IO.IOException exception = null;
+using System;
+using System.Collections;
+using System.IO;
+using System.Threading;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public FutureRSP()
-		{
-		}
+namespace Dicom.Net {
+    /// <summary> 
+    /// 
+    /// </summary>
+    public class FutureRSP : DimseListenerI, AssociationListenerI {
+        private readonly ArrayList pending = new ArrayList();
+        private bool closed;
+        private IOException exception;
+        private bool ready;
+        private Dimse rsp;
+        private long setAfterCloseTO = 500;
 
-		public virtual System.IO.IOException Exception
-		{
-			get
-			{
-				lock(this)
-				{
-					return exception;
-				}
-			}
-			
-			set
-			{
-				lock(this)
-				{
-					exception = value;
-					ready = true;
-					System.Threading.Monitor.PulseAll(this);
-				}
-			}
-		}
-		
-		public virtual void  Set(Dimse rsp)
-		{
-			lock(this)
-			{
-				this.rsp = rsp;
-				ready = true;
-				System.Threading.Monitor.PulseAll(this);
-			}
-		}
-		
-		public virtual Dimse Get()
-		{
-			lock(this)
-			{
-				while (!ready && !closed)
-				{
-					System.Threading.Monitor.Wait(this);
-				}
-				
-				if (!ready)
-					System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(setAfterCloseTO));
-				
-				return DoGet();
-			}
-		}
-		
-		public virtual ArrayList ListPending()
-		{
-			lock(this)
-			{
-				return pending;
-			}
-		}
-		
-		public virtual bool IsReady()
-		{
-			lock(this)
-			{
-				return ready;
-			}
-		}
-		
-		public virtual Dimse Peek()
-		{
-			lock(this)
-			{
-				return rsp;
-			}
-		}
-		
-		public virtual void  DimseReceived(Association assoc, Dimse dimse)
-		{
-			if (dimse.Command.IsPending())
-			{
-				pending.Add(dimse);
-			}
-			else
-			{
-				Set(dimse);
-			}
-		}
-		
-		public virtual void  Write(Association src, PduI Pdu)
-		{
-		}
-		
-		public virtual void  Received(Association src, Dimse dimse)
-		{
-		}
-		
-		public virtual void  Error(Association src, System.IO.IOException ioe)
-		{
-			Exception = ioe;
-		}
-		
-		public virtual void  Close(Association src)
-		{
-			lock(this)
-			{
-				closed = true;
-				System.Threading.Monitor.PulseAll(this);
-			}
-		}
-		
-		public virtual void  Write(Association src, Dimse dimse)
-		{
-		}
-		
-		public virtual void  Received(Association src, PduI Pdu)
-		{
-		}
-		
-		private Dimse DoGet()
-		{
-			if (exception != null)
-				throw exception;
-			else
-				return rsp;
-		}
-	}
+        public virtual IOException Exception {
+            get {
+                lock (this) {
+                    return exception;
+                }
+            }
+
+            set {
+                lock (this) {
+                    exception = value;
+                    ready = true;
+                    Monitor.PulseAll(this);
+                }
+            }
+        }
+
+        #region AssociationListenerI Members
+
+        public virtual void Write(Association src, PduI Pdu) {}
+
+        public virtual void Received(Association src, Dimse dimse) {}
+
+        public virtual void Error(Association src, IOException ioe) {
+            Exception = ioe;
+        }
+
+        public virtual void Close(Association src) {
+            lock (this) {
+                closed = true;
+                Monitor.PulseAll(this);
+            }
+        }
+
+        public virtual void Write(Association src, Dimse dimse) {}
+
+        public virtual void Received(Association src, PduI Pdu) {}
+
+        #endregion
+
+        #region DimseListenerI Members
+
+        public virtual void DimseReceived(Association assoc, Dimse dimse) {
+            if (dimse.Command.IsPending()) {
+                pending.Add(dimse);
+            }
+            else {
+                Set(dimse);
+            }
+        }
+
+        #endregion
+
+        public virtual void Set(Dimse rsp) {
+            lock (this) {
+                this.rsp = rsp;
+                ready = true;
+                Monitor.PulseAll(this);
+            }
+        }
+
+        public virtual Dimse Get() {
+            lock (this) {
+                while (!ready && !closed) {
+                    Monitor.Wait(this);
+                }
+
+                if (!ready) {
+                    Monitor.Wait(this, TimeSpan.FromMilliseconds(setAfterCloseTO));
+                }
+
+                return DoGet();
+            }
+        }
+
+        public virtual ArrayList ListPending() {
+            lock (this) {
+                return pending;
+            }
+        }
+
+        public virtual bool IsReady() {
+            lock (this) {
+                return ready;
+            }
+        }
+
+        public virtual Dimse Peek() {
+            lock (this) {
+                return rsp;
+            }
+        }
+
+        private Dimse DoGet() {
+            if (exception != null) {
+                throw exception;
+            }
+            else {
+                return rsp;
+            }
+        }
+    }
 }

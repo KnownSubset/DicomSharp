@@ -96,7 +96,7 @@
   <ItemGroup>
     <Reference Include="log4net">
       <Name>log4net</Name>
-      <HintPath>lib\2.0\log4net.dll</HintPath>
+      <HintPath>..\dicom-cs\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <Name>mscorlib</Name>
@@ -131,7 +131,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dicom\Data\BaseDataSet.cs" />
-    <Compile Include="Dicom\Data\Command.cs" />
     <Compile Include="Dicom\Data\DataSet.cs" />
     <Compile Include="Dicom\Data\DcmDecodeParameter.cs" />
     <Compile Include="Dicom\Data\DcmElement.cs" />
@@ -144,10 +143,9 @@
     <Compile Include="Dicom\Data\DcmParserFactory.cs" />
     <Compile Include="Dicom\Data\DcmStreamHandler.cs" />
     <Compile Include="Dicom\Data\DcmValueException.cs" />
+    <Compile Include="Dicom\Data\DicomCommand.cs" />
     <Compile Include="Dicom\Data\FileFormat.cs" />
     <Compile Include="Dicom\Data\FileMetaInfo.cs" />
-    <Compile Include="Dicom\Data\FilterDataset.cs" />
-    <Compile Include="Dicom\Data\FilterSQElement.cs" />
     <Compile Include="Dicom\Data\FragmentElement.cs" />
     <Compile Include="Dicom\Data\IDcmHandler.cs" />
     <Compile Include="Dicom\Data\PersonName.cs" />
@@ -176,20 +174,20 @@
     <Compile Include="Dicom\Net\DcmServiceException.cs" />
     <Compile Include="Dicom\Net\DcmServiceRegistry.cs" />
     <Compile Include="Dicom\Net\Dimse.cs" />
-    <Compile Include="Dicom\Net\DimseListenerI.cs" />
     <Compile Include="Dicom\Net\DimseReader.cs" />
     <Compile Include="Dicom\Net\DimseWriter.cs" />
     <Compile Include="Dicom\Net\ExtNegotiation.cs" />
-    <Compile Include="Dicom\Net\ExtNegotiatorI.cs" />
     <Compile Include="Dicom\Net\Fsm.cs" />
-    <Compile Include="Dicom\Net\FutureRSP.cs" />
+    <Compile Include="Dicom\Net\FutureDimseResponse.cs" />
     <Compile Include="Dicom\Net\IAssociationListener.cs" />
     <Compile Include="Dicom\Net\IDataSource.cs" />
     <Compile Include="Dicom\Net\IDcmService.cs" />
+    <Compile Include="Dicom\Net\IDimseListener.cs" />
+    <Compile Include="Dicom\Net\IExtNegotiator.cs" />
+    <Compile Include="Dicom\Net\IPdu.cs" />
     <Compile Include="Dicom\Net\Multicaster.cs" />
     <Compile Include="Dicom\Net\PDataTF.cs" />
     <Compile Include="Dicom\Net\PduException.cs" />
-    <Compile Include="Dicom\Net\PduI.cs" />
     <Compile Include="Dicom\Net\PresContext.cs" />
     <Compile Include="Dicom\Net\RoleSelection.cs" />
     <Compile Include="Dicom\Net\UnparsedPdu.cs" />

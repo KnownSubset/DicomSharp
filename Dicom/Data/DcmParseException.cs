@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,46 +24,39 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DcmParseException : System.IO.IOException
-	{
-		
-		/// <summary> 
-		/// Creates a new instance of <code>DcmValueException</code> without detail message.
-		/// </summary>
-		public DcmParseException()
-		{
-		}
-		
-		/// <summary> 
-		/// Constructs an instance of <code>DcmValueException</code> with the
-		/// specified detail message.
-		/// </summary>
-		/// <param name="msg">the detail message.
-		/// </param>
-		public DcmParseException(String msg):base(msg)
-		{
-		}
-		
-		/// <summary> 
-		/// Constructs a new throwable with the specified detail message and
-		/// cause.
-		/// </summary>
-		/// <param name="msg">the detail message.
-		/// </param>
-		/// <param name="cause">the cause.
-		/// </param>
-		//UPGRADE_NOTE: Exception 'java.lang.Throwable' was converted to ' ' which has different behavior. 'ms-help://MS.VSCC/commoner/redir/redirect.htm?keyword="jlca1100"'
-		public DcmParseException(String msg, Exception cause):base( msg, cause )
-		{
-		}
-	}
+using System;
+using System.IO;
+
+namespace Dicom.Data {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DcmParseException : IOException {
+        /// <summary> 
+        /// Creates a new instance of <code>DcmValueException</code> without detail message.
+        /// </summary>
+        public DcmParseException() {}
+
+        /// <summary> 
+        /// Constructs an instance of <code>DcmValueException</code> with the
+        /// specified detail message.
+        /// </summary>
+        /// <param name="msg">the detail message.
+        /// </param>
+        public DcmParseException(String msg) : base(msg) {}
+
+        /// <summary> 
+        /// Constructs a new throwable with the specified detail message and
+        /// cause.
+        /// </summary>
+        /// <param name="msg">the detail message.
+        /// </param>
+        /// <param name="cause">the cause.
+        /// </param>
+        //UPGRADE_NOTE: Exception 'java.lang.Throwable' was converted to ' ' which has different behavior. 'ms-help://MS.VSCC/commoner/redir/redirect.htm?keyword="jlca1100"'
+        public DcmParseException(String msg, Exception cause) : base(msg, cause) {}
+    }
 }

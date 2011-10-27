@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,31 +24,26 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Data
-{
-	using System;
-	
-	public class DcmParserFactory
-	{
-		private static DcmParserFactory  s_instance = new DcmParserFactory();
+using System.IO;
 
-		public static DcmParserFactory Instance
-		{
-			get { return s_instance; }			
-		}
+namespace Dicom.Data {
+    public class DcmParserFactory {
+        private static readonly DcmParserFactory s_instance = new DcmParserFactory();
 
-		/// <summary>
-		/// Creates a new instance of DcmParserFactory
-		/// </summary>
-		private DcmParserFactory()
-		{
-		}
+        /// <summary>
+        /// Creates a new instance of DcmParserFactory
+        /// </summary>
+        private DcmParserFactory() {}
 
-		public virtual DcmParser NewDcmParser(System.IO.Stream ins)
-		{
-			return new DcmParser(ins);
-		}		
-	}
+        public static DcmParserFactory Instance {
+            get { return s_instance; }
+        }
+
+        public virtual DcmParser NewDcmParser(Stream ins) {
+            return new DcmParser(ins);
+        }
+    }
 }

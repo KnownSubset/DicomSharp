@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,140 +24,126 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-[assembly: log4net.Config.DOMConfigurator(ConfigFileExtension="config")]
-namespace Dicom.Server
-{
-	using System;
-	using System.IO;
-	using System.Reflection;
-	using System.Threading;
-	using System.Net;
-	using System.Net.Sockets;
-	using log4net;
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Threading;
+using log4net;
+using log4net.Config;
 
-	/// <summary>
-	/// SCP Server
-	/// </summary>
-	public class Server
-	{
-		private static readonly ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+[assembly: DOMConfigurator(ConfigFileExtension = "config")]
 
-		public interface HandlerI
-		{
-			void Handle(Object s);
-			bool IsSockedClosedByHandler();
-		}
-		
-		private HandlerI handler;
-		private TcpListener ss;
-		private int port = 104;
-		private bool m_Stop = false;
-		
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="handler"></param>
-		public Server(HandlerI handler)
-		{
-			if (handler == null)
-				throw new System.NullReferenceException();
-			
-			this.handler = handler;
-		}
-		
-		public virtual void  Start(int port)
-		{
-			CheckNotRunning();
-			log.Info("Start Server listening at port " + port);
+namespace Dicom.Server {
+    /// <summary>
+    /// SCP Server
+    /// </summary>
+    public class Server {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-			// Create the TCP listener
-			ss = new TcpListener( port );
-			ss.Start();
+        private readonly HandlerI handler;
+        private bool m_Stop;
+        private int port = 104;
+        private TcpListener ss;
 
-			// Fire the thread to listen for incoming associations
-			Run();
-		}
-		
-		public virtual void  Stop()
-		{
-			if (ss == null)
-				return ;
-			
-			IPAddress ia = ((IPEndPoint) ss.LocalEndpoint).Address;
-			int port = ((IPEndPoint) ss.LocalEndpoint).Port;
-			log.Info("Stop Server listening at port " + port);
-			
-			try
-			{
-				ss.Stop();
-			}
-			catch (IOException ignore)
-			{
-			}
-			
-			// try to connect to server port to ensure to leave blocking accept
-			try
-			{
-				new TcpClient(new IPEndPoint(ia, port)).Close();
-			}
-			catch (IOException ignore)
-			{
-			}
-			m_Stop = true;
-			ss = null;
-		}
-		
-		/// <summary>
-		/// Run the server
-		/// </summary>
-		public virtual void  Run()
-		{
-			if (ss == null)
-				return ;
-			
-			TcpClient s = null;
-			while( !m_Stop )
-			{
-				try
-				{
-					s = ss.AcceptTcpClient();
-					if (log.IsInfoEnabled)
-					{
-						log.Info("handle - " + s);
-					}
-					
-					// Fire up a new pooled thread to handle this socket.
-					ThreadPool.QueueUserWorkItem(new WaitCallback(handler.Handle), s);
-				}
-				catch( Exception ioe)
-				{
-					log.Error(ioe);
-					if (s != null)
-					{
-						try
-						{
-							s.Close();
-						}
-						catch (Exception ignore)
-						{
-						}
-					}
-				}
-				if (log.IsInfoEnabled)
-				{
-					log.Info("finished - " + s);
-				}
-			}			
-		}
-		
-		private void  CheckNotRunning()
-		{
-			if (ss != null)
-			{
-				throw new SystemException("Already Running");
-			}
-		}
-	}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="handler"></param>
+        public Server(HandlerI handler) {
+            if (handler == null) {
+                throw new NullReferenceException();
+            }
+
+            this.handler = handler;
+        }
+
+        public virtual void Start(int port) {
+            CheckNotRunning();
+            log.Info("Start Server listening at port " + port);
+
+            // Create the TCP listener
+            ss = new TcpListener(port);
+            ss.Start();
+
+            // Fire the thread to listen for incoming associations
+            Run();
+        }
+
+        public virtual void Stop() {
+            if (ss == null) {
+                return;
+            }
+
+            IPAddress ia = ((IPEndPoint) ss.LocalEndpoint).Address;
+            int port = ((IPEndPoint) ss.LocalEndpoint).Port;
+            log.Info("Stop Server listening at port " + port);
+
+            try {
+                ss.Stop();
+            }
+            catch (IOException ignore) {}
+
+            // try to connect to server port to ensure to leave blocking accept
+            try {
+                new TcpClient(new IPEndPoint(ia, port)).Close();
+            }
+            catch (IOException ignore) {}
+            m_Stop = true;
+            ss = null;
+        }
+
+        /// <summary>
+        /// Run the server
+        /// </summary>
+        public virtual void Run() {
+            if (ss == null) {
+                return;
+            }
+
+            TcpClient s = null;
+            while (!m_Stop) {
+                try {
+                    s = ss.AcceptTcpClient();
+                    if (log.IsInfoEnabled) {
+                        log.Info("handle - " + s);
+                    }
+
+                    // Fire up a new pooled thread to handle this socket.
+                    ThreadPool.QueueUserWorkItem(handler.Handle, s);
+                }
+                catch (Exception ioe) {
+                    log.Error(ioe);
+                    if (s != null) {
+                        try {
+                            s.Close();
+                        }
+                        catch (Exception ignore) {}
+                    }
+                }
+                if (log.IsInfoEnabled) {
+                    log.Info("finished - " + s);
+                }
+            }
+        }
+
+        private void CheckNotRunning() {
+            if (ss != null) {
+                throw new SystemException("Already Running");
+            }
+        }
+
+        #region Nested type: HandlerI
+
+        public interface HandlerI {
+            void Handle(Object s);
+            bool IsSockedClosedByHandler();
+        }
+
+        #endregion
+    }
 }

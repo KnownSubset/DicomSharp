@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // This library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
@@ -23,26 +24,23 @@
 //
 // Fang Yang (yangfang@email.com)
 //
+
 #endregion
 
-namespace Dicom.Net
-{
-	using System;
-	
-	/// <summary> 
-	/// </summary>
-	public interface DcmServiceI
-	{
-		void  c_store(ActiveAssociation assoc, Dimse rq);
-		void  c_get(ActiveAssociation assoc, Dimse rq);
-		void  c_find(ActiveAssociation assoc, Dimse rq);
-		void  c_move(ActiveAssociation assoc, Dimse rq);
-		void  c_echo(ActiveAssociation assoc, Dimse rq);
-		void  n_create(ActiveAssociation assoc, Dimse rq);
-		void  n_set(ActiveAssociation assoc, Dimse rq);
-		void  n_get(ActiveAssociation assoc, Dimse rq);
-		void  n_delete(ActiveAssociation assoc, Dimse rq);
-		void  n_action(ActiveAssociation assoc, Dimse rq);
-		void  n_event_report(ActiveAssociation assoc, Dimse rq);
-	}
+namespace Dicom.Net {
+    /// <summary> 
+    /// </summary>
+    public interface DcmServiceI {
+        void c_store(ActiveAssociation assoc, Dimse rq);
+        void c_get(ActiveAssociation assoc, Dimse rq);
+        void c_find(ActiveAssociation assoc, Dimse rq);
+        void c_move(ActiveAssociation assoc, Dimse rq);
+        void c_echo(ActiveAssociation assoc, Dimse rq);
+        void n_create(ActiveAssociation assoc, Dimse rq);
+        void n_set(ActiveAssociation assoc, Dimse rq);
+        void n_get(ActiveAssociation assoc, Dimse rq);
+        void n_delete(ActiveAssociation assoc, Dimse rq);
+        void n_action(ActiveAssociation assoc, Dimse rq);
+        void n_event_report(ActiveAssociation assoc, Dimse rq);
+    }
 }
