@@ -147,8 +147,8 @@ namespace DicomSharp.Net {
             return new Dimse(presentationContextId, dicomCommand, null, null);
         }
 
-        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand, Dataset dataset) {
-            return new Dimse(presentationContextId, dicomCommand, dataset, null);
+        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand, DataSet dataSet) {
+            return new Dimse(presentationContextId, dicomCommand, dataSet, null);
         }
 
         public virtual Dimse NewDimse(int presentationContextId, DicomCommand dicomCommand, IDataSource dataSource) {

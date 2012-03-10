@@ -38,22 +38,20 @@ using DicomSharp.Utility;
 using log4net;
 
 namespace DicomSharp.Data {
-    public abstract class BaseDataset : DcmObject {
+    public abstract class BaseDataSet : DcmObject {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private FileMetaInfo fmi;
+        private FileMetaInfo _fileMetaInfo;
 
         private int grCount;
         private int[] grLens = new int[8];
         private uint[] grTags = new uint[8];
         protected internal int totLen;
 
-        public FileMetaInfo GetFileMetaInfo() {
-            return fmi;
-        }
-
-        public void SetFileMetaInfo(FileMetaInfo fmi) {
-            this.fmi = fmi;
+        public FileMetaInfo FileMetaInfo
+        {
+            get { return _fileMetaInfo; }
+            set { _fileMetaInfo = value; }
         }
 
         public override String ToString() {
@@ -84,27 +82,30 @@ namespace DicomSharp.Data {
             grCount = 0;
 
             uint curGrTag, prevGrTag = 0;
-            IEnumerator enu = GetEnumerator();
-            while (enu.MoveNext()) {
-                var el = (DcmElement) enu.Current;
-                curGrTag = el.tag() & 0xffff0000;
-                if (curGrTag != prevGrTag) {
+            foreach (var dcmElement in _dcmElements)
+            {
+                curGrTag = dcmElement.tag() & 0xffff0000;
+                if (curGrTag != prevGrTag)
+                {
                     grCount++;
                     grTags = EnsureCapacity(grTags, grCount + 1);
                     grLens = EnsureCapacity(grLens, grCount + 1);
                     grTags[grCount - 1] = prevGrTag = curGrTag;
                     grLens[grCount - 1] = 0;
                 }
-                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(el.vr())) ? 12 : 8;
-                if (el is ValueElement) {
-                    grLens[grCount - 1] += el.Length();
+                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(dcmElement.vr())) ? 12 : 8;
+                if (dcmElement is ValueElement)
+                {
+                    grLens[grCount - 1] += dcmElement.Length();
                 }
-                else if (el is FragmentElement) {
-                    grLens[grCount - 1] += ((FragmentElement) el).CalcLength();
+                else if (dcmElement is FragmentElement)
+                {
+                    grLens[grCount - 1] += ((FragmentElement)dcmElement).CalcLength();
                 }
-                else {
-                    grLens[grCount - 1] += ((SQElement) el).CalcLength(param);
-                }
+                else
+                {
+                    grLens[grCount - 1] += ((SQElement)dcmElement).CalcLength(param);
+                } 
             }
             grTags[grCount] = 0;
             if (!param.skipGroupLen) {
@@ -126,7 +127,7 @@ namespace DicomSharp.Data {
         }
 
         public abstract long GetItemOffset();
-        public abstract Dataset SetItemOffset(long itemOffset);
+        public abstract DataSet SetItemOffset(long itemOffset);
 
         public virtual void WriteDataset(IDcmHandler handler, DcmEncodeParam param) {
             if (!(param.skipGroupLen && param.undefItemLen && param.undefSeqLen)) {
@@ -140,23 +141,21 @@ namespace DicomSharp.Data {
 
         private void DoWrite(IDcmHandler handler, DcmEncodeParam param) {
             int grIndex = 0;
-            IEnumerator enu = GetEnumerator();
-            while (enu.MoveNext()) {
-                var el = (DcmElement) enu.Current;
-                if (!param.skipGroupLen && grTags[grIndex] == (el.tag() & (int) (- (0x100000000 - 0xffff0000)))) {
+            foreach (var dcmElement in _dcmElements){
+                if (!param.skipGroupLen && grTags[grIndex] == (dcmElement.tag() & (int) (- (0x100000000 - 0xffff0000)))) {
                     var b4 = new byte[4];
                     ByteBuffer.Wrap(b4, param.byteOrder).Write(grLens[grIndex]);
-                    handler.StartElement(grTags[grIndex], VRs.UL, el.StreamPosition);
+                    handler.StartElement(grTags[grIndex], VRs.UL, dcmElement.StreamPosition);
                     handler.Value(b4, 0, 4);
                     handler.EndElement();
                     ++grIndex;
                 }
-                if (el is SQElement) {
-                    int len = param.undefSeqLen ? - 1 : el.Length();
-                    handler.StartElement(el.tag(), VRs.SQ, el.StreamPosition);
+                if (dcmElement is SQElement) {
+                    int len = param.undefSeqLen ? - 1 : dcmElement.Length();
+                    handler.StartElement(dcmElement.tag(), VRs.SQ, dcmElement.StreamPosition);
                     handler.StartSequence(len);
-                    for (int j = 0, m = el.vm(); j < m;) {
-                        BaseDataset ds = el.GetItem(j);
+                    for (int j = 0, m = dcmElement.vm(); j < m;) {
+                        BaseDataSet ds = dcmElement.GetItem(j);
                         int itemlen = param.undefItemLen ? - 1 : ds.length();
                         handler.StartItem(++j, ds.GetItemOffset(), itemlen);
                         ds.DoWrite(handler, param);
@@ -165,15 +164,15 @@ namespace DicomSharp.Data {
                     handler.EndSequence(len);
                     handler.EndElement();
                 }
-                else if (el is FragmentElement) {
-                    long offset = el.StreamPosition;
-                    handler.StartElement(el.tag(), el.vr(), offset);
+                else if (dcmElement is FragmentElement) {
+                    long offset = dcmElement.StreamPosition;
+                    handler.StartElement(dcmElement.tag(), dcmElement.vr(), offset);
                     handler.StartSequence(- 1);
                     if (offset != - 1L) {
                         offset += 12;
                     }
-                    for (int j = 0, m = el.vm(); j < m;) {
-                        ByteBuffer bb = el.GetDataFragment(j, param.byteOrder);
+                    for (int j = 0, m = dcmElement.vm(); j < m;) {
+                        ByteBuffer bb = dcmElement.GetDataFragment(j, param.byteOrder);
                         handler.Fragment(++j, offset, bb.ToArray(), (int) bb.Position, bb.length());
                         if (offset != - 1L) {
                             offset += (bb.length() + 9) & (~ 1);
@@ -184,8 +183,8 @@ namespace DicomSharp.Data {
                 }
                 else {
 //					int len = el.Length();
-                    handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
-                    ByteBuffer bb = el.GetByteBuffer(param.byteOrder);
+                    handler.StartElement(dcmElement.tag(), dcmElement.vr(), dcmElement.StreamPosition);
+                    ByteBuffer bb = dcmElement.GetByteBuffer(param.byteOrder);
                     handler.Value(bb);
                     handler.EndElement();
                 }
@@ -201,7 +200,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual void WriteFile(Stream outs, DcmEncodeParam param) {
-            FileMetaInfo fmi = GetFileMetaInfo();
+            FileMetaInfo fmi = FileMetaInfo;
             if (fmi != null) {
                 fmi.Write(outs);
                 if (param == null) {
@@ -214,24 +213,24 @@ namespace DicomSharp.Data {
 
         /*
 		/// <summary>
-		/// Get the subset of current Dataset
+		/// Get the subset of current DataSet
 		/// Used by DICOMDIR
 		/// </summary>
 		/// <param name="fromTag"></param>
 		/// <param name="toTag"></param>
 		/// <returns></returns>
-		public virtual Dataset subSet(int fromTag, int toTag)
+		public virtual DataSet subSet(int fromTag, int toTag)
 		{
 			return new FilterDataset.Segment(thIs, fromTag, toTag);
 		}
 		
 		/// <summary>
-		/// Get the subset of current Dataset
+		/// Get the subset of current DataSet
 		/// Used by DICOMDIR
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <returns></returns>
-		public virtual Dataset subSet(Dataset filter)
+		public virtual DataSet subSet(DataSet filter)
 		{
 			return new FilterDataset.Selection(thIs, filter);
 		}	

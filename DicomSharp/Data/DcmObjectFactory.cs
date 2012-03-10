@@ -53,8 +53,8 @@ namespace DicomSharp.Data {
             return new DicomCommand();
         }
 
-        public virtual Dataset NewDataset() {
-            return new Dataset();
+        public virtual DataSet NewDataset() {
+            return new DataSet();
         }
 
         public virtual FileMetaInfo NewFileMetaInfo(String sopClassUID, String sopInstanceUID, String transferSyntaxUID,
@@ -71,7 +71,7 @@ namespace DicomSharp.Data {
             return new PersonName(s);
         }
 
-        public virtual FileMetaInfo NewFileMetaInfo(Dataset ds, String transferSyntaxUID) {
+        public virtual FileMetaInfo NewFileMetaInfo(DataSet ds, String transferSyntaxUID) {
             try {
                 return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUniqueId, null),
                                                ds.GetString(Tags.SOPInstanceUniqueId, null), transferSyntaxUID,

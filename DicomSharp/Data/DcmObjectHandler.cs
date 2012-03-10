@@ -82,10 +82,10 @@ namespace DicomSharp.Data {
         }
 
         public virtual void StartFileMetaInfo(byte[] preamble) {
-            if (result is Dataset) {
-                curDcmObject = ((Dataset) result).GetFileMetaInfo();
+            if (result is DataSet) {
+                curDcmObject = ((DataSet)result).FileMetaInfo;
                 if (curDcmObject == null) {
-                    ((Dataset) result).SetFileMetaInfo((FileMetaInfo) (curDcmObject = new FileMetaInfo()));
+                    ((DataSet) result).FileMetaInfo = ((FileMetaInfo) (curDcmObject = new FileMetaInfo()));
                 }
             }
             else {
@@ -103,7 +103,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual void EndFileMetaInfo() {
-            if (result is Dataset) {
+            if (result is DataSet) {
                 curDcmObject = result;
             }
             else {
@@ -157,7 +157,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual void EndItem(int len) {
-            curDcmObject = ((Dataset) curDcmObject).Parent;
+            curDcmObject = ((DataSet) curDcmObject).Parent;
         }
 
         #endregion

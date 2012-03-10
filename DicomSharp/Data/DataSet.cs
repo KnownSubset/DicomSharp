@@ -38,19 +38,19 @@ using log4net;
 
 namespace DicomSharp.Data {
     /// <summary>
-    /// Implementation of <code>Dataset</code> container objects.
+    /// Implementation of <code>DataSet</code> container objects.
     /// </summary>
-    public class Dataset : BaseDataset {
+    public class DataSet : BaseDataSet {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly Dataset parent;
+        private readonly DataSet parent;
         private Encoding encoding;
         private long itemOffset = - 1L;
         private String privateCreatorID;
 
-        public Dataset() : this(null) {}
+        public DataSet() : this(null) {}
 
-        public Dataset(Dataset parent) {
+        public DataSet(DataSet parent) {
             this.parent = parent;
         }
 
@@ -63,20 +63,20 @@ namespace DicomSharp.Data {
             get { return encoding != null ? encoding : parent != null ? parent.Encoding : null; }
         }
 
-        public virtual Dataset Parent {
+        public virtual DataSet Parent {
             get { return parent; }
         }
 
         public override long GetItemOffset() {
-            if (itemOffset != - 1L || m_list.Count == 0) {
+            if (itemOffset != - 1L || _dcmElements.Count == 0) {
                 return itemOffset;
             }
 
-            long elm1pos = ((DcmElement) m_list[0]).StreamPosition;
+            long elm1pos = ((DcmElement) _dcmElements[0]).StreamPosition;
             return elm1pos == - 1L ? - 1L : elm1pos - 8L;
         }
 
-        public override Dataset SetItemOffset(long itemOffset) {
+        public override DataSet SetItemOffset(long itemOffset) {
             this.itemOffset = itemOffset;
             return this;
         }

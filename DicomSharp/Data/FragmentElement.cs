@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -45,7 +46,7 @@ namespace DicomSharp.Data {
     public abstract class FragmentElement : DcmElement {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ArrayList m_list = new ArrayList();
+        private readonly IList<ByteBuffer> _byteBuffers = new List<ByteBuffer>();
 
         /// <summary>
         /// Creates a new instance of ElementImpl 
@@ -53,7 +54,7 @@ namespace DicomSharp.Data {
         public FragmentElement(uint tag) : base(tag) {}
 
         public override int vm() {
-            return m_list.Count;
+            return _byteBuffers.Count;
         }
 
         public override bool HasDataFragments() {
@@ -66,9 +67,9 @@ namespace DicomSharp.Data {
             }
 
             int offsetSize = Marshal.SizeOf(typeof (uint)),
-                end = m_list.Count - 1;
+                end = _byteBuffers.Count - 1;
 
-            var data = (ByteBuffer) m_list[index];
+            var data = _byteBuffers[index];
 
             if ((0 == index)
                 && (tag() == Dictionary.Tags.PixelData)
@@ -77,7 +78,7 @@ namespace DicomSharp.Data {
                 var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
 
                 for (int i = 1; i < end; i++) {
-                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
+                    var sizeofElement = (uint) _byteBuffers[i].length();
 
                     nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
 
@@ -98,9 +99,9 @@ namespace DicomSharp.Data {
             }
 
             int offsetSize = Marshal.SizeOf(typeof (uint)),
-                end = m_list.Count - 1;
+                end = _byteBuffers.Count - 1;
 
-            var data = (ByteBuffer) m_list[index];
+            var data = _byteBuffers[index];
 
             if ((0 == index)
                 && (tag() == Dictionary.Tags.PixelData)
@@ -109,7 +110,7 @@ namespace DicomSharp.Data {
                 var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
 
                 for (int i = 1; i < end; i++) {
-                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
+                    var sizeofElement = (uint) _byteBuffers[i].length();
 
                     nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
 
@@ -131,7 +132,7 @@ namespace DicomSharp.Data {
             if (index >= vm()) {
                 return 0;
             }
-            var data = (ByteBuffer) m_list[index];
+            var data = _byteBuffers[index];
             return (data.length() + 1) & (~ 1);
         }
 
@@ -167,7 +168,7 @@ namespace DicomSharp.Data {
         }
 
         public override void AddDataFragment(ByteBuffer data) {
-            m_list.Add(data ?? EMPTY_VALUE);
+            _byteBuffers.Add(data ?? EMPTY_VALUE);
         }
 
         protected internal virtual void SwapOrder(ByteBuffer data) {

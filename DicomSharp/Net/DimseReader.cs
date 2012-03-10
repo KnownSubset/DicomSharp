@@ -117,7 +117,7 @@ namespace DicomSharp.Net {
                     ins = new PDataTFInputStream(this, pdv.InputStream);
                 }
                 else {
-                    // no Dataset
+                    // no DataSet
                     // if no Data Fragment
                     ForkNextReadNext();
                 }

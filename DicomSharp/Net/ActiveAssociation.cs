@@ -271,7 +271,7 @@ namespace DicomSharp.Net {
         /// <param name="dimse"></param>
         private void HandleResponse(Dimse dimse) {
             IDicomCommand cmd = dimse.DicomCommand;
-            dimse.ReadDataset(); // read out dataset, if any
+            dimse.ReadDataset(); // read out DataSet, if any
             int msgID = cmd.MessageIDToBeingRespondedTo;
             IDimseListener dimseListener = null;
             if (cmd.IsPending()) {

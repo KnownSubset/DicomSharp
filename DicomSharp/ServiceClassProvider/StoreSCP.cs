@@ -81,13 +81,13 @@ namespace DicomSharp.ServiceClassProvider {
                 String instanceUniqueId = rqCmd.AffectedSOPInstanceUniqueId;
                 String classUniqueId = rqCmd.AffectedSOPClassUniqueId;
                 DcmDecodeParam decParam = DcmDecodeParam.ValueOf(request.TransferSyntaxUniqueId);
-                Dataset dataset = objFact.NewDataset();
+                DataSet dataSet = objFact.NewDataset();
                 DcmParser parser = parserFact.NewDcmParser(ins);
-                parser.DcmHandler = dataset.DcmHandler;
+                parser.DcmHandler = dataSet.DcmHandler;
                 parser.ParseDataset(decParam, Tags.PixelData);
-                dataset.SetFileMetaInfo(objFact.NewFileMetaInfo(classUniqueId, instanceUniqueId, request.TransferSyntaxUniqueId));
-                FileInfo file = ToFile(dataset);
-                StoreToFile(parser, dataset, file, (DcmEncodeParam) decParam);
+                dataSet.FileMetaInfo = objFact.NewFileMetaInfo(classUniqueId, instanceUniqueId, request.TransferSyntaxUniqueId);
+                FileInfo file = ToFile(dataSet);
+                StoreToFile(parser, dataSet, file, (DcmEncodeParam) decParam);
                 responseCommand.PutUS(Tags.Status, SUCCESS);
             }
             catch (Exception e) {
@@ -111,7 +111,7 @@ namespace DicomSharp.ServiceClassProvider {
             return new BufferedStream(new FileStream(file.FullName, FileMode.Create));
         }
 
-        private void StoreToFile(DcmParser parser, Dataset ds, FileInfo file, DcmEncodeParam encParam) {
+        private void StoreToFile(DcmParser parser, DataSet ds, FileInfo file, DcmEncodeParam encParam) {
             Stream outs = openOutputStream(file);
             try {
                 ds.WriteFile(outs, encParam);
@@ -140,7 +140,7 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        private FileInfo ToFile(Dataset ds) {
+        private FileInfo ToFile(DataSet ds) {
             String studyInstanceUniqueId = null;
             try {
                 studyInstanceUniqueId = ds.GetString(Tags.StudyInstanceUniqueId);
@@ -158,13 +158,13 @@ namespace DicomSharp.ServiceClassProvider {
                 if (classUniqueId == null) {
                     throw new DcmServiceException(MISSING_UID, "Missing SOP Class UID");
                 }
-                if (!instanceUniqueId.Equals(ds.GetFileMetaInfo().MediaStorageSOPInstanceUniqueId)) {
+                if (!instanceUniqueId.Equals(ds.FileMetaInfo.MediaStorageSOPInstanceUniqueId)) {
                     throw new DcmServiceException(MISMATCH_UID,
-                                                  "SOP Instance UID in Dataset differs from Affected SOP Instance UID");
+                                                  "SOP Instance UID in DataSet differs from Affected SOP Instance UID");
                 }
-                if (!classUniqueId.Equals(ds.GetFileMetaInfo().MediaStorageSOPClassUniqueId)) {
+                if (!classUniqueId.Equals(ds.FileMetaInfo.MediaStorageSOPClassUniqueId)) {
                     throw new DcmServiceException(MISMATCH_UID,
-                                                  "SOP Class UID in Dataset differs from Affected SOP Class UID");
+                                                  "SOP Class UID in DataSet differs from Affected SOP Class UID");
                 }
             }
             catch (DcmValueException e) {
@@ -182,7 +182,7 @@ namespace DicomSharp.ServiceClassProvider {
             return file;
         }
 
-        private String ToFileID(Dataset ds, uint tag) {
+        private String ToFileID(DataSet ds, uint tag) {
             try {
                 String s = ds.GetString(tag);
                 if (string.IsNullOrEmpty(s)) {

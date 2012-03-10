@@ -47,7 +47,7 @@ namespace DicomSharp.Data {
         private const int MIN_TRUNCATE_STRING_LEN = 16;
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected List<DcmElement> m_list = new List<DcmElement>();
+        protected List<DcmElement> _dcmElements = new List<DcmElement>();
 
         public virtual IDcmHandler DcmHandler {
             get { return new DcmObjectHandler(this); }
@@ -59,7 +59,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual int Size {
-            get { return m_list.Count; }
+            get { return _dcmElements.Count; }
         }
 
         public virtual Encoding GetEncoding() {
@@ -67,11 +67,11 @@ namespace DicomSharp.Data {
         }
 
         public virtual bool IsEmpty() {
-            return m_list.Count == 0;
+            return _dcmElements.Count == 0;
         }
 
         public virtual void Clear() {
-            m_list.Clear();
+            _dcmElements.Clear();
         }
 
         public virtual bool Contains(uint tag) {
@@ -87,11 +87,7 @@ namespace DicomSharp.Data {
                     return false;
                 }
             }
-            return m_list.BinarySearch(new DcmElement(tag)) >= 0;
-        }
-
-        public virtual IEnumerator GetEnumerator() {
-            return m_list.GetEnumerator();
+            return _dcmElements.BinarySearch(new DcmElement(tag)) >= 0;
         }
 
         public virtual int vm(uint tag) {
@@ -107,8 +103,8 @@ namespace DicomSharp.Data {
                     return - 1;
                 }
             }
-            int index = m_list.BinarySearch(new DcmElement(tag));
-            return index >= 0 ? ((DcmElement) m_list[index]).vm() : -1;
+            int index = _dcmElements.BinarySearch(new DcmElement(tag));
+            return index >= 0 ? ((DcmElement) _dcmElements[index]).vm() : -1;
         }
 
         private uint AdjustPrivateTag(uint tag, bool create) {
@@ -119,14 +115,14 @@ namespace DicomSharp.Data {
             }
             uint gr = tag & 0xffff0000;
             uint el = 0x10;
-            int index = m_list.BinarySearch(new DcmElement(gr | el));
+            int index = _dcmElements.BinarySearch(new DcmElement(gr | el));
             if (index >= 0) {
-                var elm = (DcmElement) m_list[index];
-                while (++index < m_list.Count) {
+                var elm = (DcmElement) _dcmElements[index];
+                while (++index < _dcmElements.Count) {
                     if (creatorID.Equals(elm.GetString(GetEncoding()))) {
                         return gr | (el << 8) | (tag & 0xff);
                     }
-                    elm = (DcmElement) m_list[index];
+                    elm = (DcmElement) _dcmElements[index];
                     if (elm.tag() != (gr | ++el)) {
                         break;
                     }
@@ -152,15 +148,15 @@ namespace DicomSharp.Data {
                     return null;
                 }
             }
-            int index = m_list.BinarySearch(new DcmElement(tag));
-            return index >= 0 ? (DcmElement) m_list[index] : null;
+            int index = _dcmElements.BinarySearch(new DcmElement(tag));
+            return index >= 0 ? (DcmElement) _dcmElements[index] : null;
         }
 
         public virtual DcmElement Remove(uint tag) {
-            int index = m_list.BinarySearch(new DcmElement(tag));
+            int index = _dcmElements.BinarySearch(new DcmElement(tag));
             if (index >= 0) {
-                var elm = (DcmElement) m_list[index];
-                m_list.RemoveAt(index);
+                var elm = (DcmElement) _dcmElements[index];
+                _dcmElements.RemoveAt(index);
                 return elm;
             }
             return null;
@@ -385,11 +381,11 @@ namespace DicomSharp.Data {
                          };
         }
 
-        public virtual Dataset GetItem(uint tag) {
+        public virtual DataSet GetItem(uint tag) {
             return GetItem(tag, 0);
         }
 
-        public virtual Dataset GetItem(uint tag, int index) {
+        public virtual DataSet GetItem(uint tag, int index) {
             DcmElement e = Get(tag);
             if (e == null || e.vm() <= index) {
                 return null;
@@ -419,17 +415,17 @@ namespace DicomSharp.Data {
         }
 
         private DcmElement DoPut(DcmElement newElem) {
-            int size = m_list.Count;
-            if (size == 0 || newElem.CompareTo(m_list[size - 1]) > 0) {
-                m_list.Add(newElem);
+            int size = _dcmElements.Count;
+            if (size == 0 || newElem.CompareTo(_dcmElements[size - 1]) > 0) {
+                _dcmElements.Add(newElem);
             }
             else {
-                int index = m_list.BinarySearch(newElem);
+                int index = _dcmElements.BinarySearch(newElem);
                 if (index >= 0) {
-                    m_list[index] = newElem;
+                    _dcmElements[index] = newElem;
                 }
                 else {
-                    m_list.Insert(-(index + 1), newElem);
+                    _dcmElements.Insert(-(index + 1), newElem);
                 }
             }
             return newElem;
@@ -1297,36 +1293,41 @@ namespace DicomSharp.Data {
         }
 
         public virtual void PutAll(DcmObject dcmObj) {
-            IEnumerator enu = dcmObj.GetEnumerator();
-            while (enu.MoveNext()) {
-                var el = (DcmElement) enu.Current;
-                if (el.IsEmpty()) {
-                    PutXX(el.tag(), el.vr());
+            foreach (var dcmElement in _dcmElements)
+            {
+                if (dcmElement.IsEmpty())
+                {
+                    PutXX(dcmElement.tag(), dcmElement.vr());
                 }
-                else {
+                else
+                {
                     DcmElement sq;
-                    switch (el.vr()) {
+                    switch (dcmElement.vr())
+                    {
                         case VRs.SQ:
-                            sq = PutSQ(el.tag());
-                            for (int i = 0, n = el.vm(); i < n; ++i) {
-                                sq.AddItem(el.GetItem(i));
+                            sq = PutSQ(dcmElement.tag());
+                            for (int i = 0, n = dcmElement.vm(); i < n; ++i)
+                            {
+                                sq.AddItem(dcmElement.GetItem(i));
                             }
                             break;
 
                         case VRs.OB:
                         case VRs.OW:
                         case VRs.UN:
-                            if (el.HasDataFragments()) {
-                                sq = PutXXsq(el.tag(), el.vr());
-                                for (int i = 0, n = el.vm(); i < n; ++i) {
-                                    sq.AddDataFragment(el.GetDataFragment(i));
+                            if (dcmElement.HasDataFragments())
+                            {
+                                sq = PutXXsq(dcmElement.tag(), dcmElement.vr());
+                                for (int i = 0, n = dcmElement.vm(); i < n; ++i)
+                                {
+                                    sq.AddDataFragment(dcmElement.GetDataFragment(i));
                                 }
                                 break;
                             }
                             goto default;
 
                         default:
-                            PutXX(el.tag(), el.vr(), el.GetByteBuffer());
+                            PutXX(dcmElement.tag(), dcmElement.vr(), dcmElement.GetByteBuffer());
                             break;
                     }
                 }
@@ -1335,12 +1336,12 @@ namespace DicomSharp.Data {
 
         protected virtual void Write(uint grTag, int grLen, IDcmHandler handler) {
             var b4 = new[] {(byte) grLen, (byte) (grLen >> 8), (byte) (grLen >> 16), (byte) ((grLen >> 24))};
-            long el1Pos = m_list[0].StreamPosition;
+            long el1Pos = _dcmElements[0].StreamPosition;
             handler.StartElement(grTag, VRs.UL, el1Pos == - 1L ? - 1L : el1Pos - 12);
             handler.Value(b4, 0, 4);
             handler.EndElement();
-            for (int i = 0, n = m_list.Count; i < n; ++i) {
-                var el = m_list[i];
+            for (int i = 0, n = _dcmElements.Count; i < n; ++i) {
+                var el = _dcmElements[i];
                 handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
                 ByteBuffer bb = el.GetByteBuffer(ByteOrder.LITTLE_ENDIAN);
                 handler.Value(bb.ToArray(), (int) bb.Position, bb.length());

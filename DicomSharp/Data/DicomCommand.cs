@@ -484,9 +484,9 @@ namespace DicomSharp.Data {
         private int grLen()
         {
             int len = 0;
-            for (int i = 0, n = m_list.Count; i < n; ++i)
+            for (int i = 0, n = _dcmElements.Count; i < n; ++i)
             {
-                len += m_list[i].Length() + 8;
+                len += _dcmElements[i].Length() + 8;
             }
 
             return len;
@@ -502,7 +502,7 @@ namespace DicomSharp.Data {
             sb.Append(msgId).Append(':').Append(CommandFieldAsString());
             if (dataSetType != (int)DicomCommandMessage.NO_DATASET)
             {
-                sb.Append(" with Dataset");
+                sb.Append(" with DataSet");
             }
             if (_sopClassUniqueId != null)
             {

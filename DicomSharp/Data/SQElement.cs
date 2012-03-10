@@ -39,13 +39,13 @@ namespace DicomSharp.Data {
     /// </summary>
     public class SQElement : DcmElement {
         private readonly ArrayList m_list = new ArrayList();
-        private readonly Dataset parent;
+        private readonly DataSet parent;
         private int totlen = - 1;
 
         /// <summary>
         /// Creates a new instance of ElementImpl 
         /// </summary>
-        public SQElement(uint tag, Dataset parent) : base(tag) {
+        public SQElement(uint tag, DataSet parent) : base(tag) {
             this.parent = parent;
         }
 
@@ -61,19 +61,19 @@ namespace DicomSharp.Data {
             return true;
         }
 
-        public override Dataset GetItem(int index) {
+        public override DataSet GetItem(int index) {
             if (index >= vm()) {
                 return null;
             }
-            return (Dataset) m_list[index];
+            return (DataSet) m_list[index];
         }
 
-        public override void AddItem(Dataset item) {
+        public override void AddItem(DataSet item) {
             m_list.Add(item);
         }
 
-        public override Dataset AddNewItem() {
-            var item = new Dataset(parent);
+        public override DataSet AddNewItem() {
+            var item = new DataSet(parent);
             m_list.Add(item);
             return item;
         }

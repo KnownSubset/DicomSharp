@@ -131,7 +131,7 @@ namespace DicomSharp.Data {
         private int grLen() {
             int length = 0;
             for (int i = 0, n = Size; i < n; ++i) {
-                var dcmElement = m_list[i];
+                var dcmElement = _dcmElements[i];
                 length += dcmElement.Length() + (VRs.IsLengthField16Bit(dcmElement.vr()) ? 8 : 12);
             }
             return length;

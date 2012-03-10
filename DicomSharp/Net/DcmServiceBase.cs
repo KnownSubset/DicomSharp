@@ -148,7 +148,7 @@ namespace DicomSharp.Net {
             IDicomCommand requestCmd = request.DicomCommand;
             DicomCommand rspCmd = objFact.NewCommand();
             rspCmd.InitNEventReportRSP(requestCmd.MessageID, requestCmd.AffectedSOPClassUniqueId, requestCmd.AffectedSOPInstanceUniqueId, SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNEventReport(assoc, request, rspCmd);
             }
@@ -164,7 +164,7 @@ namespace DicomSharp.Net {
             IDicomCommand requestCmd = request.DicomCommand;
             DicomCommand rspCmd = objFact.NewCommand();
             rspCmd.InitNGetRSP(requestCmd.MessageID, requestCmd.RequestedSOPClassUniqueId, requestCmd.RequestedSOPInstanceUniqueId, SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNGet(assoc, request, rspCmd);
             }
@@ -180,7 +180,7 @@ namespace DicomSharp.Net {
             IDicomCommand requestCmd = request.DicomCommand;
             DicomCommand rspCmd = objFact.NewCommand();
             rspCmd.InitNSetRSP(requestCmd.MessageID, requestCmd.RequestedSOPClassUniqueId, requestCmd.RequestedSOPInstanceUniqueId, SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNSet(assoc, request, rspCmd);
             }
@@ -196,7 +196,7 @@ namespace DicomSharp.Net {
             IDicomCommand requestCmd = request.DicomCommand;
             var rspCmd = new DicomCommand();
             rspCmd.InitNActionRSP(requestCmd.MessageID, requestCmd.RequestedSOPClassUniqueId, requestCmd.RequestedSOPInstanceUniqueId, SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNAction(assoc, request, rspCmd);
             }
@@ -213,7 +213,7 @@ namespace DicomSharp.Net {
             DicomCommand rspCmd = objFact.NewCommand();
             rspCmd.InitNCreateRSP(requestCmd.MessageID, requestCmd.AffectedSOPClassUniqueId, CreateUID(requestCmd.AffectedSOPInstanceUniqueId),
                                   SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNCreate(assoc, request, rspCmd);
             }
@@ -229,7 +229,7 @@ namespace DicomSharp.Net {
             IDicomCommand requestCmd = request.DicomCommand;
             DicomCommand rspCmd = objFact.NewCommand();
             rspCmd.InitNDeleteRSP(requestCmd.MessageID, requestCmd.RequestedSOPClassUniqueId, requestCmd.RequestedSOPInstanceUniqueId, SUCCESS);
-            Dataset rspData = null;
+            DataSet rspData = null;
             try {
                 rspData = DoNDelete(assoc, request, rspCmd);
             }
@@ -246,57 +246,57 @@ namespace DicomSharp.Net {
         protected virtual void DoAfterRsp(ActiveAssociation assoc, IDimse rsp) {}
 
         protected virtual void DoCStore(ActiveAssociation activeAssociation, IDimse request, DicomCommand responseCommand) {
-            request.ReadDataset(); // read out dataset, if any
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
         protected virtual MultiDimseRsp DoCGet(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
         protected virtual MultiDimseRsp DoCFind(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
         protected virtual MultiDimseRsp DoCMove(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
         protected virtual void DoCEcho(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            //      request.getDataset(); // read out dataset
+            //      request.getDataset(); // read out DataSet
             throw defEx;
         }
 
-        protected virtual Dataset DoNEventReport(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNEventReport(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
-        protected virtual Dataset DoNGet(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNGet(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
-        protected virtual Dataset DoNSet(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNSet(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
-        protected virtual Dataset DoNAction(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNAction(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
-        protected virtual Dataset DoNCreate(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNCreate(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
-        protected virtual Dataset DoNDelete(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
-            request.ReadDataset(); // read out dataset, if any
+        protected virtual DataSet DoNDelete(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd) {
+            request.ReadDataset(); // read out DataSet, if any
             throw defEx;
         }
 
@@ -305,7 +305,7 @@ namespace DicomSharp.Net {
             try {
                 assoc.AddCancelListener(rspCmd.MessageIDToBeingRespondedTo, mdr.CancelListener);
                 do {
-                    Dataset rspData = mdr.next(assoc, request, rspCmd);
+                    DataSet rspData = mdr.next(assoc, request, rspCmd);
                     IDimse rsp = assocFact.NewDimse(request.pcid(), rspCmd, rspData);
                     assoc.Association.Write(rsp);
                     DoAfterRsp(assoc, rsp);
@@ -326,7 +326,7 @@ namespace DicomSharp.Net {
 
         public interface MultiDimseRsp {
             IDimseListener CancelListener { get; }
-            Dataset next(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd);
+            DataSet next(ActiveAssociation assoc, IDimse request, DicomCommand rspCmd);
             void release();
         }
 

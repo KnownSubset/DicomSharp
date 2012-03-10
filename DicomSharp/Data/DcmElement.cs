@@ -118,9 +118,9 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Get element as Dataset value
+        /// Get element as DataSet value
         /// </summary>
-        public virtual Dataset Item {
+        public virtual DataSet Item {
             get { return GetItem(0); }
         }
 
@@ -253,15 +253,15 @@ namespace DicomSharp.Data {
             return false;
         }
 
-        public virtual Dataset AddNewItem() {
+        public virtual DataSet AddNewItem() {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual void AddItem(Dataset item) {
+        public virtual void AddItem(DataSet item) {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual Dataset GetItem(int index) {
+        public virtual DataSet GetItem(int index) {
             throw new NotSupportedException(ToString());
         }
 

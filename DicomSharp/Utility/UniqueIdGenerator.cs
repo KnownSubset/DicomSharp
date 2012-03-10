@@ -32,54 +32,48 @@
 using System;
 using System.Net;
 using System.Text;
-using log4net;
 
 namespace DicomSharp.Utility {
-    public class UniqueIdGenerator {
-        private static readonly String IpAddress;
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(UniqueIdGenerator));
+    public class UIDGenerator {
+        private static readonly String IP;
 
-        static UniqueIdGenerator()
-        {
+        static UIDGenerator() {
             {
                 String tmp;
-                try
-                {
-                    tmp = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
+                try {
+                    tmp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
                 }
-                catch (Exception exception)
-                {
-                    Logger.Error(exception.Message, exception);
+                catch (Exception e) {
                     tmp = "127.0.0.1";
                 }
-                IpAddress = tmp;
+                IP = tmp;
             }
         }
 
 
         /// <summary>
-        /// Creates a new instance of UniqueIdGenerator
+        /// Creates a new instance of UIDGenerator
         /// </summary>
-        private UniqueIdGenerator() {}
+        private UIDGenerator() {}
 
-        public static UniqueIdGenerator Instance {
-            get { return new UniqueIdGenerator(); }
+        public static UIDGenerator Instance {
+            get { return new UIDGenerator(); }
         }
 
-        public virtual String CreateUniqueId() {
-            return CreateUniqueId(Implementation.ClassUID);
+        public virtual String createUID() {
+            return createUID(Implementation.ClassUID);
         }
 
-        public virtual String CreateUniqueId(String root) {
+        public virtual String createUID(String root) {
             StringBuilder sb = new StringBuilder(64).Append(root).Append('.');
-            sb.Append(IpAddress.Replace(".", ""));
+            sb.Append(IP.Replace(".", ""));
             String str = DateTime.Now.ToString("yyyyMMddHHmmssffffff");
             sb.Append(str);
             return sb.ToString();
         }
 
         public static void Main() {
-            String uid = Instance.CreateUniqueId();
+            String uid = Instance.createUID();
             Console.Write(uid);
         }
     }
