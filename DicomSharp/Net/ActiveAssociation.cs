@@ -109,47 +109,47 @@ namespace DicomSharp.Net {
                     switch ((DicomCommandMessage)cmd.CommandField)
                     {
                         case DicomCommandMessage.C_STORE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).c_store(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_store(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_GET_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).c_get(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_get(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_FIND_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).c_find(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_find(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_MOVE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).c_move(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_move(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_ECHO_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).c_echo(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_echo(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_EVENT_REPORT_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).n_event_report(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).n_event_report(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_GET_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUID).n_get(this, dimse);
+                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_get(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_SET_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUID).n_set(this, dimse);
+                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_set(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_ACTION_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUID).n_action(this, dimse);
+                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_action(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_CREATE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUID).n_action(this, dimse);
+                            services.Lookup(cmd.AffectedSOPClassUniqueId).n_action(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_DELETE_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUID).n_delete(this, dimse);
+                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_delete(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_STORE_RSP:
@@ -271,7 +271,7 @@ namespace DicomSharp.Net {
         /// <param name="dimse"></param>
         private void HandleResponse(Dimse dimse) {
             IDicomCommand cmd = dimse.DicomCommand;
-            Dataset ds = dimse.Dataset; // read out dataset, if any
+            dimse.ReadDataset(); // read out dataset, if any
             int msgID = cmd.MessageIDToBeingRespondedTo;
             IDimseListener dimseListener = null;
             if (cmd.IsPending()) {

@@ -167,7 +167,7 @@ namespace DicomSharp.Data {
         }
 
         public override void AddDataFragment(ByteBuffer data) {
-            m_list.Add(data != null ? data : EMPTY_VALUE);
+            m_list.Add(data ?? EMPTY_VALUE);
         }
 
         protected internal virtual void SwapOrder(ByteBuffer data) {
@@ -192,9 +192,9 @@ namespace DicomSharp.Data {
 			
 			public void  AddDataFragment(ByteBuffer data)
 			{
-				if ((data.length() & 3) != 0)
+				if ((data.Length() & 3) != 0)
 				{
-					log.warn("Ignore odd length fragment of " + DicomSharp.Dictionary.Tags.toString(tag) + " OF #" + data.length());
+					log.warn("Ignore odd Length fragment of " + DicomSharp.Dictionary.Tags.toString(tag) + " OF #" + data.Length());
 					data = null;
 				}
 				base.AddDataFragment(data);
@@ -261,7 +261,7 @@ namespace DicomSharp.Data {
 
             public override void AddDataFragment(ByteBuffer data) {
                 if ((data.length() & 1) != 0) {
-                    log.Warn("Ignore odd length fragment of " + Dictionary.Tags.ToHexString(tag()) + " OW #" +
+                    log.Warn("Ignore odd Length fragment of " + Dictionary.Tags.ToHexString(tag()) + " OW #" +
                              data.length());
                     data = null;
                 }

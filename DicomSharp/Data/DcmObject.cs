@@ -1335,13 +1335,12 @@ namespace DicomSharp.Data {
 
         protected virtual void Write(uint grTag, int grLen, IDcmHandler handler) {
             var b4 = new[] {(byte) grLen, (byte) (grLen >> 8), (byte) (grLen >> 16), (byte) ((grLen >> 24))};
-            long el1Pos = ((DcmElement) m_list[0]).StreamPosition;
+            long el1Pos = m_list[0].StreamPosition;
             handler.StartElement(grTag, VRs.UL, el1Pos == - 1L ? - 1L : el1Pos - 12);
             handler.Value(b4, 0, 4);
             handler.EndElement();
             for (int i = 0, n = m_list.Count; i < n; ++i) {
-                var el = (DcmElement) m_list[i];
-                int len = el.Length();
+                var el = m_list[i];
                 handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
                 ByteBuffer bb = el.GetByteBuffer(ByteOrder.LITTLE_ENDIAN);
                 handler.Value(bb.ToArray(), (int) bb.Position, bb.length());

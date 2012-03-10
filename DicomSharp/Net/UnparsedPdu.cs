@@ -85,7 +85,7 @@ namespace DicomSharp.Net {
         }
 
         public override String ToString() {
-            return "Pdu[type=" + m_type + ", length=" + (len & 0xFFFFFFFFL) + "]";
+            return "Pdu[type=" + m_type + ", Length=" + (len & 0xFFFFFFFFL) + "]";
         }
 
         internal static void SkipFully(Stream ins, long len) {

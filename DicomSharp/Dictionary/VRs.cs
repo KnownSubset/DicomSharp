@@ -99,7 +99,7 @@ namespace DicomSharp.Dictionary {
         }
 
         /// <summary>
-        /// These VRs have 2 bytes fixed length
+        /// These VRs have 2 bytes fixed Length
         /// </summary>
         /// <param name="vr"></param>
         /// <returns></returns>
@@ -1900,8 +1900,8 @@ namespace DicomSharp.Dictionary {
                     return TM;
 
                 case Tags.InstanceCreatorUID:
-                case Tags.SOPClassUID:
-                case Tags.SOPInstanceUID:
+                case Tags.SOPClassUniqueId:
+                case Tags.SOPInstanceUniqueId:
                 case Tags.FailedSOPInstanceUIDList:
                 case Tags.SOPClassesInStudy:
                 case Tags.PrivateCodingSchemeCreatorUID:
@@ -1911,7 +1911,7 @@ namespace DicomSharp.Dictionary {
                 case Tags.SOPClassesSupported:
                 case Tags.TransactionUID:
                 case Tags.CreatorVersionUID:
-                case Tags.StudyInstanceUID:
+                case Tags.StudyInstanceUniqueId:
                 case Tags.SeriesInstanceUID:
                 case Tags.FrameOfReferenceUID:
                 case Tags.SynchronizationFrameOfReferenceUID:

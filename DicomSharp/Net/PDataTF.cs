@@ -106,7 +106,7 @@ namespace DicomSharp.Net {
 
         public static PDataTF Parse(UnparsedPdu raw) {
             if (raw.buffer() == null) {
-                throw new PduException("Pdu length exceeds supported maximum " + raw,
+                throw new PduException("Pdu Length exceeds supported maximum " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.REASON_NOT_SPECIFIED));
             }
             return new PDataTF(raw.length(), raw.buffer());
@@ -153,7 +153,7 @@ namespace DicomSharp.Net {
                 throw new SystemException("Open PDV " + curPDV);
             }
             if (Free() < 0) {
-                throw new SystemException("Maximal length of Pdu reached");
+                throw new SystemException("Maximal Length of Pdu reached");
             }
             curPDV = new PDV(this, 6 + Pdulen);
             curPDV.pcid(pcid);

@@ -43,7 +43,7 @@ namespace DicomSharp.Net {
     /// Finite State Mechine of DICOM communication
     /// </summary>
     public class Fsm {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Fsm));
 
         private readonly State STA1;
         private readonly State STA10;
@@ -94,7 +94,7 @@ namespace DicomSharp.Net {
             this.requestor = requestor;
             this.s = s;
             stream = s.GetStream();
-            log.Info(s.ToString());
+            Logger.Info(s.ToString());
             ChangeState(requestor ? STA4 : STA2);
         }
 
@@ -267,11 +267,10 @@ namespace DicomSharp.Net {
 
         private void ChangeState(State state) {
             if (this.state != state) {
-                State prev = this.state;
                 this.state = state;
                 state.Entry();
-                if (log.IsInfoEnabled) {
-                    log.Info(state.ToString());
+                if (Logger.IsInfoEnabled) {
+                    Logger.Info(state.ToString());
                 }
             }
         }
@@ -412,8 +411,8 @@ namespace DicomSharp.Net {
         }
 
         internal void FireReceived(Dimse dimse) {
-            if (log.IsInfoEnabled) {
-                log.Info("received " + dimse);
+            if (Logger.IsInfoEnabled) {
+                Logger.Info("received " + dimse);
             }
             if (assocListener != null) {
                 assocListener.Received(assoc, dimse);
@@ -421,8 +420,8 @@ namespace DicomSharp.Net {
         }
 
         internal void FireWrite(IDimse dimse) {
-            if (log.IsInfoEnabled) {
-                log.Info("sending " + dimse);
+            if (Logger.IsInfoEnabled) {
+                Logger.Info("sending " + dimse);
             }
             if (assocListener != null) {
                 assocListener.Write(assoc, dimse);
@@ -431,13 +430,13 @@ namespace DicomSharp.Net {
 
         private void FireWrite(IPdu pdu) {
             if (pdu is PDataTF) {
-                if (log.IsDebugEnabled) {
-                    log.Debug("sending " + pdu);
+                if (Logger.IsDebugEnabled) {
+                    Logger.Debug("sending " + pdu);
                 }
             }
             else {
-                if (log.IsInfoEnabled) {
-                    log.Info("sending " + pdu.ToString(log.IsDebugEnabled));
+                if (Logger.IsInfoEnabled) {
+                    Logger.Info("sending " + pdu.ToString(Logger.IsDebugEnabled));
                 }
             }
             if (assocListener != null) {
@@ -447,13 +446,13 @@ namespace DicomSharp.Net {
 
         private IPdu FireReceived(IPdu pdu) {
             if (pdu is PDataTF) {
-                if (log.IsDebugEnabled) {
-                    log.Debug("received " + pdu);
+                if (Logger.IsDebugEnabled) {
+                    Logger.Debug("received " + pdu);
                 }
             }
             else {
-                if (log.IsInfoEnabled) {
-                    log.Info("received " + pdu.ToString(log.IsDebugEnabled));
+                if (Logger.IsInfoEnabled) {
+                    Logger.Info("received " + pdu.ToString(Logger.IsDebugEnabled));
                 }
             }
             if (assocListener != null) {
@@ -529,7 +528,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -593,14 +592,17 @@ namespace DicomSharp.Net {
                     m_fsm.assocListener.Close(m_fsm.assoc);
                 }
 
-                if (log.IsInfoEnabled) {
-                    log.Info("closing connection - " + m_fsm.s);
+                if (Logger.IsInfoEnabled) {
+                    Logger.Info("closing connection - " + m_fsm.s);
                 }
                 try {
                     m_fsm.stream.Close();
                     m_fsm.s.Close();
                 }
-                catch (IOException ignore) {}
+                catch (IOException ignore)
+                {
+                    Logger.Error(ignore);
+                }
             }
 
             internal override void Write(AAbort abort) {}
@@ -650,7 +652,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -700,7 +702,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -756,8 +758,6 @@ namespace DicomSharp.Net {
                 if (m_fsm.ReaderThreadPool != null) {
                     m_fsm.ReaderThreadPool.Shutdown();
                 }
-
-                var timer = new Timer(TimeoutIt, null, m_fsm.tcpCloseTimeout, Timeout.Infinite);
             }
         }
 
@@ -805,7 +805,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -929,7 +929,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -996,7 +996,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }
@@ -1077,7 +1077,7 @@ namespace DicomSharp.Net {
                     try {
                         Write(ule.AAbort);
                     }
-                    catch (Exception ignore) {}
+                    catch (Exception) {}
                     throw ule;
                 }
             }

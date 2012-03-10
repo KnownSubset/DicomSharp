@@ -70,7 +70,7 @@ namespace DicomSharp.Utility {
         /// Public Instance Methods
         ///////////////////////////////////////////////////////////////////////
         /// <summary>
-        /// Return length as int, o/w, we can use Length (long) directly
+        /// Return Length as int, o/w, we can use Length (long) directly
         /// </summary>
         /// <returns></returns>
         public int length() {

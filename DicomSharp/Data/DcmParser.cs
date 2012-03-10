@@ -263,7 +263,7 @@ namespace DicomSharp.Data {
             try {
                 b12[0] = m_ins.ReadByte();
             }
-            catch (EndOfStreamException ex) {
+            catch (EndOfStreamException) {
                 eof = true;
                 log.Debug("Detect EOF");
                 return -1;
@@ -367,7 +367,7 @@ namespace DicomSharp.Data {
             long rPos0 = rPos;
             int hlen = ParseHeader();
 
-            // Group length is optional so we should not throw exception here
+            // Group Length is optional so we should not throw exception here
             if (hlen != 8 || (rTag >> 16) != groupTag || rVR != VRs.UL || rLen != 4) {
                 throw new DcmParseException("hlen=" + hlen + ", " + LogMsg());
             }
@@ -471,7 +471,7 @@ namespace DicomSharp.Data {
         /// <returns></returns>
         private long DoParse(uint stopTag, int length) {
             if (log.IsDebugEnabled) {
-                log.Debug("rpos:" + rPos + ",stopTag:" + Tags.ToHexString(stopTag) + ",length:" + length);
+                log.Debug("rpos:" + rPos + ",stopTag:" + Tags.ToHexString(stopTag) + ",Length:" + length);
             }
             long lread = 0;
             if (length != 0) {
@@ -564,7 +564,7 @@ namespace DicomSharp.Data {
                         case SEQ_DELIMITATION_ITEM_TAG:
                             if (sqLen != -1) {
                                 log.Warn("Unexpected Sequence Delimination Item" +
-                                         " (fffe,e0dd) for Sequence with explicit length: " + sqLen);
+                                         " (fffe,e0dd) for Sequence with explicit Length: " + sqLen);
                             }
                             // solves a bug with some files, but might be completly wrong
                             if ((itemlen != 0)

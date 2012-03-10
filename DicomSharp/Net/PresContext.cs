@@ -113,7 +113,7 @@ namespace DicomSharp.Net {
 			m_asuid = m_asuid;
 			if (remain < 0)
 			{
-				throw new PduException("Presentation item length: " + len + " mismatch length of sub-items", new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+				throw new PduException("Presentation item Length: " + len + " mismatch Length of sub-items", new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
 			}
 		}*/
         /// <summary>
@@ -159,7 +159,7 @@ namespace DicomSharp.Net {
                 remain -= 4 + uidlen;
             }
             if (remain < 0) {
-                throw new PduException("Presentation item length: " + len + " mismatch length of sub-items",
+                throw new PduException("Presentation item Length: " + len + " mismatch Length of sub-items",
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
         }

@@ -183,7 +183,7 @@ namespace DicomSharp.Data {
                     handler.EndElement();
                 }
                 else {
-//					int len = el.length();
+//					int len = el.Length();
                     handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
                     ByteBuffer bb = el.GetByteBuffer(param.byteOrder);
                     handler.Value(bb);
@@ -205,7 +205,7 @@ namespace DicomSharp.Data {
             if (fmi != null) {
                 fmi.Write(outs);
                 if (param == null) {
-                    param = DcmDecodeParam.ValueOf(fmi.TransferSyntaxUID);
+                    param = DcmDecodeParam.ValueOf(fmi.TransferSyntaxUniqueId);
                 }
             }
             WriteDataset(outs, param);

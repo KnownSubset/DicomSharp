@@ -10,10 +10,10 @@ namespace DicomSharp.Data {
         bool IsRequest();
         bool IsResponse();
         bool HasDataset();
-        String AffectedSOPClassUID { get; }
-        String RequestedSOPClassUID { get; }
-        String AffectedSOPInstanceUID { get; }
-        String RequestedSOPInstanceUID { get; }
+        String AffectedSOPClassUniqueId { get; }
+        String RequestedSOPClassUniqueId { get; }
+        String AffectedSOPInstanceUniqueId { get; }
+        String RequestedSOPInstanceUniqueId { get; }
         int Status { get; }
         DicomCommand InitCStoreRQ(int messageId, String sopClassUID, String sopInstUID, int priority);
         DicomCommand InitCStoreRSP(int messageId, String sopClassUID, String sopInstUID, int status);

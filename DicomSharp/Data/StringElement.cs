@@ -73,7 +73,7 @@ namespace DicomSharp.Data {
             this.trim = trim;
             this.maxLen = maxLen;
             this.IsText = IsText;
-            m_data = toByteBuffer(value, trim, chk == null ? DoCheck : chk, encoding);
+            m_data = ToByteBuffer(value, trim, chk == null ? DoCheck : chk, encoding);
         }
 
         internal StringElement(uint tag, String[] values, int maxLen, bool IsText, Trim trim, Check chk,
@@ -81,7 +81,7 @@ namespace DicomSharp.Data {
             this.trim = trim;
             this.maxLen = maxLen;
             this.IsText = IsText;
-            m_data = toByteBuffer(values, trim, chk == null ? DoCheck : chk, encoding);
+            m_data = ToByteBuffer(values, trim, chk == null ? DoCheck : chk, encoding);
         }
 
         internal StringElement(uint tag, ByteBuffer data, Trim trim) : base(tag, data) {
@@ -91,7 +91,7 @@ namespace DicomSharp.Data {
         protected virtual String DoCheck(String s) {
             char[] a = s.ToCharArray();
             if (a.Length > maxLen) {
-                log.Warn("Value: " + s + " exeeds VR length limit: " + maxLen);
+                log.Warn("Value: " + s + " exeeds VR Length limit: " + maxLen);
             }
             for (int i = 0; i < a.Length; ++i) {
                 if (!DoCheck(a[i])) {
@@ -166,21 +166,19 @@ namespace DicomSharp.Data {
             return s;
         }
 
-        private static ByteBuffer toByteBuffer(String value, Trim trim, Check check, Encoding encoding) {
-            if (value == null || value.Length == 0) {
+        private static ByteBuffer ToByteBuffer(String value, Trim trim, Check check, Encoding encoding) {
+            if (string.IsNullOrEmpty(value)) {
                 return EMPTY_VALUE;
             }
             try {
-                return ByteBuffer.Wrap((encoding != null
-                                            ? encoding
-                                            : Encoding.ASCII).GetBytes(check(trim(value))));
+                return ByteBuffer.Wrap((encoding ?? Encoding.ASCII).GetBytes(check(trim(value))));
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 throw new ArgumentException(value);
             }
         }
 
-        private static ByteBuffer toByteBuffer(ByteBuffer[] bbs, int totLen) {
+        private static ByteBuffer ToByteBuffer(ByteBuffer[] bbs, int totLen) {
             ByteBuffer bb = ByteBuffer.Wrap(new byte[totLen]);
             bb.Write(bbs[0]);
             for (int i = 1; i < bbs.Length; ++i) {
@@ -190,22 +188,22 @@ namespace DicomSharp.Data {
             return bb;
         }
 
-        private static ByteBuffer toByteBuffer(String[] values, Trim trim, Check Check, Encoding encoding) {
+        private static ByteBuffer ToByteBuffer(String[] values, Trim trim, Check Check, Encoding encoding) {
             if (values.Length == 0) {
                 return EMPTY_VALUE;
             }
 
             if (values.Length == 1) {
-                return toByteBuffer(values[0], trim, Check, encoding);
+                return ToByteBuffer(values[0], trim, Check, encoding);
             }
 
             var bbs = new ByteBuffer[values.Length];
             int totLen = - 1;
             for (int i = 0; i < values.Length; ++i) {
-                bbs[i] = toByteBuffer(values[i], trim, Check, encoding);
+                bbs[i] = ToByteBuffer(values[i], trim, Check, encoding);
                 totLen += bbs[i].length() + 1;
             }
-            return toByteBuffer(bbs, totLen);
+            return ToByteBuffer(bbs, totLen);
         }
 
         internal static DcmElement CreateLT(uint tag, ByteBuffer data) {
@@ -730,7 +728,7 @@ namespace DicomSharp.Data {
                 try {
                     Single.Parse(s);
                     if (s.Length > 16) {
-                        log.Warn("DS Value: " + s + " exeeds DS length limit: 16");
+                        log.Warn("DS Value: " + s + " exeeds DS Length limit: 16");
                     }
                 }
                 catch (FormatException e) {
@@ -869,11 +867,11 @@ namespace DicomSharp.Data {
                 try {
                     Int32.Parse(s);
                     if (s.Length > 12) {
-                        log.Warn("IS Value: " + s + " exeeds IS length limit: 12");
+                        log.Warn("IS Value: " + s + " exeeds IS Length limit: 12");
                     }
                 }
-                catch (FormatException e) {
-                    log.Warn("Illegal IS Value: " + s);
+                catch (FormatException exception) {
+                    log.Warn(String.Format("Illegal IS Value: {0}, {1}", s, exception.Message));
                 }
                 return s;
             }
@@ -1130,7 +1128,7 @@ namespace DicomSharp.Data {
             protected override String DoCheck(String s) {
                 char[] a = s.ToCharArray();
                 if (a.Length > maxLen) {
-                    log.Warn("Value: " + s + " exeeds VR length limit: " + maxLen);
+                    log.Warn("Value: " + s + " exeeds VR Length limit: " + maxLen);
                 }
                 int state = StringUtils.UID_DIGIT1;
                 for (int i = 0; i < a.Length; ++i) {

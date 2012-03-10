@@ -208,7 +208,7 @@ namespace DicomSharp.Net
             dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
             dataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
             dataset.PutCS(Tags.Modality);
-            dataset.PutUI(Tags.StudyInstanceUID, seriesInstanceUIDs.ToArray());
+            dataset.PutUI(Tags.StudyInstanceUniqueId, seriesInstanceUIDs.ToArray());
             dataset.PutUI(Tags.SeriesInstanceUID);
             dataset.PutIS(Tags.SeriesNumber);
             dataset.PutDA(Tags.SeriesDate);
@@ -246,7 +246,7 @@ namespace DicomSharp.Net
             dataset.PutDA(Tags.PatientBirthDate);
             dataset.PutCS(Tags.PatientSex);
             dataset.PutAS(Tags.PatientAge);
-            dataset.PutUI(Tags.StudyInstanceUID);
+            dataset.PutUI(Tags.StudyInstanceUniqueId);
             dataset.PutSH(Tags.StudyID);
             List<Dataset> datasets = RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID);
             if (datasets.Any())
@@ -296,7 +296,7 @@ namespace DicomSharp.Net
             dataset.PutDA(Tags.PatientBirthDate);
             dataset.PutCS(Tags.PatientSex);
             dataset.PutAS(Tags.PatientAge);
-            dataset.PutUI(Tags.StudyInstanceUID, studyInstanceUIDs.ToArray());
+            dataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUIDs.ToArray());
             dataset.PutSH(Tags.StudyID);
             return studyInstanceUIDs.Any() ? RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID) : new List<Dataset>();
         }
@@ -314,10 +314,10 @@ namespace DicomSharp.Net
             List<string> studiesNotCached = RetrieveItemsFromTheCache(studyInstanceUIDs, datasets);
             var dataset = new Dataset();
             dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
-            dataset.PutUI(Tags.SOPInstanceUID);
+            dataset.PutUI(Tags.SOPInstanceUniqueId);
             dataset.PutCS(Tags.QueryRetrieveLevel, "IMAGE");
             dataset.PutUI(Tags.SeriesInstanceUID, seriesNotCached.ToArray());
-            dataset.PutUI(Tags.StudyInstanceUID, studiesNotCached.ToArray());
+            dataset.PutUI(Tags.StudyInstanceUniqueId, studiesNotCached.ToArray());
             datasets.AddRange(RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID));
             return datasets;
         }
@@ -403,9 +403,9 @@ namespace DicomSharp.Net
                 {
                     var dataset = new Dataset();
                     dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
-                    dataset.PutUI(Tags.StudyInstanceUID, studyInstanceUID);
+                    dataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUID);
                     dataset.PutUI(Tags.SeriesInstanceUID, seriesInstanceUID);
-                    dataset.PutUI(Tags.SOPInstanceUID, sopInstanceUID);
+                    dataset.PutUI(Tags.SOPInstanceUniqueId, sopInstanceUID);
                     IAssociation association = active.Association;
                     if ((association.GetAcceptedPresContext(sopClassUID, TRANSFER_SYNTAX_UID)) == null)
                     {
@@ -470,7 +470,7 @@ namespace DicomSharp.Net
                 //
                 // Prepare association
                 //
-                string classUID = dataset.GetString(Tags.SOPClassUID);
+                string classUID = dataset.GetString(Tags.SOPClassUniqueId);
                 string tsUID = dataset.GetString(Tags.TransferSyntaxUID);
 
                 if ((tsUID == null || tsUID.Equals("")) && (dataset.GetFileMetaInfo() != null))
@@ -527,7 +527,7 @@ namespace DicomSharp.Net
                 //
                 // Prepare association
                 //
-                String classUID = ds.GetString(Tags.SOPClassUID);
+                String classUID = ds.GetString(Tags.SOPClassUniqueId);
                 String tsUID = ds.GetString(Tags.TransferSyntaxUID);
 
                 if ((tsUID == null || tsUID.Equals("")) && (ds.GetFileMetaInfo() != null))
@@ -643,13 +643,13 @@ namespace DicomSharp.Net
 
         private FutureDimseResponse SendDataset(IActiveAssociation activeAssociation, DcmParser parser, Dataset dataset)
         {
-            String sopInstUID = dataset.GetString(Tags.SOPInstanceUID);
+            String sopInstUID = dataset.GetString(Tags.SOPInstanceUniqueId);
             if (sopInstUID == null)
             {
                 LOGGER.Error("SOP instance UID is null");
                 return null;
             }
-            String sopClassUID = dataset.GetString(Tags.SOPClassUID);
+            String sopClassUID = dataset.GetString(Tags.SOPClassUniqueId);
             if (sopClassUID == null)
             {
                 LOGGER.Error("SOP class UID is null");
@@ -662,7 +662,7 @@ namespace DicomSharp.Net
             {
                 if (parser.DcmDecodeParam.encapsulated)
                 {
-                    String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUID;
+                    String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUniqueId;
                     if ((pc = association.GetAcceptedPresContext(sopClassUID, tsuid)) == null)
                     {
                         LOGGER.Error("SOP class UID not supported");
@@ -680,9 +680,9 @@ namespace DicomSharp.Net
                     activeAssociation.Invoke(associationFactory.NewDimse(pc.pcid(), cStoreRequest,
                                                                          new FileDataSource(parser, dataset, new byte[2048])));
             }
-            if ((dataset.GetFileMetaInfo() != null) && (dataset.GetFileMetaInfo().TransferSyntaxUID != null))
+            if ((dataset.GetFileMetaInfo() != null) && (dataset.GetFileMetaInfo().TransferSyntaxUniqueId != null))
             {
-                String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUID;
+                String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUniqueId;
                 if ((pc = association.GetAcceptedPresContext(sopClassUID, tsuid)) == null)
                 {
                     LOGGER.Error("SOP class UID not supported");
@@ -719,7 +719,7 @@ namespace DicomSharp.Net
         {
             if (swap && (len & 1) != 0)
             {
-                throw new DcmParseException("Illegal length of OW Pixel Data: " + len);
+                throw new DcmParseException("Illegal Length of OW Pixel Data: " + len);
             }
             if (buffer == null)
             {

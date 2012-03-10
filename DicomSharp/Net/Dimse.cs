@@ -68,7 +68,7 @@ namespace DicomSharp.Net {
             get { return _dicomCommand; }
         }
 
-        public virtual String TransferSyntaxUID {
+        public virtual String TransferSyntaxUniqueId {
             get { return _transferSyntaxUniqueId; }
             set { _transferSyntaxUniqueId = value; }
         }
@@ -90,6 +90,12 @@ namespace DicomSharp.Net {
                 m_ins = null;
                 return _dataset;
             }
+        }
+
+        public void ReadDataset()
+        {
+            Dataset dataset = Dataset;
+            dataset = null;
         }
 
         public virtual Stream DataAsStream {

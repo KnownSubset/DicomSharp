@@ -155,7 +155,7 @@ namespace DicomSharp.Net {
 
         protected virtual AAssociateRQAC Init(UnparsedPdu raw) {
             if (raw.buffer() == null) {
-                throw new PduException("Pdu length exceeds supported maximum " + raw,
+                throw new PduException("Pdu Length exceeds supported maximum " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.REASON_NOT_SPECIFIED));
             }
             ByteBuffer bb = ByteBuffer.Wrap(raw.buffer(), 6, raw.length(), ByteOrder.BIG_ENDIAN);
@@ -171,7 +171,7 @@ namespace DicomSharp.Net {
                 while (bb.Position < bb.Length) {
                     int itemType = bb.ReadByte(); // Item type
                     bb.Skip(); // Skip one byte
-                    int itemLen = bb.ReadInt16(); // Item length
+                    int itemLen = bb.ReadInt16(); // Item Length
 
                     switch (itemType) {
                         case 0x10:
@@ -295,7 +295,7 @@ namespace DicomSharp.Net {
         private void ReadUserInfo(ByteBuffer bb, int len) {
             int diff = len - bb.Remaining;
             if (diff != 0) {
-                throw new PduException("User info item length=" + len + " mismatch Pdu length (diff=" + diff + ")",
+                throw new PduException("User info item Length=" + len + " mismatch Pdu Length (diff=" + diff + ")",
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
 
@@ -306,7 +306,7 @@ namespace DicomSharp.Net {
                 switch (subItemType) {
                     case 0x51:
                         if (itemLen != 4) {
-                            throw new PduException("Illegal length of Maximum length sub-item: " + itemLen,
+                            throw new PduException("Illegal Length of Maximum Length sub-item: " + itemLen,
                                                    new AAbort(AAbort.SERVICE_PROVIDER,
                                                               AAbort.INVALID_PDU_PARAMETER_VALUE));
                         }

@@ -803,7 +803,7 @@ namespace DicomSharp.Data {
         #region Nested type: UN
 
         /// <summary>
-        /// UN - Unkown, a string of bytes, any length
+        /// UN - Unkown, a string of bytes, any Length
         /// </summary>
         internal sealed class UN : ValueElement {
             internal UN(uint tag, ByteBuffer data) : base(tag, data) {}

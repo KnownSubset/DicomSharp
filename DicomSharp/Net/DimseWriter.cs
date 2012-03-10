@@ -56,7 +56,7 @@ namespace DicomSharp.Net {
                 if (tsUID == null) {
                     throw new SystemException();
                 }
-                (dimse).TransferSyntaxUID = tsUID;
+                (dimse).TransferSyntaxUniqueId = tsUID;
                 fsm.FireWrite(dimse);
                 if (pDataTF == null) {
                     pDataTF = new PDataTF(fsm.WriteMaxLength);

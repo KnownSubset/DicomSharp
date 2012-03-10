@@ -73,8 +73,8 @@ namespace DicomSharp.Data {
 
         public virtual FileMetaInfo NewFileMetaInfo(Dataset ds, String transferSyntaxUID) {
             try {
-                return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUID, null),
-                                               ds.GetString(Tags.SOPInstanceUID, null), transferSyntaxUID,
+                return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUniqueId, null),
+                                               ds.GetString(Tags.SOPInstanceUniqueId, null), transferSyntaxUID,
                                                Implementation.ClassUID, Implementation.VersionName);
             }
             catch (DcmValueException ex) {

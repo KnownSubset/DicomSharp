@@ -273,7 +273,7 @@ namespace DicomSharp.Data {
 
         internal static void SwapWords(ByteBuffer bb) {
             if ((bb.Length & 1) != 0) {
-                throw new ArgumentException("illegal value length: " + bb);
+                throw new ArgumentException("illegal value Length: " + bb);
             }
 
             ByteOrder from = bb.GetOrder();
@@ -288,7 +288,7 @@ namespace DicomSharp.Data {
 
         internal static void SwapInts(ByteBuffer bb) {
             if ((bb.Length & 3) != 0) {
-                throw new ArgumentException("illegal value length " + bb);
+                throw new ArgumentException("illegal value Length " + bb);
             }
 
             ByteOrder from = bb.GetOrder();
@@ -303,7 +303,7 @@ namespace DicomSharp.Data {
 
         internal static void SwapLongs(ByteBuffer bb) {
             if ((bb.Length & 7) != 0) {
-                throw new ArgumentException("illegal value length " + bb);
+                throw new ArgumentException("illegal value Length " + bb);
             }
 
             ByteOrder from = bb.GetOrder();

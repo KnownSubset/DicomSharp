@@ -42,9 +42,9 @@ namespace DicomSharp.ServiceClassProvider {
     /// SCP for C-STORE
     /// </summary>
     public class StoreSCP : DcmServiceBase {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(StoreSCP));
         private new const int SUCCESS = 0x0000;
         private const int PROCESSING_FAILURE = 0x0101;
-        private const int CLASS_INSTANCE_CONFLICT = 0x0119;
         private const int MISSING_UID = 0xA900;
         private const int MISMATCH_UID = 0xA901;
         private const int CANNOT_UNDERSTAND = 0xC000;
@@ -74,21 +74,21 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        protected override void DoCStore(ActiveAssociation assoc, IDimse rq, DicomCommand rspCmd) {
-            IDicomCommand rqCmd = rq.DicomCommand;
-            Stream ins = rq.DataAsStream;
+        protected override void DoCStore(ActiveAssociation activeAssociation, IDimse request, DicomCommand responseCommand) {
+            IDicomCommand rqCmd = request.DicomCommand;
+            Stream ins = request.DataAsStream;
             try {
-                String instUID = rqCmd.AffectedSOPInstanceUID;
-                String classUID = rqCmd.AffectedSOPClassUID;
-                DcmDecodeParam decParam = DcmDecodeParam.ValueOf(rq.TransferSyntaxUID);
-                Dataset ds = objFact.NewDataset();
+                String instanceUniqueId = rqCmd.AffectedSOPInstanceUniqueId;
+                String classUniqueId = rqCmd.AffectedSOPClassUniqueId;
+                DcmDecodeParam decParam = DcmDecodeParam.ValueOf(request.TransferSyntaxUniqueId);
+                Dataset dataset = objFact.NewDataset();
                 DcmParser parser = parserFact.NewDcmParser(ins);
-                parser.DcmHandler = ds.DcmHandler;
+                parser.DcmHandler = dataset.DcmHandler;
                 parser.ParseDataset(decParam, Tags.PixelData);
-                ds.SetFileMetaInfo(objFact.NewFileMetaInfo(classUID, instUID, rq.TransferSyntaxUID));
-                FileInfo file = toFile(ds);
-                storeToFile(parser, ds, file, (DcmEncodeParam) decParam);
-                rspCmd.PutUS(Tags.Status, SUCCESS);
+                dataset.SetFileMetaInfo(objFact.NewFileMetaInfo(classUniqueId, instanceUniqueId, request.TransferSyntaxUniqueId));
+                FileInfo file = ToFile(dataset);
+                StoreToFile(parser, dataset, file, (DcmEncodeParam) decParam);
+                responseCommand.PutUS(Tags.Status, SUCCESS);
             }
             catch (Exception e) {
                 log.Error(e.Message, e);
@@ -101,14 +101,7 @@ namespace DicomSharp.ServiceClassProvider {
 
         private Stream openOutputStream(FileInfo file) {
             DirectoryInfo parent = file.Directory;
-            bool tmpBool;
-            if (File.Exists(parent.FullName)) {
-                tmpBool = true;
-            }
-            else {
-                tmpBool = Directory.Exists(parent.FullName);
-            }
-
+            bool tmpBool = File.Exists(parent.FullName) || Directory.Exists(parent.FullName);
             if (!tmpBool) {
                 Directory.CreateDirectory(parent.FullName);
                 log.Info("M-WRITE " + parent);
@@ -118,24 +111,28 @@ namespace DicomSharp.ServiceClassProvider {
             return new BufferedStream(new FileStream(file.FullName, FileMode.Create));
         }
 
-        private void storeToFile(DcmParser parser, Dataset ds, FileInfo file, DcmEncodeParam encParam) {
+        private void StoreToFile(DcmParser parser, Dataset ds, FileInfo file, DcmEncodeParam encParam) {
             Stream outs = openOutputStream(file);
             try {
                 ds.WriteFile(outs, encParam);
                 if (parser.ReadTag == Tags.PixelData) {
                     ds.WriteHeader(outs, encParam, parser.ReadTag, parser.ReadVR, parser.ReadLength);
-                    copy(parser.InputStream, outs);
+                    Copy(parser.InputStream, outs);
                 }
             }
             finally {
                 try {
                     outs.Close();
                 }
-                catch (IOException ignore) {}
+                catch (IOException ignore)
+                {
+                    Logger.Error(ignore);
+                    
+                }
             }
         }
 
-        private void copy(Stream ins, Stream outs) {
+        private void Copy(Stream ins, Stream outs) {
             int c;
             var buffer = new byte[512];
             while ((c = ins.Read(buffer, 0, buffer.Length)) != - 1) {
@@ -143,29 +140,29 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        private FileInfo toFile(Dataset ds) {
-            String studyInstUID = null;
+        private FileInfo ToFile(Dataset ds) {
+            String studyInstanceUniqueId = null;
             try {
-                studyInstUID = ds.GetString(Tags.StudyInstanceUID);
-                if (studyInstUID == null) {
+                studyInstanceUniqueId = ds.GetString(Tags.StudyInstanceUniqueId);
+                if (studyInstanceUniqueId == null) {
                     throw new DcmServiceException(MISSING_UID, "Missing Study Instance UID");
                 }
                 if (ds.vm(Tags.SeriesInstanceUID) <= 0) {
                     throw new DcmServiceException(MISSING_UID, "Missing Series Instance UID");
                 }
-                String instUID = ds.GetString(Tags.SOPInstanceUID);
-                if (instUID == null) {
+                String instanceUniqueId = ds.GetString(Tags.SOPInstanceUniqueId);
+                if (instanceUniqueId == null) {
                     throw new DcmServiceException(MISSING_UID, "Missing SOP Instance UID");
                 }
-                String classUID = ds.GetString(Tags.SOPClassUID);
-                if (classUID == null) {
+                String classUniqueId = ds.GetString(Tags.SOPClassUniqueId);
+                if (classUniqueId == null) {
                     throw new DcmServiceException(MISSING_UID, "Missing SOP Class UID");
                 }
-                if (!instUID.Equals(ds.GetFileMetaInfo().MediaStorageSOPInstanceUID)) {
+                if (!instanceUniqueId.Equals(ds.GetFileMetaInfo().MediaStorageSOPInstanceUniqueId)) {
                     throw new DcmServiceException(MISMATCH_UID,
                                                   "SOP Instance UID in Dataset differs from Affected SOP Instance UID");
                 }
-                if (!classUID.Equals(ds.GetFileMetaInfo().MediaStorageSOPClassUID)) {
+                if (!classUniqueId.Equals(ds.GetFileMetaInfo().MediaStorageSOPClassUniqueId)) {
                     throw new DcmServiceException(MISMATCH_UID,
                                                   "SOP Class UID in Dataset differs from Affected SOP Class UID");
                 }
@@ -179,7 +176,7 @@ namespace DicomSharp.ServiceClassProvider {
             for (int i = 0; i < dirSplitLevel; ++i) {
                 dir = new FileInfo(dir.FullName + "\\" + pn.Substring(0, (i + 1) - (0)));
             }
-            dir = new FileInfo(dir.FullName + "\\" + studyInstUID);
+            dir = new FileInfo(dir.FullName + "\\" + studyInstanceUniqueId);
             dir = new FileInfo(dir.FullName + "\\" + ToFileID(ds, Tags.SeriesNumber));
             var file = new FileInfo(dir.FullName + "\\" + ToFileID(ds, Tags.InstanceNumber) + ".dcm");
             return file;
@@ -188,7 +185,7 @@ namespace DicomSharp.ServiceClassProvider {
         private String ToFileID(Dataset ds, uint tag) {
             try {
                 String s = ds.GetString(tag);
-                if (s == null || s.Length == 0) {
+                if (string.IsNullOrEmpty(s)) {
                     return "__NULL__";
                 }
                 char[] ins = s.ToUpper().ToCharArray();
@@ -198,7 +195,8 @@ namespace DicomSharp.ServiceClassProvider {
                 }
                 return new String(outs);
             }
-            catch (DcmValueException e) {
+            catch (DcmValueException dcmValueException) {
+                Logger.Error(dcmValueException);
                 return "__ERR__";
             }
         }

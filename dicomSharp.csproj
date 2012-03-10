@@ -226,7 +226,7 @@
     <Compile Include="DicomSharp\Utility\LF_ThreadPool.cs" />
     <Compile Include="DicomSharp\Utility\StringUtils.cs" />
     <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
-    <Compile Include="DicomSharp\Utility\UIDGenerator.cs" />
+    <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
