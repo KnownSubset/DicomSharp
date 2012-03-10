@@ -1,6 +1,7 @@
 using System;
 using System.IO;
-using DicomCS.Data;
+using DicomSharp.Data;
+using DicomSharp.Net;
 
 namespace DicomCS.Net {
     public interface IDimse : IDataSource {

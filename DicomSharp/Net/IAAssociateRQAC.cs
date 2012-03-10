@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using DicomSharp.Net;
 
 namespace DicomCS.Net {
     public interface IAAssociateRQAC {

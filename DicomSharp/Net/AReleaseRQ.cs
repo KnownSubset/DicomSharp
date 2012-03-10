@@ -36,7 +36,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public sealed class AReleaseRQ : PduI {
+    public sealed class AReleaseRQ : IPdu {
         private static readonly AReleaseRQ s_instance = new AReleaseRQ();
 
         private static readonly byte[] BYTES = new byte[] {5, 0, 0, 0, 0, 4, 0, 0, 0, 0};
@@ -45,7 +45,7 @@ namespace DicomSharp.Net {
             get { return s_instance; }
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public void WriteTo(Stream outs) {
             outs.Write(BYTES, 0, BYTES.Length);

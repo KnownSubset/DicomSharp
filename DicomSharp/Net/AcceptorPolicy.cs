@@ -204,7 +204,7 @@ namespace DicomSharp.Net {
             return (ExtNegotiatorI) extNegotiaionMap[uid];
         }
 
-        public virtual PduI Negotiate(AAssociateRQ rq) {
+        public virtual IPdu Negotiate(AAssociateRQ rq) {
             if ((rq.ProtocolVersion & 0x0001) == 0) {
                 return new AAssociateRJ(AAssociateRJ.REJECTED_PERMANENT, AAssociateRJ.SERVICE_PROVIDER_ACSE,
                                         AAssociateRJ.PROTOCOL_VERSION_NOT_SUPPORTED);
@@ -232,7 +232,7 @@ namespace DicomSharp.Net {
             return policy2.doNegotiate(rq);
         }
 
-        private PduI doNegotiate(AAssociateRQ rq) {
+        private IPdu doNegotiate(AAssociateRQ rq) {
             String appCtx = NegotiateAppCtx(rq.ApplicationContext);
             if (appCtx == null) {
                 return new AAssociateRJ(AAssociateRJ.REJECTED_PERMANENT, AAssociateRJ.SERVICE_USER,

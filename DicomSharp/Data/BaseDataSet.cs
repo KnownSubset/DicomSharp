@@ -97,7 +97,7 @@ namespace DicomSharp.Data {
                 }
                 grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(el.vr())) ? 12 : 8;
                 if (el is ValueElement) {
-                    grLens[grCount - 1] += el.length();
+                    grLens[grCount - 1] += el.Length();
                 }
                 else if (el is FragmentElement) {
                     grLens[grCount - 1] += ((FragmentElement) el).CalcLength();
@@ -152,7 +152,7 @@ namespace DicomSharp.Data {
                     ++grIndex;
                 }
                 if (el is SQElement) {
-                    int len = param.undefSeqLen ? - 1 : el.length();
+                    int len = param.undefSeqLen ? - 1 : el.Length();
                     handler.StartElement(el.tag(), VRs.SQ, el.StreamPosition);
                     handler.StartSequence(len);
                     for (int j = 0, m = el.vm(); j < m;) {

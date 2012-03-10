@@ -1,8 +1,7 @@
 using System;
 using System.IO;
-using DicomSharp.Data;
 
-namespace DicomCS.Data {
+namespace DicomSharp.Data {
     public interface IDicomCommand : IDcmObject {
         int CommandField { get; }
         int MessageID { get; }

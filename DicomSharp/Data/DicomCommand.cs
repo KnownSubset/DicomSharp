@@ -32,7 +32,6 @@
 using System;
 using System.IO;
 using System.Text;
-using DicomCS.Data;
 using DicomSharp.Dictionary;
 using DicomSharp.Utility;
 
@@ -183,8 +182,8 @@ namespace DicomSharp.Data {
 
         public IDicomCommand InitCCancelRQ(int messageId)
         {
-            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.C_CANCEL_RQ);
-            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
+            PutUS(Tags.CommandField, (int)DicomCommandMessage.C_CANCEL_RQ);
+            PutUS(Tags.MessageIdBeingRespondedTo, messageId);
             return this;
         }
 
@@ -220,9 +219,9 @@ namespace DicomSharp.Data {
             {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
-            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.C_ECHO_RQ);
-            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
+            PutUS(Tags.CommandField, (int)DicomCommandMessage.C_ECHO_RQ);
+            PutUS(Tags.MessageId, messageId);
             return this;
         }
 
@@ -251,9 +250,9 @@ namespace DicomSharp.Data {
             {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
-            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.N_EVENT_REPORT_RQ);
-            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
+            PutUS(Tags.CommandField, (int)DicomCommandMessage.N_EVENT_REPORT_RQ);
+            PutUS(Tags.MessageId, messageId);
             PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
             PutUS(Tags.EventTypeID, eventTypeID);
             return this;
@@ -307,9 +306,9 @@ namespace DicomSharp.Data {
             {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
-            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.N_CREATE_RQ);
-            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
+            PutUS(Tags.CommandField, (int)DicomCommandMessage.N_CREATE_RQ);
+            PutUS(Tags.MessageId, messageId);
             if (sopInstanceUID != null)
             {
                 PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
@@ -349,17 +348,17 @@ namespace DicomSharp.Data {
             {
                 switch (tag)
                 {
-                    case Tags.AFFECTED_SOP_CLASS_UID:
-                    case Tags.REQUESTED_SOP_CLASS_UID:
+                    case Tags.AffectedSOPClassUID:
+                    case Tags.RequestedSOPClassUID:
                         sopClassUID = newElem.GetString(null);
                         break;
 
-                    case Tags.COMMAND_FIELD:
+                    case Tags.CommandField:
                         cmdField = newElem.Int;
                         break;
 
-                    case Tags.MESSAGE_ID:
-                    case Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO:
+                    case Tags.MessageId:
+                    case Tags.MessageIdBeingRespondedTo:
                         msgId = newElem.Int;
                         break;
 
@@ -414,9 +413,9 @@ namespace DicomSharp.Data {
             {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
-            PutUS(Tags.COMMAND_FIELD, (int)cmd);
-            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
+            PutUS(Tags.CommandField, (int)cmd);
+            PutUS(Tags.MessageId, messageId);
             PutUS(Tags.Priority, priority);
             return this;
         }
@@ -425,10 +424,10 @@ namespace DicomSharp.Data {
         {
             if (sopClassUID != null)
             {
-                PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+                PutUI(Tags.AffectedSOPClassUID, sopClassUID);
             }
-            PutUS(Tags.COMMAND_FIELD, (int)cmd);
-            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
+            PutUS(Tags.CommandField, (int)cmd);
+            PutUS(Tags.MessageIdBeingRespondedTo, messageId);
             PutUS(Tags.Status, status);
             return this;
         }
@@ -454,9 +453,9 @@ namespace DicomSharp.Data {
             {
                 throw new ArgumentException();
             }
-            PutUI(Tags.REQUESTED_SOP_CLASS_UID, sopClassUID);
-            PutUS(Tags.COMMAND_FIELD, (int)cmd);
-            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.RequestedSOPClassUID, sopClassUID);
+            PutUS(Tags.CommandField, (int)cmd);
+            PutUS(Tags.MessageId, messageId);
             PutUI(Tags.RequestedSOPInstanceUID, sopInstanceUID);
             return this;
         }
@@ -465,10 +464,10 @@ namespace DicomSharp.Data {
         {
             if (sopClassUID != null)
             {
-                PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+                PutUI(Tags.AffectedSOPClassUID, sopClassUID);
             }
-            PutUS(Tags.COMMAND_FIELD, (int)cmd);
-            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
+            PutUS(Tags.CommandField, (int)cmd);
+            PutUS(Tags.MessageIdBeingRespondedTo, messageId);
             PutUS(Tags.Status, status);
             if (sopInstanceUID != null)
             {

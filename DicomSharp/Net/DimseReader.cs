@@ -204,7 +204,7 @@ namespace DicomSharp.Net {
             if (buf == null) {
                 buf = new byte[fsm.ReadMaxLength + 6];
             }
-            PduI pdu = fsm.Read(timeout, buf);
+            IPdu pdu = fsm.Read(timeout, buf);
             if (pdu is PDataTF) {
                 pDataTF = (PDataTF) pdu;
                 return true;

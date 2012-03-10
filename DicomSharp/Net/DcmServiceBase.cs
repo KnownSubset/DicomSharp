@@ -325,7 +325,7 @@ namespace DicomSharp.Net {
         #region Nested type: MultiDimseRsp
 
         public interface MultiDimseRsp {
-            DimseListenerI CancelListener { get; }
+            IDimseListener CancelListener { get; }
             Dataset next(ActiveAssociation assoc, Dimse rq, DicomCommand rspCmd);
             void release();
         }

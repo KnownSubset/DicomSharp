@@ -1,4 +1,4 @@
-namespace DicomCS.Data {
+namespace DicomSharp.Data {
     public enum DicomCommandMessage {
         C_STORE_RQ = 0x0001,
         C_STORE_RSP = 0x8001,

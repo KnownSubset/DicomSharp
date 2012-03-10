@@ -39,7 +39,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public abstract class AAssociateRQAC : PduI {
+    public abstract class AAssociateRQAC : IPdu {
         private static readonly byte[] ZERO32 = new byte[] {
                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                                                0, 0, 0, 0, 0, 0, 0, 0
@@ -124,7 +124,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public void WriteTo(Stream outs) {
             var bb = new MyByteBuffer(this);

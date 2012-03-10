@@ -149,6 +149,8 @@
     <Compile Include="DicomSharp\Data\FileMetaInfo.cs" />
     <Compile Include="DicomSharp\Data\FragmentElement.cs" />
     <Compile Include="DicomSharp\Data\IDcmHandler.cs" />
+    <Compile Include="DicomSharp\Data\IDcmObject.cs" />
+    <Compile Include="DicomSharp\Data\IDicomCommand.cs" />
     <Compile Include="DicomSharp\Data\PersonName.cs" />
     <Compile Include="DicomSharp\Data\SQElement.cs" />
     <Compile Include="DicomSharp\Data\StringElement.cs" />

@@ -38,7 +38,7 @@ namespace DicomSharp.Net {
     /// <summary> 
     /// 
     /// </summary>
-    public class FutureRSP : DimseListenerI, IAssociationListener {
+    public class FutureDimseResponse : IDimseListener, IAssociationListener {
         private readonly ArrayList pending = new ArrayList();
         private bool closed;
         private IOException exception;
@@ -64,7 +64,7 @@ namespace DicomSharp.Net {
 
         #region IAssociationListener Members
 
-        public virtual void Write(Association src, PduI Pdu) {}
+        public virtual void Write(Association src, IPdu Pdu) {}
 
         public virtual void Received(Association src, Dimse dimse) {}
 
@@ -81,11 +81,11 @@ namespace DicomSharp.Net {
 
         public virtual void Write(Association src, Dimse dimse) {}
 
-        public virtual void Received(Association src, PduI Pdu) {}
+        public virtual void Received(Association src, IPdu Pdu) {}
 
         #endregion
 
-        #region DimseListenerI Members
+        #region IDimseListener Members
 
         public virtual void DimseReceived(Association assoc, Dimse dimse) {
             if (dimse.DicomCommand.IsPending()) {

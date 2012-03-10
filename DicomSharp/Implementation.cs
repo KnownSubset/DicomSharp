@@ -37,8 +37,8 @@ namespace DicomSharp {
         public static Hashtable rb = new Hashtable();
 
         static Implementation() {
-            rb.Add("dicomcs.ImplementationClassUID", "1.2.40.1.6.8.168");
-            rb.Add("dicomcs.ImplementationVersionName", "dicomcs20021018");
+            rb.Add("dicomSharp.ImplementationClassUID", "1.0.0.0.168");
+            rb.Add("dicomSharp.ImplementationVersionName", "dicomcs20120310");
         }
 
         public static String ClassUID {

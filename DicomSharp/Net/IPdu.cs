@@ -35,7 +35,7 @@ using System.IO;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public interface PduI {
+    public interface IPdu {
         void WriteTo(Stream outs);
 
         String ToString(bool verbose);

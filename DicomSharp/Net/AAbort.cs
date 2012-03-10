@@ -37,7 +37,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public class AAbort : PduI {
+    public class AAbort : IPdu {
         public const int SERVICE_USER = 0;
         public const int SERVICE_PROVIDER = 2;
         public const int REASON_NOT_SPECIFIED = 0;
@@ -57,7 +57,7 @@ namespace DicomSharp.Net {
             buf = new byte[] {7, 0, 0, 0, 0, 4, 0, 0, (byte) source, (byte) reason};
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public void WriteTo(Stream outs) {
             outs.Write(buf, 0, buf.Length);

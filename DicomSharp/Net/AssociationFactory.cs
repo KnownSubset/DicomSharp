@@ -96,7 +96,7 @@ namespace DicomSharp.Net {
             return new ExtNegotiation(uid, info);
         }
 
-        public virtual PduI readFrom(Stream ins, byte[] buf) {
+        public virtual IPdu readFrom(Stream ins, byte[] buf) {
             var raw = new UnparsedPdu(ins, buf);
             switch (raw.GetType()) {
                 case 1:

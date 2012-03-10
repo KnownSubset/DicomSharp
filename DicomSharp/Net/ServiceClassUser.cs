@@ -48,7 +48,7 @@ namespace DicomSharp.Net
     /// </summary>
     public class ServiceClassUser : IServiceClassUser
     {
-        private const string TRANSFER_SYNTAX_UID = UIDs.IMPLICIT_VR_LITTLE_ENDIAN;
+        private const string TRANSFER_SYNTAX_UID = UIDs.ImplicitVRLittleEndian;
         private const int ASSOCIATE_TIME_OUT = 0;
         private static readonly ILog LOGGER = LogManager.GetLogger(typeof (ServiceClassUser));
         private static readonly String[] DEF_TS = new[] {TRANSFER_SYNTAX_UID};

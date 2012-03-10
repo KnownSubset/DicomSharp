@@ -37,7 +37,7 @@ namespace DicomSharp.Net {
     /// <summary>
     /// 
     /// </summary>
-    public sealed class AReleaseRP : PduI {
+    public sealed class AReleaseRP : IPdu {
         private static readonly AReleaseRP instance = new AReleaseRP();
 
         private static readonly byte[] BYTES = new byte[] {6, 0, 0, 0, 0, 4, 0, 0, 0, 0};
@@ -46,7 +46,7 @@ namespace DicomSharp.Net {
             get { return instance; }
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public void WriteTo(Stream outs) {
             outs.Write(BYTES, 0, BYTES.Length);

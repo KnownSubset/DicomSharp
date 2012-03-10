@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
-using DicomCS.Util;
+using DicomSharp.Net;
+using DicomSharp.Utility;
 
 namespace DicomCS.Net {
     public interface IAssociation {

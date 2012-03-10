@@ -32,7 +32,7 @@
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public interface DimseListenerI {
+    public interface IDimseListener {
         void DimseReceived(Association assoc, Dimse dimse);
     }
 }

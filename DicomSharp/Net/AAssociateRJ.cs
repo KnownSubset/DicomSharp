@@ -37,7 +37,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public class AAssociateRJ : PduI {
+    public class AAssociateRJ : IPdu {
         public const int REJECTED_PERMANENT = 1;
         public const int REJECTED_TRANSIENT = 2;
         public const int SERVICE_USER = 1;
@@ -61,7 +61,7 @@ namespace DicomSharp.Net {
             buf = new byte[] {3, 0, 0, 0, 0, 4, 0, (byte) result, (byte) source, (byte) reason};
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public void WriteTo(Stream outs) {
             outs.Write(buf, 0, buf.Length);

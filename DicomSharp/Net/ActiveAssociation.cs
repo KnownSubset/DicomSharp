@@ -187,7 +187,7 @@ namespace DicomSharp.Net {
         /// </summary>
         /// <param name="msgID"></param>
         /// <param name="l"></param>
-        public void AddCancelListener(int msgID, DimseListenerI l) {
+        public void AddCancelListener(int msgID, IDimseListener l) {
             cancelDispatcher.Add(msgID, l);
         }
 
@@ -203,7 +203,7 @@ namespace DicomSharp.Net {
         /// </summary>
         /// <param name="rq"></param>
         /// <param name="l"></param>
-        public void Invoke(Dimse rq, DimseListenerI l) {
+        public void Invoke(Dimse rq, IDimseListener l) {
             int msgID = rq.DicomCommand.MessageID;
             int maxOps = assoc.MaxOpsInvoked;
             if (maxOps == 0) {
@@ -225,8 +225,8 @@ namespace DicomSharp.Net {
         /// </summary>
         /// <param name="rq"></param>
         /// <returns></returns>
-        public FutureRSP Invoke(Dimse rq) {
-            var retval = new FutureRSP();
+        public FutureDimseResponse Invoke(Dimse rq) {
+            var retval = new FutureDimseResponse();
             assoc.AddAssociationListener(retval);
             Invoke(rq, retval);
             return retval;
@@ -272,13 +272,13 @@ namespace DicomSharp.Net {
             DicomCommand cmd = dimse.DicomCommand;
             Dataset ds = dimse.Dataset; // read out dataset, if any
             int msgID = cmd.MessageIDToBeingRespondedTo;
-            DimseListenerI l = null;
+            IDimseListener l = null;
             if (cmd.IsPending()) {
-                l = (DimseListenerI) rspDispatcher[msgID];
+                l = (IDimseListener) rspDispatcher[msgID];
             }
             else {
                 lock (rspDispatcher) {
-                    l = (DimseListenerI) rspDispatcher[msgID];
+                    l = (IDimseListener) rspDispatcher[msgID];
                     rspDispatcher.Remove(msgID);
                     Monitor.Pulse(rspDispatcher);
                 }
@@ -297,7 +297,7 @@ namespace DicomSharp.Net {
             DicomCommand cmd = dimse.DicomCommand;
             int msgID = cmd.MessageIDToBeingRespondedTo;
 
-            var l = (DimseListenerI) cancelDispatcher[msgID];
+            var l = (IDimseListener) cancelDispatcher[msgID];
             cancelDispatcher.Remove(msgID);
 
             if (l != null) {

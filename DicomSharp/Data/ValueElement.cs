@@ -173,7 +173,7 @@ namespace DicomSharp.Data {
             return bb;
         }
 
-        public override int length() {
+        public override int Length() {
             return ((m_data.length() + 1) & (~ 1));
         }
 

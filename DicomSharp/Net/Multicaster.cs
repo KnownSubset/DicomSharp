@@ -45,7 +45,7 @@ namespace DicomSharp.Net {
 
         #region IAssociationListener Members
 
-        public virtual void Write(Association src, PduI pdu) {
+        public virtual void Write(Association src, IPdu pdu) {
             a.Write(src, pdu);
             b.Write(src, pdu);
         }
@@ -55,7 +55,7 @@ namespace DicomSharp.Net {
             b.Write(src, dimse);
         }
 
-        public virtual void Received(Association src, PduI pdu) {
+        public virtual void Received(Association src, IPdu pdu) {
             a.Received(src, pdu);
             b.Received(src, pdu);
         }

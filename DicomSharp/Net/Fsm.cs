@@ -282,7 +282,7 @@ namespace DicomSharp.Net {
         /// <param name="timeout"></param>
         /// <param name="buf"></param>
         /// <returns></returns>
-        public PduI Read(int timeout, byte[] buf) {
+        public IPdu Read(int timeout, byte[] buf) {
             try {
                 UnparsedPdu raw = null;
 
@@ -429,7 +429,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        private void FireWrite(PduI pdu) {
+        private void FireWrite(IPdu pdu) {
             if (pdu is PDataTF) {
                 if (log.IsDebugEnabled) {
                     log.Debug("sending " + pdu);
@@ -445,7 +445,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        private PduI FireReceived(PduI pdu) {
+        private IPdu FireReceived(IPdu pdu) {
             if (pdu is PDataTF) {
                 if (log.IsDebugEnabled) {
                     log.Debug("received " + pdu);
@@ -498,7 +498,7 @@ namespace DicomSharp.Net {
 
             internal virtual void Entry() {}
 
-            internal virtual PduI Parse(UnparsedPdu raw) {
+            internal virtual IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -615,7 +615,7 @@ namespace DicomSharp.Net {
                 return "Sta 10 - Release collision acceptor side; awaiting A-RELEASE response";
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -627,7 +627,7 @@ namespace DicomSharp.Net {
                                                    new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNEXPECTED_PDU));
 
                         case 6:
-                            PduI pdu = m_fsm.FireReceived(AReleaseRP.Parse(raw));
+                            IPdu pdu = m_fsm.FireReceived(AReleaseRP.Parse(raw));
                             m_fsm.ChangeState(m_fsm.STA12);
                             return pdu;
 
@@ -665,7 +665,7 @@ namespace DicomSharp.Net {
                 return "Sta 11 - Release collision requestor side; awaiting A-RELEASE-RP PDU";
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -677,7 +677,7 @@ namespace DicomSharp.Net {
                                                    new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNEXPECTED_PDU));
 
                         case 6:
-                            PduI pdu = m_fsm.FireReceived(AReleaseRP.Parse(raw));
+                            IPdu pdu = m_fsm.FireReceived(AReleaseRP.Parse(raw));
                             m_fsm.ChangeState(m_fsm.STA1);
                             return pdu;
 
@@ -770,7 +770,7 @@ namespace DicomSharp.Net {
                 return "Sta 2 - Transport connection open (Awaiting A-ASSOCIATE-RQ PDU)";
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -887,7 +887,7 @@ namespace DicomSharp.Net {
                 return "Sta 5 - Awaiting A-ASSOCIATE-AC or A-ASSOCIATE-RJ PDU";
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -956,7 +956,7 @@ namespace DicomSharp.Net {
                 return true;
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -969,7 +969,7 @@ namespace DicomSharp.Net {
                             return m_fsm.FireReceived(PDataTF.Parse(raw));
 
                         case 5:
-                            PduI pdu = m_fsm.FireReceived(AReleaseRQ.Parse(raw));
+                            IPdu pdu = m_fsm.FireReceived(AReleaseRQ.Parse(raw));
                             m_fsm.ChangeState(m_fsm.STA8);
                             return pdu;
 
@@ -1036,7 +1036,7 @@ namespace DicomSharp.Net {
                 return true;
             }
 
-            internal override PduI Parse(UnparsedPdu raw) {
+            internal override IPdu Parse(UnparsedPdu raw) {
                 try {
                     switch (raw.GetType()) {
                         case 1:
@@ -1049,7 +1049,7 @@ namespace DicomSharp.Net {
                             return m_fsm.FireReceived(PDataTF.Parse(raw));
 
                         case 5:
-                            PduI pdu = m_fsm.FireReceived(AReleaseRQ.Parse(raw));
+                            IPdu pdu = m_fsm.FireReceived(AReleaseRQ.Parse(raw));
                             m_fsm.ChangeState(m_fsm.requestor ? m_fsm.STA9 : m_fsm.STA10);
                             return pdu;
 

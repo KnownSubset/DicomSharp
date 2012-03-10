@@ -37,6 +37,24 @@ using DicomSharp.Utility;
 using log4net;
 
 namespace DicomSharp.Net {
+
+    public enum AssociationState
+    {
+        IDLE = 1,
+        AWAITING_READ_ASS_RQ = 2,
+        AWAITING_WRITE_ASS_RP = 3,
+        AWAITING_WRITE_ASS_RQ = 4,
+        AWAITING_READ_ASS_RP = 5,
+        ASSOCIATION_ESTABLISHED = 6,
+        AWAITING_READ_REL_RP = 7,
+        AWAITING_WRITE_REL_RP = 8,
+        RCRS_AWAITING_WRITE_REL_RP = 9,
+        RCAS_AWAITING_READ_REL_RP = 10,
+        RCRS_AWAITING_READ_REL_RP = 11,
+        RCAS_AWAITING_WRITE_REL_RP = 12,
+        ASSOCIATION_TERMINATING = 13
+    }
+
     /// <summary>
     /// DICOM Association
     /// </summary>
@@ -162,7 +180,7 @@ namespace DicomSharp.Net {
             reader.ReaderThreadPool = pool;
         }
 
-        public PduI Connect(AAssociateRQ rq, int timeout) {
+        public IPdu Connect(AAssociateRQ rq, int timeout) {
             NDC.Push(name);
             try {
                 fsm.Write(rq);
@@ -173,15 +191,15 @@ namespace DicomSharp.Net {
             }
         }
 
-        public PduI Accept(AcceptorPolicy policy, int timeout) {
+        public IPdu Accept(AcceptorPolicy policy, int timeout) {
             NDC.Push(name);
             try {
-                PduI rq = fsm.Read(timeout, b10);
+                IPdu rq = fsm.Read(timeout, b10);
                 if (!(rq is AAssociateRQ)) {
                     return rq;
                 }
 
-                PduI rp = policy.Negotiate((AAssociateRQ) rq);
+                IPdu rp = policy.Negotiate((AAssociateRQ) rq);
                 if (rp is AAssociateAC) {
                     fsm.Write((AAssociateAC) rp);
                 }
@@ -220,7 +238,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        public PduI release(int timeout) {
+        public IPdu release(int timeout) {
             NDC.Push(name);
             try {
                 fsm.Write(AReleaseRQ.Instance);

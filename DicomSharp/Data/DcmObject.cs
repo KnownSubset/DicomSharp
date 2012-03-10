@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -46,7 +47,7 @@ namespace DicomSharp.Data {
         private const int MIN_TRUNCATE_STRING_LEN = 16;
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected ArrayList m_list = new ArrayList();
+        protected List<DcmElement> m_list = new List<DcmElement>();
 
         public virtual IDcmHandler DcmHandler {
             get { return new DcmObjectHandler(this); }
@@ -1340,7 +1341,7 @@ namespace DicomSharp.Data {
             handler.EndElement();
             for (int i = 0, n = m_list.Count; i < n; ++i) {
                 var el = (DcmElement) m_list[i];
-                int len = el.length();
+                int len = el.Length();
                 handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
                 ByteBuffer bb = el.GetByteBuffer(ByteOrder.LITTLE_ENDIAN);
                 handler.Value(bb.ToArray(), (int) bb.Position, bb.length());

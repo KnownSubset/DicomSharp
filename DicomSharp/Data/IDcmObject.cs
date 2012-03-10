@@ -1,7 +1,7 @@
 using System;
-using DicomCS.Util;
+using DicomSharp.Utility;
 
-namespace DicomCS.Data {
+namespace DicomSharp.Data {
     public interface IDcmObject {
         DcmElement Put(DcmElement newElem);
         DcmElement PutAE(uint tag);

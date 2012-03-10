@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using DicomCS.Data;
+using DicomSharp.Data;
 
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     /// <summary>
     /// This interface defines the basic operations that a service class user needs to operate against a service class provider
     /// </summary>

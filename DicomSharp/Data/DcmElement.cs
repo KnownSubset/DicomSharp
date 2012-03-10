@@ -164,7 +164,7 @@ namespace DicomSharp.Data {
             return vm() == 0;
         }
 
-        public virtual int length() {
+        public virtual int Length() {
             return - 1;
         }
 
@@ -172,7 +172,7 @@ namespace DicomSharp.Data {
             int vr1 = vr();
             ByteBuffer bb = GetByteBuffer();
             String val = StringUtils.PromptValue(vr1, bb, 64);
-            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + length() +
+            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + Length() +
                          ",[" + val + "]";
             return tmp;
         }

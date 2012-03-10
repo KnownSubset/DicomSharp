@@ -38,7 +38,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public sealed class PDataTF : PduI {
+    public sealed class PDataTF : IPdu {
         public const int DEF_MAX_PDU_LENGTH = 16352;
 
         private const int DEF_MAX_LENGTH = 0xFFFF;
@@ -81,7 +81,7 @@ namespace DicomSharp.Net {
             enu = null;
         }
 
-        #region PduI Members
+        #region IPdu Members
 
         public String ToString(bool verbose) {
             return ToString();

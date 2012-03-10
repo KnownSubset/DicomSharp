@@ -86,7 +86,7 @@ namespace DicomSharp.Data {
             return totlen;
         }
 
-        public override int length() {
+        public override int Length() {
             return totlen;
         }
 
