@@ -128,7 +128,7 @@ namespace DicomSharp.Data {
         public abstract long GetItemOffset();
         public abstract Dataset SetItemOffset(long itemOffset);
 
-        public virtual void WriteDataset(DcmHandlerI handler, DcmEncodeParam param) {
+        public virtual void WriteDataset(IDcmHandler handler, DcmEncodeParam param) {
             if (!(param.skipGroupLen && param.undefItemLen && param.undefSeqLen)) {
                 CalcLength(param);
             }
@@ -138,7 +138,7 @@ namespace DicomSharp.Data {
             handler.EndDataset();
         }
 
-        private void DoWrite(DcmHandlerI handler, DcmEncodeParam param) {
+        private void DoWrite(IDcmHandler handler, DcmEncodeParam param) {
             int grIndex = 0;
             IEnumerator enu = GetEnumerator();
             while (enu.MoveNext()) {

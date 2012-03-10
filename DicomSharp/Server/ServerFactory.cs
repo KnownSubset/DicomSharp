@@ -44,12 +44,12 @@ namespace DicomSharp.Server {
             get { return s_instance; }
         }
 
-        public virtual Server newServer(Server.HandlerI handler) {
+        public virtual Server newServer(Server.IHandler handler) {
             return new Server(handler);
         }
 
-        public virtual DcmHandlerI newDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
-            return new DcmHandler(policy, services);
+        public virtual IDcmAssociationHandler newDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
+            return new DcmAssociationHandler(policy, services);
         }
     }
 }

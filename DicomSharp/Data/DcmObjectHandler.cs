@@ -36,9 +36,9 @@ using DicomSharp.Utility;
 
 namespace DicomSharp.Data {
     /// <summary>
-    /// DcmHandler, parsing DICOM data into Object memory block
+    /// DcmAssociationHandler, parsing DICOM data into Object memory block
     /// </summary>
-    internal class DcmObjectHandler : DcmHandlerI {
+    internal class DcmObjectHandler : IDcmHandler {
         private readonly DcmObject result;
         private readonly Stack seqStack = new Stack();
         private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
@@ -58,7 +58,7 @@ namespace DicomSharp.Data {
             this.result = result;
         }
 
-        #region DcmHandlerI Members
+        #region IDcmHandler Members
 
         public virtual DcmDecodeParam DcmDecodeParam {
             set { byteOrder = value.byteOrder; }

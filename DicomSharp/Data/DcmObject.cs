@@ -48,7 +48,7 @@ namespace DicomSharp.Data {
 
         protected ArrayList m_list = new ArrayList();
 
-        public virtual DcmHandlerI DcmHandler {
+        public virtual IDcmHandler DcmHandler {
             get { return new DcmObjectHandler(this); }
         }
 
@@ -1332,7 +1332,7 @@ namespace DicomSharp.Data {
             }
         }
 
-        protected virtual void Write(uint grTag, int grLen, DcmHandlerI handler) {
+        protected virtual void Write(uint grTag, int grLen, IDcmHandler handler) {
             var b4 = new[] {(byte) grLen, (byte) (grLen >> 8), (byte) (grLen >> 16), (byte) ((grLen >> 24))};
             long el1Pos = ((DcmElement) m_list[0]).StreamPosition;
             handler.StartElement(grTag, VRs.UL, el1Pos == - 1L ? - 1L : el1Pos - 12);

@@ -32,8 +32,8 @@
 using DicomSharp.Net;
 
 namespace DicomSharp.Server {
-    public interface DcmHandlerI : Server.HandlerI {
-        void AddAssociationListener(AssociationListenerI l);
-        void RemoveAssociationListener(AssociationListenerI l);
+    public interface IDcmAssociationHandler : Server.IHandler {
+        void AddAssociationListener(IAssociationListener associationListener);
+        void RemoveAssociationListener(IAssociationListener associationListener);
     }
 }

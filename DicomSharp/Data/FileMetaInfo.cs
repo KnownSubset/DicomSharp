@@ -140,7 +140,7 @@ namespace DicomSharp.Data {
             return len;
         }
 
-        public void Write(DcmHandlerI handler) {
+        public void Write(IDcmHandler handler) {
             handler.StartFileMetaInfo(preamble);
             handler.DcmDecodeParam = DcmDecodeParam.EVR_LE;
             Write(0x00020000, grLen(), handler);

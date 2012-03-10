@@ -37,7 +37,7 @@ namespace DicomSharp.Data {
     /// <summary>
     /// Stream format of DICOM data
     /// </summary>
-    internal class DcmStreamHandler : DcmHandlerI {
+    internal class DcmStreamHandler : IDcmHandler {
         private const uint ITEM_TAG = 0xFFFEE000;
         private const uint ITEM_DELIMITATION_ITEM_TAG = 0xFFFEE00D;
         private const uint SEQ_DELIMITATION_ITEM_TAG = 0xFFFEE0DD;
@@ -57,7 +57,7 @@ namespace DicomSharp.Data {
             this.os = new BinaryWriter(os);
         }
 
-        #region DcmHandlerI Members
+        #region IDcmHandler Members
 
         public virtual DcmDecodeParam DcmDecodeParam {
             set {

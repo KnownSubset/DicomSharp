@@ -68,11 +68,11 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0000,0110) VR=US Message ID 
         /// </summary>
-        public const uint MessageID = 0x00000110;
+        public const uint MessageId = 0x00000110;
 
         /// <summary>(0000,0120) VR=US Message ID Being Responded To 
         /// </summary>
-        public const uint MessageIDToBeingRespondedTo = 0x00000120;
+        public const uint MessageIdBeingRespondedTo = 0x00000120;
 
         /// <summary>(0000,0200) VR=UN Initiator (Retired) 
         /// </summary>

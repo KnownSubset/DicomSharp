@@ -65,7 +65,7 @@ namespace DicomSharp.Net {
         private readonly Stream stream;
         private AAbort aa;
         private AAssociateAC ac;
-        private AssociationListenerI assocListener;
+        private IAssociationListener assocListener;
         private AAssociateRJ rj;
         private AAssociateRQ rq;
         private State state;
@@ -194,13 +194,13 @@ namespace DicomSharp.Net {
             }
         }
 
-        public void AddAssociationListener(AssociationListenerI l) {
+        public void AddAssociationListener(IAssociationListener l) {
             lock (this) {
                 assocListener = Multicaster.add(assocListener, l);
             }
         }
 
-        public void RemoveAssociationListener(AssociationListenerI l) {
+        public void RemoveAssociationListener(IAssociationListener l) {
             lock (this) {
                 assocListener = Multicaster.Remove(assocListener, l);
             }

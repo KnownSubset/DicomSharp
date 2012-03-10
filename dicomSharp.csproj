@@ -144,6 +144,7 @@
     <Compile Include="DicomSharp\Data\DcmStreamHandler.cs" />
     <Compile Include="DicomSharp\Data\DcmValueException.cs" />
     <Compile Include="DicomSharp\Data\DicomCommand.cs" />
+    <Compile Include="DicomSharp\Data\DicomCommandMessage.cs" />
     <Compile Include="DicomSharp\Data\FileFormat.cs" />
     <Compile Include="DicomSharp\Data\FileMetaInfo.cs" />
     <Compile Include="DicomSharp\Data\FragmentElement.cs" />
@@ -198,8 +199,8 @@
     <Compile Include="DicomSharp\Net\PresContext.cs" />
     <Compile Include="DicomSharp\Net\RoleSelection.cs" />
     <Compile Include="DicomSharp\Net\UnparsedPdu.cs" />
-    <Compile Include="DicomSharp\Server\DcmHandler.cs" />
-    <Compile Include="DicomSharp\Server\DcmHandlerI.cs" />
+    <Compile Include="DicomSharp\Server\DcmAssociationHandler.cs" />
+    <Compile Include="DicomSharp\Server\IDcmAssociationHandler.cs" />
     <Compile Include="DicomSharp\Server\Server.cs" />
     <Compile Include="DicomSharp\Server\ServerFactory.cs" />
     <Compile Include="DicomSharp\ServiceClassProvider\AcceptorPolicyService.cs" />

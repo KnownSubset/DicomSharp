@@ -38,7 +38,7 @@ namespace DicomSharp.Server {
     /// <summary> <description>
     /// 
     /// </summary>
-    public class DcmHandler : DcmHandlerI {
+    public class DcmAssociationHandler : IDcmAssociationHandler {
         private static readonly AssociationFactory assocFact = AssociationFactory.Instance;
         private readonly ArrayList listeners = new ArrayList();
 
@@ -48,7 +48,7 @@ namespace DicomSharp.Server {
         private int requestTO = 5000;
 
 
-        public DcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
+        public DcmAssociationHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
             if (policy == null) {
                 throw new NullReferenceException();
             }
@@ -61,12 +61,12 @@ namespace DicomSharp.Server {
             this.services = services;
         }
 
-        #region DcmHandlerI Members
+        #region IDcmHandler Members
 
         public virtual void Handle(Object socket) {
             Association assoc = assocFact.NewAcceptor((TcpClient) socket);
             for (IEnumerator enu = listeners.GetEnumerator(); enu.MoveNext();) {
-                assoc.AddAssociationListener((AssociationListenerI) enu.Current);
+                assoc.AddAssociationListener((IAssociationListener) enu.Current);
             }
 
             if (assoc.Accept(policy, requestTO) is AAssociateAC) {
@@ -75,15 +75,15 @@ namespace DicomSharp.Server {
             }
         }
 
-        public virtual void AddAssociationListener(AssociationListenerI l) {
+        public virtual void AddAssociationListener(IAssociationListener associationListener) {
             lock (listeners) {
-                listeners.Add(l);
+                listeners.Add(associationListener);
             }
         }
 
-        public virtual void RemoveAssociationListener(AssociationListenerI l) {
+        public virtual void RemoveAssociationListener(IAssociationListener associationListener) {
             lock (listeners) {
-                listeners.Remove(l);
+                listeners.Remove(associationListener);
             }
         }
 

@@ -252,8 +252,8 @@ namespace DicomSharp.Dictionary {
                     return UN;
 
                 case Tags.CommandField:
-                case Tags.MessageID:
-                case Tags.MessageIDToBeingRespondedTo:
+                case Tags.MessageId:
+                case Tags.MessageIdBeingRespondedTo:
                 case Tags.Priority:
                 case Tags.DataSetType:
                 case Tags.Status:

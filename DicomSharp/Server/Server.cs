@@ -47,7 +47,7 @@ namespace DicomSharp.Server {
     public class Server {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly HandlerI handler;
+        private readonly IHandler handler;
         private bool m_Stop;
         private int port = 104;
         private TcpListener ss;
@@ -56,7 +56,7 @@ namespace DicomSharp.Server {
         /// Constructor
         /// </summary>
         /// <param name="handler"></param>
-        public Server(HandlerI handler) {
+        public Server(IHandler handler) {
             if (handler == null) {
                 throw new NullReferenceException();
             }
@@ -139,9 +139,9 @@ namespace DicomSharp.Server {
             }
         }
 
-        #region Nested type: HandlerI
+        #region Nested type: IHandler
 
-        public interface HandlerI {
+        public interface IHandler {
             void Handle(Object s);
             bool IsSockedClosedByHandler();
         }

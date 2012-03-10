@@ -35,7 +35,7 @@ namespace DicomSharp.Net {
     /// <summary>
     /// 
     /// </summary>
-    public interface AssociationListenerI {
+    public interface IAssociationListener {
         void Write(Association src, PduI Pdu);
         void Received(Association src, PduI Pdu);
         void Write(Association src, Dimse dimse);

@@ -32,7 +32,7 @@
 using DicomSharp.Utility;
 
 namespace DicomSharp.Data {
-    public interface DcmHandlerI {
+    public interface IDcmHandler {
         DcmDecodeParam DcmDecodeParam { set; }
 
         void StartCommand();

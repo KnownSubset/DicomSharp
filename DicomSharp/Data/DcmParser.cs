@@ -54,7 +54,7 @@ namespace DicomSharp.Data {
         private readonly BinaryReader m_ins;
         private DcmDecodeParam decodeParam = DcmDecodeParam.IVR_LE;
         private bool eof;
-        private DcmHandlerI handler;
+        private IDcmHandler handler;
         private int maxAlloc = 0x20000000; // 512MB
 
         private int rLen = -1;
@@ -94,7 +94,7 @@ namespace DicomSharp.Data {
             get { return rPos; }
         }
 
-        public virtual DcmHandlerI DcmHandler {
+        public virtual IDcmHandler DcmHandler {
             set { handler = value; }
         }
 

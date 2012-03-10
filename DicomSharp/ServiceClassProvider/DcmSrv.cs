@@ -42,7 +42,7 @@ namespace DicomSharp.ServiceClassProvider {
         private readonly String[] STORAGE_AS;
         private readonly DcmServiceRegistry services;
         private readonly StoreSCP storeSCP;
-        private DcmHandlerI handler;
+        private IDcmAssociationHandler _associationHandler;
         private AcceptorPolicy policy;
         private int port = 104;
         private Server.Server server;
@@ -206,8 +206,8 @@ namespace DicomSharp.ServiceClassProvider {
 
         public virtual AcceptorPolicy Policy {
             set {
-                handler = srvFact.newDcmHandler(value, services);
-                server = srvFact.newServer(handler);
+                _associationHandler = srvFact.newDcmHandler(value, services);
+                server = srvFact.newServer(_associationHandler);
             }
         }
 

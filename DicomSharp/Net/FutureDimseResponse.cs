@@ -38,7 +38,7 @@ namespace DicomSharp.Net {
     /// <summary> 
     /// 
     /// </summary>
-    public class FutureRSP : DimseListenerI, AssociationListenerI {
+    public class FutureRSP : DimseListenerI, IAssociationListener {
         private readonly ArrayList pending = new ArrayList();
         private bool closed;
         private IOException exception;
@@ -62,7 +62,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        #region AssociationListenerI Members
+        #region IAssociationListener Members
 
         public virtual void Write(Association src, PduI Pdu) {}
 

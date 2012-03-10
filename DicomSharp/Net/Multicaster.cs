@@ -34,16 +34,16 @@ using System.IO;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public class Multicaster : AssociationListenerI {
-        private readonly AssociationListenerI a;
-        private readonly AssociationListenerI b;
+    public class Multicaster : IAssociationListener {
+        private readonly IAssociationListener a;
+        private readonly IAssociationListener b;
 
-        public Multicaster(AssociationListenerI a, AssociationListenerI b) {
+        public Multicaster(IAssociationListener a, IAssociationListener b) {
             this.a = a;
             this.b = b;
         }
 
-        #region AssociationListenerI Members
+        #region IAssociationListener Members
 
         public virtual void Write(Association src, PduI pdu) {
             a.Write(src, pdu);
@@ -77,7 +77,7 @@ namespace DicomSharp.Net {
 
         #endregion
 
-        public static AssociationListenerI add(AssociationListenerI a, AssociationListenerI b) {
+        public static IAssociationListener add(IAssociationListener a, IAssociationListener b) {
             if (a == null) {
                 return b;
             }
@@ -87,7 +87,7 @@ namespace DicomSharp.Net {
             return new Multicaster(a, b);
         }
 
-        public static AssociationListenerI Remove(AssociationListenerI l, AssociationListenerI oldl) {
+        public static IAssociationListener Remove(IAssociationListener l, IAssociationListener oldl) {
             if (l == oldl || l == null) {
                 return null;
             }
@@ -97,15 +97,15 @@ namespace DicomSharp.Net {
             return null;
         }
 
-        private AssociationListenerI Remove(AssociationListenerI oldl) {
+        private IAssociationListener Remove(IAssociationListener oldl) {
             if (oldl == a) {
                 return b;
             }
             if (oldl == b) {
                 return a;
             }
-            AssociationListenerI a2 = Remove(a, oldl);
-            AssociationListenerI b2 = Remove(b, oldl);
+            IAssociationListener a2 = Remove(a, oldl);
+            IAssociationListener b2 = Remove(b, oldl);
             if (a2 == a && b2 == b) {
                 return this;
             }

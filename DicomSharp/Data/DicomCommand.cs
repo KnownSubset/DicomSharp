@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using System.Text;
+using DicomCS.Data;
 using DicomSharp.Dictionary;
 using DicomSharp.Utility;
 
@@ -40,76 +41,62 @@ namespace DicomSharp.Data {
     /// Defines behavior of <code>Command</code> container objects.
     /// </summary>
     /// <seealso cref=" "DICOM Part 7: Message Exchange, 6.3.1 Command Set Structure" />
-    public class DicomCommand : DcmObject {
-        public const int C_STORE_RQ = 0x0001;
-        public const int C_STORE_RSP = 0x8001;
-        public const int C_GET_RQ = 0x0010;
-        public const int C_GET_RSP = 0x8010;
-        public const int C_FIND_RQ = 0x0020;
-        public const int C_FIND_RSP = 0x8020;
-        public const int C_MOVE_RQ = 0x0021;
-        public const int C_MOVE_RSP = 0x8021;
-        public const int C_ECHO_RQ = 0x0030;
-        public const int C_ECHO_RSP = 0x8030;
-        public const int N_EVENT_REPORT_RQ = 0x0100;
-        public const int N_EVENT_REPORT_RSP = 0x8100;
-        public const int N_GET_RQ = 0x0110;
-        public const int N_GET_RSP = 0x8110;
-        public const int N_SET_RQ = 0x0120;
-        public const int N_SET_RSP = 0x8120;
-        public const int N_ACTION_RQ = 0x0130;
-        public const int N_ACTION_RSP = 0x8130;
-        public const int N_CREATE_RQ = 0x0140;
-        public const int N_CREATE_RSP = 0x8140;
-        public const int N_DELETE_RQ = 0x0150;
-        public const int N_DELETE_RSP = 0x8150;
-        public const int C_CANCEL_RQ = 0x0FFF;
-        public const int MEDIUM = 0x0000;
-        public const int HIGH = 0x0001;
-        public const int LOW = 0x0002;
-        public const int NO_DATASET = 0x0101;
-        private int cmdField = - 1;
-        private int dataSetType = - 1;
-        private int msgID = - 1;
+
+    public class DicomCommand : DcmObject, IDicomCommand
+    {
+        private int cmdField = -1;
+        private int dataSetType = -1;
+        private int msgId = -1;
         private String sopClassUID;
         private String sopInstUID;
-        private int status = - 1;
+        private int status = -1;
 
-        public virtual int CommandField {
+        #region IDicomCommand Members
+
+        public virtual int CommandField
+        {
             get { return cmdField; }
         }
 
-        public virtual int MessageID {
-            get { return msgID; }
+        public virtual int MessageID
+        {
+            get { return msgId; }
         }
 
-        public virtual int MessageIDToBeingRespondedTo {
-            get { return msgID; }
+        public virtual int MessageIDToBeingRespondedTo
+        {
+            get { return msgId; }
         }
 
-        public virtual String AffectedSOPClassUID {
+        public virtual String AffectedSOPClassUID
+        {
             get { return sopClassUID; }
         }
 
-        public virtual String RequestedSOPClassUID {
+        public virtual String RequestedSOPClassUID
+        {
             get { return sopClassUID; }
         }
 
-        public virtual String AffectedSOPInstanceUID {
+        public virtual String AffectedSOPInstanceUID
+        {
             get { return sopInstUID; }
         }
 
-        public virtual String RequestedSOPInstanceUID {
+        public virtual String RequestedSOPInstanceUID
+        {
             get { return sopInstUID; }
         }
 
-        public virtual int Status {
+        public virtual int Status
+        {
             get { return status; }
         }
 
-
-        public bool IsPending() {
-            switch (status) {
+        public bool IsPending()
+        {
+            switch (status)
+            {
                 case 0xff00:
                 case 0xff01:
                     return true;
@@ -117,281 +104,263 @@ namespace DicomSharp.Data {
             return false;
         }
 
-        public bool IsRequest() {
-            switch (cmdField) {
-                case C_STORE_RQ:
-                case C_GET_RQ:
-                case C_FIND_RQ:
-                case C_MOVE_RQ:
-                case C_ECHO_RQ:
-                case N_EVENT_REPORT_RQ:
-                case N_GET_RQ:
-                case N_SET_RQ:
-                case N_ACTION_RQ:
-                case N_CREATE_RQ:
-                case N_DELETE_RQ:
-                case C_CANCEL_RQ:
+        public bool IsRequest()
+        {
+            switch (cmdField)
+            {
+                case (int)DicomCommandMessage.C_STORE_RQ:
+                case (int)DicomCommandMessage.C_GET_RQ:
+                case (int)DicomCommandMessage.C_FIND_RQ:
+                case (int)DicomCommandMessage.C_MOVE_RQ:
+                case (int)DicomCommandMessage.C_ECHO_RQ:
+                case (int)DicomCommandMessage.N_EVENT_REPORT_RQ:
+                case (int)DicomCommandMessage.N_GET_RQ:
+                case (int)DicomCommandMessage.N_SET_RQ:
+                case (int)DicomCommandMessage.N_ACTION_RQ:
+                case (int)DicomCommandMessage.N_CREATE_RQ:
+                case (int)DicomCommandMessage.N_DELETE_RQ:
+                case (int)DicomCommandMessage.C_CANCEL_RQ:
                     return true;
             }
             return false;
         }
 
-        public bool IsResponse() {
-            switch (cmdField) {
-                case C_STORE_RSP:
-                case C_GET_RSP:
-                case C_FIND_RSP:
-                case C_MOVE_RSP:
-                case C_ECHO_RSP:
-                case N_EVENT_REPORT_RSP:
-                case N_GET_RSP:
-                case N_SET_RSP:
-                case N_ACTION_RSP:
-                case N_CREATE_RSP:
-                case N_DELETE_RSP:
+        public bool IsResponse()
+        {
+            switch (cmdField)
+            {
+                case (int)DicomCommandMessage.C_STORE_RSP:
+                case (int)DicomCommandMessage.C_GET_RSP:
+                case (int)DicomCommandMessage.C_FIND_RSP:
+                case (int)DicomCommandMessage.C_MOVE_RSP:
+                case (int)DicomCommandMessage.C_ECHO_RSP:
+                case (int)DicomCommandMessage.N_EVENT_REPORT_RSP:
+                case (int)DicomCommandMessage.N_GET_RSP:
+                case (int)DicomCommandMessage.N_SET_RSP:
+                case (int)DicomCommandMessage.N_ACTION_RSP:
+                case (int)DicomCommandMessage.N_CREATE_RSP:
+                case (int)DicomCommandMessage.N_DELETE_RSP:
                     return true;
             }
             return false;
         }
 
-        public bool HasDataset() {
-            if (dataSetType == - 1) {
+        public bool HasDataset()
+        {
+            if (dataSetType == -1)
+            {
                 throw new SystemException();
             }
 
-            return dataSetType != NO_DATASET;
+            return dataSetType != (int)DicomCommandMessage.NO_DATASET;
         }
 
-
-        private DicomCommand InitCxxxxRQ(int cmd, int msgID, String sopClassUID, int priority) {
-            if (priority != MEDIUM && priority != HIGH && priority != LOW) {
-                throw new ArgumentException("priority=" + priority);
-            }
-            if (sopClassUID.Length == 0) {
+        public DicomCommand InitCStoreRQ(int messageId, String sopClassUID, String sopInstUID, int priority)
+        {
+            if (sopInstUID.Length == 0)
+            {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            PutUS(Tags.CommandField, cmd);
-            PutUS(Tags.MessageID, msgID);
-            PutUS(Tags.Priority, priority);
-            return this;
-        }
-
-        private DicomCommand InitCxxxxRSP(int cmd, int msgID, String sopClassUID, int status) {
-            if (sopClassUID != null) {
-                PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            }
-            PutUS(Tags.CommandField, cmd);
-            PutUS(Tags.MessageIDToBeingRespondedTo, msgID);
-            PutUS(Tags.Status, status);
-            return this;
-        }
-
-        public DicomCommand InitCStoreRQ(int msgID, String sopClassUID, String sopInstUID, int priority) {
-            if (sopInstUID.Length == 0) {
-                throw new ArgumentException();
-            }
-            InitCxxxxRQ(C_STORE_RQ, msgID, sopClassUID, priority);
+            InitCxxxxRQ(DicomCommandMessage.C_STORE_RQ, messageId, sopClassUID, priority);
             PutUI(Tags.AffectedSOPInstanceUID, sopInstUID);
             return this;
         }
 
-        public DicomCommand setMoveOriginator(String aet, int msgID) {
-            if (aet.Length == 0) {
-                throw new ArgumentException();
-            }
-            PutAE(Tags.MoveOriginatorAET, aet);
-            PutUS(Tags.MoveOriginatorMessageID, msgID);
+        public DicomCommand InitCStoreRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.C_STORE_RSP, messageId, sopClassUID, sopInstUID, status);
+        }
+
+        public IDicomCommand InitCFindRQ(int messageId, string sopClassUID, int priority)
+        {
+            return InitCxxxxRQ(DicomCommandMessage.C_FIND_RQ, messageId, sopClassUID, priority);
+        }
+
+        public DicomCommand InitCFindRSP(int messageId, String sopClassUID, int status)
+        {
+            return InitCxxxxRSP(DicomCommandMessage.C_FIND_RSP, messageId, sopClassUID, status);
+        }
+
+        public IDicomCommand InitCCancelRQ(int messageId)
+        {
+            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.C_CANCEL_RQ);
+            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
             return this;
         }
 
-        public DicomCommand InitCStoreRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(C_STORE_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitCGetRQ(int messageId, String sopClassUID, int priority)
+        {
+            return InitCxxxxRQ(DicomCommandMessage.C_GET_RQ, messageId, sopClassUID, priority);
         }
 
-        public DicomCommand InitCFindRQ(int msgID, String sopClassUID, int priority) {
-            return InitCxxxxRQ(C_FIND_RQ, msgID, sopClassUID, priority);
+        public DicomCommand InitCGetRSP(int messageId, String sopClassUID, int status)
+        {
+            return InitCxxxxRSP(DicomCommandMessage.C_GET_RSP, messageId, sopClassUID, status);
         }
 
-        public DicomCommand InitCFindRSP(int msgID, String sopClassUID, int status) {
-            return InitCxxxxRSP(C_FIND_RSP, msgID, sopClassUID, status);
-        }
-
-        public DicomCommand InitCCancelRQ(int msgID) {
-            PutUS(Tags.CommandField, C_CANCEL_RQ);
-            PutUS(Tags.MessageIDToBeingRespondedTo, msgID);
+        public IDicomCommand InitCMoveRQ(int messageId, string sopClassUID, int priority, string moveDestintation)
+        {
+            if (string.Empty.Equals(moveDestintation))
+            {
+                throw new ArgumentException();
+            }
+            InitCxxxxRQ(DicomCommandMessage.C_MOVE_RQ, messageId, sopClassUID, priority);
+            PutAE(Tags.MoveDestination, moveDestintation);
             return this;
         }
 
-        public DicomCommand InitCGetRQ(int msgID, String sopClassUID, int priority) {
-            return InitCxxxxRQ(C_GET_RQ, msgID, sopClassUID, priority);
+        public DicomCommand InitCMoveRSP(int messageId, String sopClassUID, int status)
+        {
+            return InitCxxxxRSP(DicomCommandMessage.C_MOVE_RSP, messageId, sopClassUID, status);
         }
 
-        public DicomCommand InitCGetRSP(int msgID, String sopClassUID, int status) {
-            return InitCxxxxRSP(C_GET_RSP, msgID, sopClassUID, status);
-        }
-
-        public DicomCommand InitCMoveRQ(int msgID, String sopClassUID, int priority, String moveDest) {
-            if (moveDest.Length == 0) {
+        public DicomCommand InitCEchoRQ(int messageId, String sopClassUID)
+        {
+            if (sopClassUID.Length == 0)
+            {
                 throw new ArgumentException();
             }
-            InitCxxxxRQ(C_MOVE_RQ, msgID, sopClassUID, priority);
-            PutAE(Tags.MoveDestination, moveDest);
+            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.C_ECHO_RQ);
+            PutUS(Tags.MESSAGE_ID, messageId);
             return this;
         }
 
-        public DicomCommand InitCMoveRSP(int msgID, String sopClassUID, int status) {
-            return InitCxxxxRSP(C_MOVE_RSP, msgID, sopClassUID, status);
+        public IDicomCommand InitCEchoRQ(int messageId)
+        {
+            return InitCEchoRQ(messageId, UIDs.Verification);
         }
 
-        public DicomCommand InitCEchoRQ(int msgID, String sopClassUID) {
-            if (sopClassUID.Length == 0) {
+        public DicomCommand InitCEchoRSP(int messageId, String sopClassUID, int status)
+        {
+            return InitCxxxxRSP(DicomCommandMessage.C_ECHO_RSP, messageId, sopClassUID, status);
+        }
+
+        public DicomCommand InitCEchoRSP(int messageId)
+        {
+            return InitCxxxxRSP(DicomCommandMessage.C_ECHO_RSP, messageId, UIDs.Verification, 0);
+        }
+
+        public DicomCommand InitNEventReportRQ(int messageId, String sopClassUID, String sopInstanceUID, int eventTypeID)
+        {
+            if (sopClassUID.Length == 0)
+            {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            PutUS(Tags.CommandField, C_ECHO_RQ);
-            PutUS(Tags.MessageID, msgID);
-            return this;
-        }
-
-        public DicomCommand InitCEchoRQ(int msgID) {
-            return InitCEchoRQ(msgID, UIDs.Verification);
-        }
-
-        public DicomCommand InitCEchoRSP(int msgID, String sopClassUID, int status) {
-            return InitCxxxxRSP(C_ECHO_RSP, msgID, sopClassUID, status);
-        }
-
-        public DicomCommand InitCEchoRSP(int msgID) {
-            return InitCxxxxRSP(C_ECHO_RSP, msgID, UIDs.Verification, 0);
-        }
-
-        private DicomCommand InitNxxxxRQ(int cmd, int msgID, String sopClassUID, String sopInstanceUID) {
-            if (sopClassUID.Length == 0) {
+            if (sopInstanceUID.Length == 0)
+            {
                 throw new ArgumentException();
             }
-            if (sopInstanceUID.Length == 0) {
-                throw new ArgumentException();
-            }
-            PutUI(Tags.RequestedSOPClassUID, sopClassUID);
-            PutUS(Tags.CommandField, cmd);
-            PutUS(Tags.MessageID, msgID);
-            PutUI(Tags.RequestedSOPInstanceUID, sopInstanceUID);
-            return this;
-        }
-
-        private DicomCommand InitNxxxxRSP(int cmd, int msgID, String sopClassUID, String sopInstanceUID, int status) {
-            if (sopClassUID != null) {
-                PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            }
-            PutUS(Tags.CommandField, cmd);
-            PutUS(Tags.MessageIDToBeingRespondedTo, msgID);
-            PutUS(Tags.Status, status);
-            if (sopInstanceUID != null) {
-                PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
-            }
-            return this;
-        }
-
-        public DicomCommand InitNEventReportRQ(int msgID, String sopClassUID, String sopInstanceUID, int eventTypeID) {
-            if (sopClassUID.Length == 0) {
-                throw new ArgumentException();
-            }
-            if (sopInstanceUID.Length == 0) {
-                throw new ArgumentException();
-            }
-            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            PutUS(Tags.CommandField, N_EVENT_REPORT_RQ);
-            PutUS(Tags.MessageID, msgID);
+            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.N_EVENT_REPORT_RQ);
+            PutUS(Tags.MESSAGE_ID, messageId);
             PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
             PutUS(Tags.EventTypeID, eventTypeID);
             return this;
         }
 
-        public DicomCommand InitNEventReportRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_EVENT_REPORT_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNEventReportRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_EVENT_REPORT_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public DicomCommand InitNGetRQ(int msgID, String sopClassUID, String sopInstUID, int[] attrIDs) {
-            InitNxxxxRQ(N_GET_RQ, msgID, sopClassUID, sopInstUID);
-            if (attrIDs != null) {
+        public DicomCommand InitNGetRQ(int messageId, String sopClassUID, String sopInstUID, int[] attrIDs)
+        {
+            InitNxxxxRQ(DicomCommandMessage.N_GET_RQ, messageId, sopClassUID, sopInstUID);
+            if (attrIDs != null)
+            {
                 PutAT(Tags.AttributeIdentifierList, attrIDs);
             }
             return this;
         }
 
-        public DicomCommand InitNGetRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_GET_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNGetRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_GET_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public DicomCommand InitNSetRQ(int msgID, String sopClassUID, String sopInstUID) {
-            return InitNxxxxRQ(N_SET_RQ, msgID, sopClassUID, sopInstUID);
+        public DicomCommand InitNSetRQ(int messageId, String sopClassUID, String sopInstUID)
+        {
+            return InitNxxxxRQ(DicomCommandMessage.N_SET_RQ, messageId, sopClassUID, sopInstUID);
         }
 
-        public DicomCommand InitNSetRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_SET_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNSetRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_SET_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public DicomCommand InitNActionRQ(int msgID, String sopClassUID, String sopInstUID, int actionTypeID) {
-            InitNxxxxRQ(N_ACTION_RQ, msgID, sopClassUID, sopInstUID);
+        public DicomCommand InitNActionRQ(int messageId, String sopClassUID, String sopInstUID, int actionTypeID)
+        {
+            InitNxxxxRQ(DicomCommandMessage.N_ACTION_RQ, messageId, sopClassUID, sopInstUID);
             PutUS(Tags.ActionTypeID, actionTypeID);
             return this;
         }
 
-        public DicomCommand InitNActionRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_ACTION_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNActionRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_ACTION_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public DicomCommand InitNCreateRQ(int msgID, String sopClassUID, String sopInstanceUID) {
-            if (sopClassUID.Length == 0) {
+        public DicomCommand InitNCreateRQ(int messageId, String sopClassUID, String sopInstanceUID)
+        {
+            if (sopClassUID.Length == 0)
+            {
                 throw new ArgumentException();
             }
-            PutUI(Tags.AffectedSOPClassUID, sopClassUID);
-            PutUS(Tags.CommandField, N_CREATE_RQ);
-            PutUS(Tags.MessageID, msgID);
-            if (sopInstanceUID != null) {
+            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            PutUS(Tags.COMMAND_FIELD, (int)DicomCommandMessage.N_CREATE_RQ);
+            PutUS(Tags.MESSAGE_ID, messageId);
+            if (sopInstanceUID != null)
+            {
                 PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
             }
             return this;
         }
 
-        public DicomCommand InitNCreateRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_CREATE_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNCreateRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_CREATE_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public DicomCommand InitNDeleteRQ(int msgID, String sopClassUID, String sopInstUID) {
-            return InitNxxxxRQ(N_DELETE_RQ, msgID, sopClassUID, sopInstUID);
+        public DicomCommand InitNDeleteRQ(int messageId, String sopClassUID, String sopInstUID)
+        {
+            return InitNxxxxRQ(DicomCommandMessage.N_DELETE_RQ, messageId, sopClassUID, sopInstUID);
         }
 
-        public DicomCommand InitNDeleteRSP(int msgID, String sopClassUID, String sopInstUID, int status) {
-            return InitNxxxxRSP(N_DELETE_RSP, msgID, sopClassUID, sopInstUID, status);
+        public DicomCommand InitNDeleteRSP(int messageId, String sopClassUID, String sopInstUID, int status)
+        {
+            return InitNxxxxRSP(DicomCommandMessage.N_DELETE_RSP, messageId, sopClassUID, sopInstUID, status);
         }
 
-        public override DcmElement Put(DcmElement newElem) {
+        public override DcmElement Put(DcmElement newElem)
+        {
             uint tag = newElem.tag();
-            if ((tag & 0xFFFF0000) != 0x00000000) {
+            if ((tag & 0xFFFF0000) != 0x00000000)
+            {
                 throw new ArgumentException(newElem.ToString());
             }
 
-            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LITTLE_ENDIAN) {
+            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LITTLE_ENDIAN)
+            {
                 throw new ArgumentException("The byte order must be LITTLE_ENDIAN: " + newElem.GetByteBuffer());
             }
 
-            try {
-                switch (tag) {
-                    case Tags.AffectedSOPClassUID:
-                    case Tags.RequestedSOPClassUID:
+            try
+            {
+                switch (tag)
+                {
+                    case Tags.AFFECTED_SOP_CLASS_UID:
+                    case Tags.REQUESTED_SOP_CLASS_UID:
                         sopClassUID = newElem.GetString(null);
                         break;
 
-                    case Tags.CommandField:
+                    case Tags.COMMAND_FIELD:
                         cmdField = newElem.Int;
                         break;
 
-                    case Tags.MessageID:
-                    case
-                        Tags.MessageIDToBeingRespondedTo:
-                        msgID = newElem.Int;
+                    case Tags.MESSAGE_ID:
+                    case Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO:
+                        msgId = newElem.Int;
                         break;
 
                     case Tags.DataSetType:
@@ -408,130 +377,198 @@ namespace DicomSharp.Data {
                         break;
                 }
             }
-            catch (DcmValueException ex) {
+            catch (DcmValueException ex)
+            {
                 throw new ArgumentException(newElem.ToString(), ex);
             }
             return base.Put(newElem);
         }
 
-        public virtual int length() {
+        public void Write(IDcmHandler handler)
+        {
+            handler.DcmDecodeParam = DcmDecodeParam.IVR_LE;
+            Write(0x00000000, grLen(), handler);
+        }
+
+        public void Write(Stream os)
+        {
+            Write(new DcmStreamHandler(os));
+        }
+
+        public void Read(Stream ins)
+        {
+            var parser = new DcmParser(ins);
+            parser.DcmHandler = DcmHandler;
+            parser.ParseCommand();
+        }
+
+        #endregion
+
+        private DicomCommand InitCxxxxRQ(DicomCommandMessage cmd, int messageId, String sopClassUID, int priority)
+        {
+            if (priority != (int)DicomCommandMessage.MEDIUM && priority != (int)DicomCommandMessage.HIGH && priority != (int)DicomCommandMessage.LOW)
+            {
+                throw new ArgumentException("priority=" + priority);
+            }
+            if (sopClassUID.Length == 0)
+            {
+                throw new ArgumentException();
+            }
+            PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            PutUS(Tags.COMMAND_FIELD, (int)cmd);
+            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUS(Tags.Priority, priority);
+            return this;
+        }
+
+        private DicomCommand InitCxxxxRSP(DicomCommandMessage cmd, int messageId, String sopClassUID, int status)
+        {
+            if (sopClassUID != null)
+            {
+                PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            }
+            PutUS(Tags.COMMAND_FIELD, (int)cmd);
+            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
+            PutUS(Tags.Status, status);
+            return this;
+        }
+
+        public DicomCommand SetMoveOriginator(String aet, int messageId)
+        {
+            if (aet.Length == 0)
+            {
+                throw new ArgumentException();
+            }
+            PutAE(Tags.MoveOriginatorAET, aet);
+            PutUS(Tags.MoveOriginatorMessageID, messageId);
+            return this;
+        }
+
+        private DicomCommand InitNxxxxRQ(DicomCommandMessage cmd, int messageId, String sopClassUID, String sopInstanceUID)
+        {
+            if (sopClassUID.Length == 0)
+            {
+                throw new ArgumentException();
+            }
+            if (sopInstanceUID.Length == 0)
+            {
+                throw new ArgumentException();
+            }
+            PutUI(Tags.REQUESTED_SOP_CLASS_UID, sopClassUID);
+            PutUS(Tags.COMMAND_FIELD, (int)cmd);
+            PutUS(Tags.MESSAGE_ID, messageId);
+            PutUI(Tags.RequestedSOPInstanceUID, sopInstanceUID);
+            return this;
+        }
+
+        private DicomCommand InitNxxxxRSP(DicomCommandMessage cmd, int messageId, String sopClassUID, String sopInstanceUID, int status)
+        {
+            if (sopClassUID != null)
+            {
+                PutUI(Tags.AFFECTED_SOP_CLASS_UID, sopClassUID);
+            }
+            PutUS(Tags.COMMAND_FIELD, (int)cmd);
+            PutUS(Tags.MESSAGE_ID_TO_BEING_RESPONDED_TO, messageId);
+            PutUS(Tags.Status, status);
+            if (sopInstanceUID != null)
+            {
+                PutUI(Tags.AffectedSOPInstanceUID, sopInstanceUID);
+            }
+            return this;
+        }
+
+        public virtual int length()
+        {
             return grLen() + 12;
         }
 
-        private int grLen() {
+        private int grLen()
+        {
             int len = 0;
-            for (int i = 0, n = m_list.Count; i < n; ++i) {
-                len += ((DcmElement) m_list[i]).length() + 8;
+            for (int i = 0, n = m_list.Count; i < n; ++i)
+            {
+                len += m_list[i].Length() + 8;
             }
 
             return len;
         }
 
-        public void Write(DcmHandlerI handler) {
-            handler.DcmDecodeParam = DcmDecodeParam.IVR_LE;
-            Write(0x00000000, grLen(), handler);
+        public override String ToString()
+        {
+            return ToStringBuffer(new StringBuilder()).ToString();
         }
 
-        public void Write(Stream os) {
-            Write(new DcmStreamHandler(os));
-        }
-
-        public void Read(Stream ins) {
-            var Parser = new DcmParser(ins);
-            Parser.DcmHandler = DcmHandler;
-            Parser.ParseCommand();
-        }
-
-        public override String ToString() {
-            return toStringBuffer(new StringBuilder()).ToString();
-        }
-
-        private StringBuilder toStringBuffer(StringBuilder sb) {
-            sb.Append(msgID).Append(':').Append(cmdFieldAsString());
-            if (dataSetType != NO_DATASET) {
+        private StringBuilder ToStringBuffer(StringBuilder sb)
+        {
+            sb.Append(msgId).Append(':').Append(CommandFieldAsString());
+            if (dataSetType != (int)DicomCommandMessage.NO_DATASET)
+            {
                 sb.Append(" with Dataset");
             }
-            if (sopClassUID != null) {
+            if (sopClassUID != null)
+            {
                 sb.Append("\n\tclass:\t").Append(UIDs.ToString(sopClassUID));
             }
-            if (sopInstUID != null) {
+            if (sopInstUID != null)
+            {
                 sb.Append("\n\tinstance:\t").Append(sopInstUID);
             }
-            if (status != - 1) {
+            if (status != -1)
+            {
                 sb.Append("\n\tstatus:\t").Append(Convert.ToString(status, 16));
             }
             return sb;
         }
 
-        private String cmdFieldAsString() {
-            switch (cmdField) {
-                case C_STORE_RQ:
+        private String CommandFieldAsString()
+        {
+            switch (cmdField)
+            {
+                case (int)DicomCommandMessage.C_STORE_RQ:
                     return "C_STORE_RQ";
-
-                case C_GET_RQ:
+                case (int)DicomCommandMessage.C_GET_RQ:
                     return "C_GET_RQ";
-
-                case C_FIND_RQ:
+                case (int)DicomCommandMessage.C_FIND_RQ:
                     return "C_FIND_RQ";
-
-                case C_MOVE_RQ:
+                case (int)DicomCommandMessage.C_MOVE_RQ:
                     return "C_MOVE_RQ";
-
-                case C_ECHO_RQ:
+                case (int)DicomCommandMessage.C_ECHO_RQ:
                     return "C_ECHO_RQ";
-
-                case N_EVENT_REPORT_RQ:
+                case (int)DicomCommandMessage.N_EVENT_REPORT_RQ:
                     return "N_EVENT_REPORT_RQ";
-
-                case N_GET_RQ:
+                case (int)DicomCommandMessage.N_GET_RQ:
                     return "N_GET_RQ";
-
-                case N_SET_RQ:
+                case (int)DicomCommandMessage.N_SET_RQ:
                     return "N_SET_RQ";
-
-                case N_ACTION_RQ:
+                case (int)DicomCommandMessage.N_ACTION_RQ:
                     return "N_ACTION_RQ";
-
-                case N_CREATE_RQ:
+                case (int)DicomCommandMessage.N_CREATE_RQ:
                     return "N_CREATE_RQ";
-
-                case N_DELETE_RQ:
+                case (int)DicomCommandMessage.N_DELETE_RQ:
                     return "N_DELETE_RQ";
-
-                case C_CANCEL_RQ:
+                case (int)DicomCommandMessage.C_CANCEL_RQ:
                     return "C_CANCEL_RQ";
-
-                case C_STORE_RSP:
+                case (int)DicomCommandMessage.C_STORE_RSP:
                     return "C_STORE_RSP";
-
-                case C_GET_RSP:
+                case (int)DicomCommandMessage.C_GET_RSP:
                     return "C_GET_RSP";
-
-                case C_FIND_RSP:
+                case (int)DicomCommandMessage.C_FIND_RSP:
                     return "C_FIND_RSP";
-
-                case C_MOVE_RSP:
+                case (int)DicomCommandMessage.C_MOVE_RSP:
                     return "C_MOVE_RSP";
-
-                case C_ECHO_RSP:
+                case (int)DicomCommandMessage.C_ECHO_RSP:
                     return "C_ECHO_RSP";
-
-                case N_EVENT_REPORT_RSP:
+                case (int)DicomCommandMessage.N_EVENT_REPORT_RSP:
                     return "N_EVENT_REPORT_RSP";
-
-                case N_GET_RSP:
+                case (int)DicomCommandMessage.N_GET_RSP:
                     return "N_GET_RSP";
-
-                case N_SET_RSP:
+                case (int)DicomCommandMessage.N_SET_RSP:
                     return "N_SET_RSP";
-
-                case N_ACTION_RSP:
+                case (int)DicomCommandMessage.N_ACTION_RSP:
                     return "N_ACTION_RSP";
-
-                case N_CREATE_RSP:
+                case (int)DicomCommandMessage.N_CREATE_RSP:
                     return "N_CREATE_RSP";
-
-                case N_DELETE_RSP:
+                case (int)DicomCommandMessage.N_DELETE_RSP:
                     return "N_DELETE_RSP";
             }
             return "cmd:" + Convert.ToString(cmdField, 16);

@@ -143,11 +143,11 @@ namespace DicomSharp.Net {
             return name + "[" + StateAsString + "]";
         }
 
-        public void AddAssociationListener(AssociationListenerI l) {
+        public void AddAssociationListener(IAssociationListener l) {
             fsm.AddAssociationListener(l);
         }
 
-        public void RemoveAssociationListener(AssociationListenerI l) {
+        public void RemoveAssociationListener(IAssociationListener l) {
             fsm.RemoveAssociationListener(l);
         }
 
