@@ -30,76 +30,86 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
-namespace DicomSharp.Utility {
-    public class Tokenizer {
-        private readonly ArrayList elements;
-        private readonly string source;
-        private string delimiters = ",;\\ \t\n\r";
+namespace DicomSharp.Utility
+{
+    public class Tokenizer
+    {
+        private readonly IList<string> _elements = new List<string>();
+        private readonly string _source;
+        private string _delimiters = ",;\\ \t\n\r";
 
-        public Tokenizer(string source) {
-            elements = new ArrayList();
-            this.source = source;
+        public Tokenizer(string source)
+        {
+            _source = source;
             ReTokenize();
         }
 
-        public Tokenizer(string source, string delimiters) {
-            elements = new ArrayList();
-            this.delimiters = delimiters;
-            this.source = source;
+        public Tokenizer(string source, string delimiters)
+        {
+            _delimiters = delimiters;
+            _source = source;
             ReTokenize();
         }
 
-        public int Count {
-            get { return (elements.Count); }
+        public int Count
+        {
+            get { return (_elements.Count); }
         }
 
-        public bool HasMoreTokens() {
-            return (elements.Count > 0);
+        public bool HasMoreTokens()
+        {
+            return (_elements.Count > 0);
         }
 
-        public string NextToken() {
-            string result;
-            if ((source == "")
-                || (elements.Count == 0)) {
+        public string NextToken()
+        {
+            if ((_source == string.Empty) || (_elements.Count == 0))
+            {
                 throw new Exception();
             }
-            else {
-                result = (string) elements[0];
-                elements.RemoveAt(0);
-                return result;
-            }
+            string result = _elements[0];
+            _elements.RemoveAt(0);
+            return result;
         }
 
-        public string NextToken(string delimiters) {
-            this.delimiters = delimiters;
+        public string NextToken(string delimiters)
+        {
+            _delimiters = delimiters;
             return NextToken();
         }
 
-        public void ReTokenize() {
-            int prev_index = 0;
+        public void ReTokenize()
+        {
+            int prevIndex = 0;
 
-            for (int index = 0; index < source.Length; index++) {
-                if (delimiters.IndexOf(source[index]) >= 0) {
-                    elements.Add(source.Substring(prev_index, index - prev_index));
-                    elements.Add(new string(source[index], 1));
+            for (int index = 0; index < _source.Length; index++)
+            {
+                if (_delimiters.IndexOf(_source[index]) >= 0)
+                {
+                    _elements.Add(_source.Substring(prevIndex, index - prevIndex));
+                    _elements.Add(new string(_source[index], 1));
 
-                    prev_index = index + 1;
+                    prevIndex = index + 1;
                 }
             }
 
-            if (prev_index != source.Length) {
-                elements.Add(source.Substring(prev_index, source.Length - prev_index));
+            if (prevIndex != _source.Length)
+            {
+                _elements.Add(_source.Substring(prevIndex, _source.Length - prevIndex));
             }
 
             RemoveEmptyStrings();
         }
 
-        private void RemoveEmptyStrings() {
-            for (int index = 0; index < elements.Count; index++) {
-                if ((string) elements[index] == "") {
-                    elements.RemoveAt(index);
+        private void RemoveEmptyStrings()
+        {
+            for (int index = 0; index < _elements.Count; index++)
+            {
+                if (_elements[index] == "")
+                {
+                    _elements.RemoveAt(index);
                     index--;
                 }
             }

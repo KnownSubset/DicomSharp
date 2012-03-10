@@ -76,12 +76,12 @@ namespace DicomSharp.Net {
             return new AAbort(source, reason);
         }
 
-        public virtual PresContext NewPresContext(int pcid, String asuid, String[] tsuids) {
-            return new PresContext(0x020, pcid, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids));
+        public virtual PresentationContext NewPresContext(int pcid, String asuid, String[] tsuids) {
+            return new PresentationContext(0x020, pcid, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids));
         }
 
-        public virtual PresContext NewPresContext(int pcid, int result, String tsuid) {
-            return new PresContext(0x021, pcid, result, null, new[] {StringUtils.CheckUID(tsuid)});
+        public virtual PresentationContext NewPresContext(int pcid, int result, String tsuid) {
+            return new PresentationContext(0x021, pcid, result, null, new[] {StringUtils.CheckUID(tsuid)});
         }
 
         public virtual AsyncOpsWindow NewAsyncOpsWindow(int maxOpsInvoked, int maxOpsPerfomed) {

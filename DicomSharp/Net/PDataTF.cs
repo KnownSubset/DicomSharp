@@ -105,11 +105,11 @@ namespace DicomSharp.Net {
         #endregion
 
         public static PDataTF Parse(UnparsedPdu raw) {
-            if (raw.buffer() == null) {
+            if (raw.Buffer() == null) {
                 throw new PduException("Pdu Length exceeds supported maximum " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.REASON_NOT_SPECIFIED));
             }
-            return new PDataTF(raw.length(), raw.buffer());
+            return new PDataTF(raw.Length(), raw.Buffer());
         }
 
         public void Clear() {

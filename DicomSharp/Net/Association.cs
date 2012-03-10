@@ -265,7 +265,7 @@ namespace DicomSharp.Net {
             return fsm.GetAcceptedTransferSyntaxUID(pcid);
         }
 
-        public PresContext GetAcceptedPresContext(String asuid, String tsuid) {
+        public PresentationContext GetAcceptedPresContext(String asuid, String tsuid) {
             return fsm.GetAcceptedPresContext(asuid, tsuid);
         }
 

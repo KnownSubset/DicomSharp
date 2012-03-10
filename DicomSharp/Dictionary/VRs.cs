@@ -282,9 +282,9 @@ namespace DicomSharp.Dictionary {
                 case Tags.ImplementationVersionName:
                     return SH;
 
-                case Tags.MediaStorageSOPClassUID:
+                case Tags.MediaStorageSOPClassUniqueId:
                 case Tags.MediaStorageSOPInstanceUID:
-                case Tags.TransferSyntaxUID:
+                case Tags.TransferSyntaxUniqueId:
                 case Tags.ImplementationClassUID:
                 case Tags.PrivateInformationCreatorUID:
                     return UI;
@@ -1912,7 +1912,7 @@ namespace DicomSharp.Dictionary {
                 case Tags.TransactionUID:
                 case Tags.CreatorVersionUID:
                 case Tags.StudyInstanceUniqueId:
-                case Tags.SeriesInstanceUID:
+                case Tags.SeriesInstanceUniqueId:
                 case Tags.FrameOfReferenceUID:
                 case Tags.SynchronizationFrameOfReferenceUID:
                 case Tags.ConcatenationUID:

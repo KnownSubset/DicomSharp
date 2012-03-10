@@ -108,7 +108,7 @@ namespace DicomSharp.Data {
         }
 
         public override String GetString(int index, Encoding encoding) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             try {
@@ -120,7 +120,7 @@ namespace DicomSharp.Data {
         }
 
         public override String[] GetStrings(Encoding encoding) {
-            var a = new String[vm()];
+            var a = new String[VM()];
             for (int i = 0; i < a.Length; ++i) {
                 a[i] = GetString(i, encoding);
             }
@@ -128,7 +128,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual ByteBuffer GetByteBuffer(int index) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             return m_data.Rewind();
@@ -201,7 +201,7 @@ namespace DicomSharp.Data {
             int totLen = - 1;
             for (int i = 0; i < values.Length; ++i) {
                 bbs[i] = ToByteBuffer(values[i], trim, Check, encoding);
-                totLen += bbs[i].length() + 1;
+                totLen += (int)(bbs[i].Length + 1);
             }
             return ToByteBuffer(bbs, totLen);
         }
@@ -540,7 +540,7 @@ namespace DicomSharp.Data {
 
             internal AE(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4145;
             }
         }
@@ -561,7 +561,7 @@ namespace DicomSharp.Data {
 
             internal AS(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4153;
             }
 
@@ -616,7 +616,7 @@ namespace DicomSharp.Data {
 
             internal CS(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4353;
             }
 
@@ -654,7 +654,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         // TODO: handle all format
                         a[i] = Parse(GetString(i, null));
@@ -677,7 +677,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4441;
             }
 
@@ -708,7 +708,7 @@ namespace DicomSharp.Data {
 
             public override float[] Floats {
                 get {
-                    var retval = new float[vm()];
+                    var retval = new float[VM()];
                     for (int i = 0; i < retval.Length; ++i) {
                         retval[i] = GetFloat(i);
                     }
@@ -716,7 +716,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4453;
             }
 
@@ -761,7 +761,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         // TODO: more formats
                         a[i] = Parse(GetString(i, null));
@@ -786,7 +786,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4454;
             }
 
@@ -814,7 +814,7 @@ namespace DicomSharp.Data {
                 : base(tag, data, trim) {}
 
             public bool IsDataRange() {
-                for (int i = 0, n = m_data.length(); i < n; ++i) {
+                for (int i = 0, n = (int) m_data.Length; i < n; ++i) {
                     if (m_data.ReadByte(i) == HYPHEN) {
                         return true;
                     }
@@ -841,7 +841,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var retval = new int[vm()];
+                    var retval = new int[VM()];
                     for (int i = 0; i < retval.Length; ++i) {
                         retval[i] = GetInt(i);
                     }
@@ -849,7 +849,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4953;
             }
 
@@ -893,7 +893,7 @@ namespace DicomSharp.Data {
 
             internal LO(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4C4F;
             }
         }
@@ -914,7 +914,7 @@ namespace DicomSharp.Data {
 
             internal LT(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4C54;
             }
         }
@@ -936,7 +936,7 @@ namespace DicomSharp.Data {
                                         Encoding encoding)
                 : base(tag, values, maxLen, IsText, TRAIL_TRIM, chk, encoding) {}
 
-            public override int vm() {
+            public override int VM() {
                 if (delimPos != null) {
                     return delimPos.Length - 1;
                 }
@@ -962,10 +962,10 @@ namespace DicomSharp.Data {
             }
 
             public virtual ByteBuffer GetByteBuffer(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
-                return vm() == 1
+                return VM() == 1
                            ? m_data.Rewind()
                            : ByteBuffer.Wrap(m_data.ToArray(), delimPos[index] + 1,
                                              delimPos[index + 1] - delimPos[index] - 1);
@@ -988,7 +988,7 @@ namespace DicomSharp.Data {
 
             internal PN(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x504E;
             }
 
@@ -1013,7 +1013,7 @@ namespace DicomSharp.Data {
 
             internal SH(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5348;
             }
         }
@@ -1034,7 +1034,7 @@ namespace DicomSharp.Data {
 
             internal ST(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5354;
             }
         }
@@ -1059,7 +1059,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = Parse(GetString(i, null));
                     }
@@ -1083,7 +1083,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x544D;
             }
 
@@ -1121,7 +1121,7 @@ namespace DicomSharp.Data {
 
             internal UI(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5549;
             }
 
@@ -1160,7 +1160,7 @@ namespace DicomSharp.Data {
 
             internal UT(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5554;
             }
         }

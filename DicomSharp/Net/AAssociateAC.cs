@@ -48,7 +48,7 @@ namespace DicomSharp.Net {
         public int countAcceptedPresContext() {
             int accepted = 0;
             for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
-                if (((PresContext) enu.Current).result() == 0) {
+                if (((PresentationContext) enu.Current).result() == 0) {
                     ++accepted;
                 }
             }
@@ -68,7 +68,7 @@ namespace DicomSharp.Net {
             return "AAssociateAC";
         }
 
-        protected override void Append(PresContext pc, StringBuilder sb) {
+        protected override void Append(PresentationContext pc, StringBuilder sb) {
             sb.Append("\n\tpc-").Append(pc.pcid()).Append(":\t").Append(pc.ResultAsString()).Append("\n\t\tts=").Append(
                 UIDs.GetName(pc.TransferSyntaxUID));
         }

@@ -141,7 +141,7 @@ namespace DicomSharp.Net {
             bb.Write(appCtxUID);
 
             for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
-                ((PresContext) enu.Current).WriteTo(bb);
+                ((PresentationContext) enu.Current).WriteTo(bb);
             }
             WriteUserInfo(bb);
             bb.WriteTo(Type(), outs);
@@ -154,11 +154,11 @@ namespace DicomSharp.Net {
         #endregion
 
         protected virtual AAssociateRQAC Init(UnparsedPdu raw) {
-            if (raw.buffer() == null) {
+            if (raw.Buffer() == null) {
                 throw new PduException("Pdu Length exceeds supported maximum " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.REASON_NOT_SPECIFIED));
             }
-            ByteBuffer bb = ByteBuffer.Wrap(raw.buffer(), 6, raw.length(), ByteOrder.BIG_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(raw.Buffer(), 6, raw.Length(), ByteOrder.BigEndian);
             try {
                 version = bb.ReadInt16(); // Protocol version
                 bb.Skip(2); // Skip 2 bytes
@@ -185,7 +185,7 @@ namespace DicomSharp.Net {
                                                        new AAbort(AAbort.SERVICE_PROVIDER,
                                                                   AAbort.UNEXPECTED_PDU_PARAMETER));
                             }
-                            AddPresContext(new PresContext(itemType, bb, itemLen));
+                            AddPresContext(new PresentationContext(itemType, bb, itemLen));
                             break;
 
                         case 0x50:
@@ -220,19 +220,19 @@ namespace DicomSharp.Net {
             return retval;
         }
 
-        public void AddPresContext(PresContext presCtx) {
-            if ((presCtx).type() != PcType()) {
-                throw new ArgumentException("wrong type of " + presCtx);
+        public void AddPresContext(PresentationContext presentationCtx) {
+            if ((presentationCtx).type() != PcType()) {
+                throw new ArgumentException("wrong type of " + presentationCtx);
             }
-            presentationContexts.Add(presCtx.pcid(), presCtx);
+            presentationContexts.Add(presentationCtx.pcid(), presentationCtx);
         }
 
         public void RemovePresentationContext(int presentationContextId) {
             presentationContexts.Remove(presentationContextId);
         }
 
-        public PresContext GetPresentationContext(int pcid) {
-            return (PresContext) presentationContexts[pcid];
+        public PresentationContext GetPresentationContext(int pcid) {
+            return (PresentationContext) presentationContexts[pcid];
         }
 
         public ICollection ListPresContext() {
@@ -399,7 +399,7 @@ namespace DicomSharp.Net {
             }
             if (verbose) {
                 for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
-                    Append((PresContext) enu.Current, sb);
+                    Append((PresentationContext) enu.Current, sb);
                 }
                 for (IEnumerator enu = roleSels.Values.GetEnumerator(); enu.MoveNext();) {
                     sb.Append("\n\t").Append(enu.Current);
@@ -415,7 +415,7 @@ namespace DicomSharp.Net {
             return sb;
         }
 
-        protected abstract void Append(PresContext pc, StringBuilder sb);
+        protected abstract void Append(PresentationContext pc, StringBuilder sb);
 
         protected abstract void AppendPresCtxSummary(StringBuilder sb);
 
@@ -424,7 +424,7 @@ namespace DicomSharp.Net {
         private sealed class MyByteBuffer : ByteBuffer {
             private readonly AAssociateRQAC assoc;
 
-            internal MyByteBuffer(AAssociateRQAC assoc) : base(4096, ByteOrder.BIG_ENDIAN) {
+            internal MyByteBuffer(AAssociateRQAC assoc) : base(4096, ByteOrder.BigEndian) {
                 Write((Byte) 0);
                 Write((Byte) 0);
                 Write((Byte) 0);

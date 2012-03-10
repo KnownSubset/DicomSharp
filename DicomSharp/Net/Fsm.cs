@@ -218,22 +218,22 @@ namespace DicomSharp.Net {
             if (ac == null) {
                 throw new SystemException(state.ToString());
             }
-            PresContext pc = ac.GetPresentationContext(pcid);
-            if (pc == null || pc.result() != PresContext.ACCEPTANCE) {
+            PresentationContext pc = ac.GetPresentationContext(pcid);
+            if (pc == null || pc.result() != PresentationContext.ACCEPTANCE) {
                 return null;
             }
             return pc.TransferSyntaxUID;
         }
 
-        internal PresContext GetAcceptedPresContext(String asuid, String tsuid) {
+        internal PresentationContext GetAcceptedPresContext(String asuid, String tsuid) {
             if (ac == null) {
                 throw new SystemException(state.ToString());
             }
             for (IEnumerator enu = rq.ListPresContext().GetEnumerator(); enu.MoveNext();) {
-                var rqpc = (PresContext) enu.Current;
+                var rqpc = (PresentationContext) enu.Current;
                 if (asuid.Equals(rqpc.AbstractSyntaxUID)) {
-                    PresContext acpc = ac.GetPresentationContext(rqpc.pcid());
-                    if (acpc != null && acpc.result() == PresContext.ACCEPTANCE && tsuid.Equals(acpc.TransferSyntaxUID)) {
+                    PresentationContext acpc = ac.GetPresentationContext(rqpc.pcid());
+                    if (acpc != null && acpc.result() == PresentationContext.ACCEPTANCE && tsuid.Equals(acpc.TransferSyntaxUID)) {
                         return acpc;
                     }
                 }
@@ -247,10 +247,10 @@ namespace DicomSharp.Net {
             }
             var list = new ArrayList();
             for (IEnumerator enu = rq.ListPresContext().GetEnumerator(); enu.MoveNext();) {
-                var rqpc = (PresContext) enu.Current;
+                var rqpc = (PresentationContext) enu.Current;
                 if (asuid.Equals(rqpc.AbstractSyntaxUID)) {
-                    PresContext acpc = ac.GetPresentationContext(rqpc.pcid());
-                    if (acpc != null && acpc.result() == PresContext.ACCEPTANCE) {
+                    PresentationContext acpc = ac.GetPresentationContext(rqpc.pcid());
+                    if (acpc != null && acpc.result() == PresentationContext.ACCEPTANCE) {
                         list.Add(acpc);
                     }
                 }

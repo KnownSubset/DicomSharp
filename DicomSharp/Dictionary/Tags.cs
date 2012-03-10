@@ -229,7 +229,7 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0002,0002) VR=UI Media Storage SOP Class UID 
         /// </summary>
-        public const uint MediaStorageSOPClassUID = 0x00020002;
+        public const uint MediaStorageSOPClassUniqueId = 0x00020002;
 
         /// <summary>(0002,0003) VR=UI Media Storage SOP Instance UID 
         /// </summary>
@@ -237,7 +237,7 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0002,0010) VR=UI Transfer Syntax UID 
         /// </summary>
-        public const uint TransferSyntaxUID = 0x00020010;
+        public const uint TransferSyntaxUniqueId = 0x00020010;
 
         /// <summary>(0002,0012) VR=UI Implementation Class UID 
         /// </summary>
@@ -2801,7 +2801,7 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0020,000E) VR=UI Series Instance UID 
         /// </summary>
-        public const uint SeriesInstanceUID = 0x0020000E;
+        public const uint SeriesInstanceUniqueId = 0x0020000E;
 
         /// <summary>(0020,0010) VR=SH Study ID 
         /// </summary>

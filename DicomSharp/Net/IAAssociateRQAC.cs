@@ -12,9 +12,9 @@ namespace DicomSharp.Net {
         int MaxPduLength { get; set; }
         AsyncOpsWindow AsyncOpsWindow { get; set; }
         int NextPCID();
-        void AddPresContext(PresContext presCtx);
+        void AddPresContext(PresentationContext presentationCtx);
         void RemovePresContext(int pcid);
-        PresContext GetPresContext(int pcid);
+        PresentationContext GetPresContext(int pcid);
         ICollection ListPresContext();
         void ClearPresContext();
         void RemoveRoleSelection(String uid);

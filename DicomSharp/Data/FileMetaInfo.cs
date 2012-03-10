@@ -79,9 +79,9 @@ namespace DicomSharp.Data {
             var generatedVar = new byte[VERSION.Length];
             VERSION.CopyTo(generatedVar, 0);
             PutOB(Tags.FileMetaInformationVersion, generatedVar);
-            PutUI(Tags.MediaStorageSOPClassUID, sopClassUniqueId);
+            PutUI(Tags.MediaStorageSOPClassUniqueId, sopClassUniqueId);
             PutUI(Tags.MediaStorageSOPInstanceUID, sopInstanceUniqueId);
-            PutUI(Tags.TransferSyntaxUID, transferSyntaxUniqueId);
+            PutUI(Tags.TransferSyntaxUniqueId, transferSyntaxUniqueId);
             PutUI(Tags.ImplementationClassUID, implementationClassUniqueId);
             if (implementationVersionName != null) {
                 PutSH(Tags.ImplementationVersionName, implementationVersionName);
@@ -97,7 +97,7 @@ namespace DicomSharp.Data {
 
             try {
                 switch (tag) {
-                    case Tags.MediaStorageSOPClassUID:
+                    case Tags.MediaStorageSOPClassUniqueId:
                         _sopClassUniqueId = newElem.GetString(null);
                         break;
 
@@ -105,7 +105,7 @@ namespace DicomSharp.Data {
                         _sopInstanceUniqueId = newElem.GetString(null);
                         break;
 
-                    case Tags.TransferSyntaxUID:
+                    case Tags.TransferSyntaxUniqueId:
                         _tsUniqueId = newElem.GetString(null);
                         break;
 
@@ -132,7 +132,7 @@ namespace DicomSharp.Data {
             int length = 0;
             for (int i = 0, n = Size; i < n; ++i) {
                 var dcmElement = _dcmElements[i];
-                length += dcmElement.Length() + (VRs.IsLengthField16Bit(dcmElement.vr()) ? 8 : 12);
+                length += dcmElement.Length() + (VRs.IsLengthField16Bit(dcmElement.VR()) ? 8 : 12);
             }
             return length;
         }

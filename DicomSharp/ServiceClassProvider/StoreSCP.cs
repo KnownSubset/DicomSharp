@@ -147,7 +147,7 @@ namespace DicomSharp.ServiceClassProvider {
                 if (studyInstanceUniqueId == null) {
                     throw new DcmServiceException(MISSING_UID, "Missing Study Instance UID");
                 }
-                if (ds.vm(Tags.SeriesInstanceUID) <= 0) {
+                if (ds.Vm(Tags.SeriesInstanceUniqueId) <= 0) {
                     throw new DcmServiceException(MISSING_UID, "Missing Series Instance UID");
                 }
                 String instanceUniqueId = ds.GetString(Tags.SOPInstanceUniqueId);

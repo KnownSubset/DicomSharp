@@ -49,11 +49,11 @@ namespace DicomSharp.Data {
             this.parent = parent;
         }
 
-        public override int vr() {
+        public override int VR() {
             return VRs.SQ;
         }
 
-        public override int vm() {
+        public override int VM() {
             return m_list.Count;
         }
 
@@ -62,7 +62,7 @@ namespace DicomSharp.Data {
         }
 
         public override DataSet GetItem(int index) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             return (DataSet) m_list[index];
@@ -80,7 +80,7 @@ namespace DicomSharp.Data {
 
         public virtual int CalcLength(DcmEncodeParam param) {
             totlen = param.undefSeqLen ? 8 : 0;
-            for (int i = 0, n = vm(); i < n; ++i) {
+            for (int i = 0, n = VM(); i < n; ++i) {
                 totlen += GetItem(i).CalcLength(param) + (param.undefItemLen ? 16 : 8);
             }
             return totlen;
@@ -94,7 +94,7 @@ namespace DicomSharp.Data {
             var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
             sb.Append(",SQ");
             if (!IsEmpty()) {
-                for (int i = 0, n = vm(); i < n; ++i) {
+                for (int i = 0, n = VM(); i < n; ++i) {
                     sb.Append("\n\tItem-").Append(i + 1).Append(GetItem(i));
                 }
             }

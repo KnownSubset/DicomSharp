@@ -152,16 +152,16 @@ namespace DicomSharp.Data {
             tagValue = tag;
         }
 
-        public virtual int vr() {
+        public virtual int VR() {
             return VRs.NONE;
         }
 
-        public virtual int vm() {
+        public virtual int VM() {
             return 0;
         }
 
         public virtual bool IsEmpty() {
-            return vm() == 0;
+            return VM() == 0;
         }
 
         public virtual int Length() {
@@ -169,10 +169,10 @@ namespace DicomSharp.Data {
         }
 
         public override String ToString() {
-            int vr1 = vr();
+            int vr1 = VR();
             ByteBuffer bb = GetByteBuffer();
             String val = StringUtils.PromptValue(vr1, bb, 64);
-            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + Length() +
+            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(VR()) + ",*" + VM() + ",#" + Length() +
                          ",[" + val + "]";
             return tmp;
         }
@@ -266,9 +266,9 @@ namespace DicomSharp.Data {
         }
 
         internal static ByteOrder Swap(ByteOrder from) {
-            return from == ByteOrder.LITTLE_ENDIAN
-                       ? ByteOrder.BIG_ENDIAN
-                       : ByteOrder.LITTLE_ENDIAN;
+            return from == ByteOrder.LittleEndian
+                       ? ByteOrder.BigEndian
+                       : ByteOrder.LittleEndian;
         }
 
         internal static void SwapWords(ByteBuffer bb) {

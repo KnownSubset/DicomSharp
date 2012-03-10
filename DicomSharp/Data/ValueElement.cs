@@ -62,7 +62,7 @@ namespace DicomSharp.Data {
         /// Create a element for Short value
         /// </summary>
         private static ByteBuffer SetShort(int value) {
-            return ByteBuffer.Wrap(new byte[2], ByteOrder.LITTLE_ENDIAN).Write((short) value);
+            return ByteBuffer.Wrap(new byte[2], ByteOrder.LittleEndian).Write((short) value);
         }
 
         private static ByteBuffer SetShorts(int[] value) {
@@ -74,7 +74,7 @@ namespace DicomSharp.Data {
                 return SetShort(value[0]);
             }
 
-            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 1], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 1], ByteOrder.LittleEndian);
             for (int i = 0; i < value.Length; ++i) {
                 bb.Write((short) value[i]);
             }
@@ -85,7 +85,7 @@ namespace DicomSharp.Data {
         /// Create a element for Int value
         /// </summary>
         private static ByteBuffer SetInt(int value) {
-            return ByteBuffer.Wrap(new byte[4], ByteOrder.LITTLE_ENDIAN).Write(value);
+            return ByteBuffer.Wrap(new byte[4], ByteOrder.LittleEndian).Write(value);
         }
 
         private static ByteBuffer SetInts(int[] value) {
@@ -97,7 +97,7 @@ namespace DicomSharp.Data {
                 return SetInt(value[0]);
             }
 
-            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LittleEndian);
             for (int i = 0; i < value.Length; ++i) {
                 bb.Write(value[i]);
             }
@@ -108,7 +108,7 @@ namespace DicomSharp.Data {
         /// Create a element for Tag value
         /// </summary>
         private static ByteBuffer SetTag(int value) {
-            return ByteBuffer.Wrap(new byte[4], ByteOrder.LITTLE_ENDIAN).Write((short) (value >> 8)).Write((short) value);
+            return ByteBuffer.Wrap(new byte[4], ByteOrder.LittleEndian).Write((short) (value >> 8)).Write((short) value);
         }
 
         private static ByteBuffer SetTags(int[] value) {
@@ -120,7 +120,7 @@ namespace DicomSharp.Data {
                 return SetTag(value[0]);
             }
 
-            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LittleEndian);
             for (int i = 0; i < value.Length; ++i) {
                 bb.Write((short) (value[i] >> 16)).Write((short) value[i]);
             }
@@ -131,7 +131,7 @@ namespace DicomSharp.Data {
         /// Create a element for Float value
         /// </summary>
         private static ByteBuffer SetFloat(float value) {
-            return ByteBuffer.Wrap(new byte[4], ByteOrder.LITTLE_ENDIAN).Write(value);
+            return ByteBuffer.Wrap(new byte[4], ByteOrder.LittleEndian).Write(value);
         }
 
         private static ByteBuffer SetFloats(float[] value) {
@@ -143,7 +143,7 @@ namespace DicomSharp.Data {
                 return SetFloat(value[0]);
             }
 
-            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 2], ByteOrder.LittleEndian);
             for (int i = 0; i < value.Length; ++i) {
                 bb.Write(value[i]);
             }
@@ -154,7 +154,7 @@ namespace DicomSharp.Data {
         /// Create a element for Double value
         /// </summary>
         private static ByteBuffer SetDouble(Double value) {
-            return ByteBuffer.Wrap(new byte[8], ByteOrder.LITTLE_ENDIAN).Write(value);
+            return ByteBuffer.Wrap(new byte[8], ByteOrder.LittleEndian).Write(value);
         }
 
         private static ByteBuffer SetDoubles(Double[] value) {
@@ -166,7 +166,7 @@ namespace DicomSharp.Data {
                 return SetDouble(value[0]);
             }
 
-            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 3], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer bb = ByteBuffer.Wrap(new byte[value.Length << 3], ByteOrder.LittleEndian);
             for (int i = 0; i < value.Length; ++i) {
                 bb.Write(value[i]);
             }
@@ -174,7 +174,7 @@ namespace DicomSharp.Data {
         }
 
         public override int Length() {
-            return ((m_data.length() + 1) & (~ 1));
+            return ((int)m_data.Length + 1) & (~ 1);
         }
 
 
@@ -185,19 +185,19 @@ namespace DicomSharp.Data {
             return m_data.Rewind();
         }
 
-        public override int vm() {
-            return m_data.length() <= 0 ? 0 : m_data.length();
+        public override int VM() {
+            return (int) (m_data.Length <= 0 ? 0 : m_data.Length);
         }
 
         public override String GetString(int index, Encoding encoding) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             return GetInt(index).ToString();
         }
 
         public override String[] GetStrings(Encoding encoding) {
-            var a = new String[vm()];
+            var a = new String[VM()];
             for (int i = 0; i < a.Length; ++i) {
                 a[i] = GetInt(i).ToString();
             }
@@ -209,8 +209,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateSS(uint tag, ByteBuffer data) {
-            if ((data.length() & 1) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " SS #" + data.length());
+            if (((int)data.Length & 1) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " SS #" + (int)data.Length);
                 return new SS(tag, EMPTY_VALUE);
             }
             return new SS(tag, data);
@@ -229,8 +229,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateUS(uint tag, ByteBuffer data) {
-            if ((data.length() & 1) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " US #" + data.length());
+            if (((int)data.Length & 1) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " US #" + (int)data.Length);
                 return new US(tag, EMPTY_VALUE);
             }
             return new US(tag, data);
@@ -249,8 +249,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateSL(uint tag, ByteBuffer data) {
-            if ((data.length() & 3) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " SL #" + data.length());
+            if (((int)data.Length & 3) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " SL #" + (int)data.Length);
                 return new SL(tag, EMPTY_VALUE);
             }
             return new SL(tag, data);
@@ -269,8 +269,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateUL(uint tag, ByteBuffer data) {
-            if ((data.length() & 3) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " UL #" + data.length());
+            if (((int)data.Length & 3) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " UL #" + (int)data.Length);
                 return new UL(tag, EMPTY_VALUE);
             }
             return new UL(tag, data);
@@ -289,8 +289,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateAT(uint tag, ByteBuffer data) {
-            if ((data.length() & 3) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " AT #" + data.length());
+            if (((int)data.Length & 3) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " AT #" + (int)data.Length);
                 return new AT(tag, EMPTY_VALUE);
             }
             return new AT(tag, data);
@@ -309,8 +309,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateFL(uint tag, ByteBuffer data) {
-            if ((data.length() & 3) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " FL #" + data.length());
+            if (((int)data.Length & 3) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " FL #" + (int)data.Length);
                 return new FL(tag, EMPTY_VALUE);
             }
 
@@ -330,8 +330,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateFD(uint tag, ByteBuffer data) {
-            if ((data.length() & 7) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " FD #" + data.length());
+            if (((int)data.Length & 7) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " FD #" + (int)data.Length);
                 return new FD(tag, EMPTY_VALUE);
             }
             return new FD(tag, data);
@@ -355,7 +355,7 @@ namespace DicomSharp.Data {
 
         internal static DcmElement CreateOW(uint tag, short[] v) {
             ByteBuffer buf = ByteBuffer.Wrap(new byte[v.Length << 1]);
-            buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
+            buf.SetOrder(ByteOrder.LittleEndian);
             for (int i = 0; i < v.Length; ++i) {
                 buf.Write(v[i]);
             }
@@ -367,7 +367,7 @@ namespace DicomSharp.Data {
             int len2 = v[0].Length;
 
             ByteBuffer buf = ByteBuffer.Wrap(new byte[(v.Length*len2) << 1]);
-            buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
+            buf.SetOrder(ByteOrder.LittleEndian);
 
             for (int j = 0; j < len2; j++) {
                 for (int i = 0; i < v.Length; ++i) {
@@ -379,8 +379,8 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateOW(uint tag, ByteBuffer data) {
-            if ((data.length() & 1) != 0) {
-                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " OW #" + data.length());
+            if (((int)data.Length & 1) != 0) {
+                log.Warn("Ignore illegal value of " + Dictionary.Tags.ToHexString(tag) + " OW #" + (int)data.Length);
                 return new OW(tag, EMPTY_VALUE);
             }
             return new OW(tag, data);
@@ -395,7 +395,7 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateOB(uint tag, byte[] v) {
-            return new OB(tag, ByteBuffer.Wrap(v, ByteOrder.LITTLE_ENDIAN));
+            return new OB(tag, ByteBuffer.Wrap(v, ByteOrder.LittleEndian));
         }
 
         internal static DcmElement CreateUN(uint tag) {
@@ -407,7 +407,7 @@ namespace DicomSharp.Data {
         }
 
         internal static DcmElement CreateUN(uint tag, byte[] v) {
-            return new UN(tag, ByteBuffer.Wrap(v, ByteOrder.LITTLE_ENDIAN));
+            return new UN(tag, ByteBuffer.Wrap(v, ByteOrder.LittleEndian));
         }
 
         #region Nested type: AT
@@ -420,7 +420,7 @@ namespace DicomSharp.Data {
 
             public override uint[] Tags {
                 get {
-                    var a = new uint[vm()];
+                    var a = new uint[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetTag(i);
                     }
@@ -428,16 +428,16 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4154;
             }
 
-            public override int vm() {
-                return m_data.length() >> 2;
+            public override int VM() {
+                return (int) (m_data.Length >> 2);
             }
 
             public override uint GetTag(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0;
                 }
                 int pos = index << 2;
@@ -446,14 +446,14 @@ namespace DicomSharp.Data {
 
 
             public override String GetString(int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return Dictionary.Tags.ToHexString(GetTag(index));
             }
 
             public override String[] GetStrings(Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetString(i, null);
                 }
@@ -477,7 +477,7 @@ namespace DicomSharp.Data {
 
             public override Double[] Doubles {
                 get {
-                    var a = new Double[vm()];
+                    var a = new Double[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetDouble(i);
                     }
@@ -485,16 +485,16 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vm() {
-                return m_data.length() >> 3;
+            public override int VM() {
+                return (int) (m_data.Length >> 3);
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4644;
             }
 
             public override Double GetDouble(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0.0;
                 }
                 return m_data.ReadDouble(index << 3);
@@ -502,14 +502,14 @@ namespace DicomSharp.Data {
 
 
             public override String GetString(int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return GetDouble(index).ToString();
             }
 
             public override String[] GetStrings(Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetDouble(i).ToString();
                 }
@@ -533,7 +533,7 @@ namespace DicomSharp.Data {
 
             public override float[] Floats {
                 get {
-                    var a = new float[vm()];
+                    var a = new float[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetFloat(i);
                     }
@@ -541,16 +541,16 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vm() {
-                return m_data.length() >> 2;
+            public override int VM() {
+                return (int) (m_data.Length >> 2);
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x464C;
             }
 
             public override float GetFloat(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0.0f;
                 }
                 return m_data.ReadSingle(index << 2);
@@ -558,14 +558,14 @@ namespace DicomSharp.Data {
 
 
             public override String GetString(int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return GetFloat(index).ToString();
             }
 
             public override String[] GetStrings(Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetFloat(i).ToString();
                 }
@@ -589,7 +589,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var a = new int[vm()];
+                    var a = new int[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetInt(i);
                     }
@@ -598,15 +598,15 @@ namespace DicomSharp.Data {
             }
 
             public override int GetInt(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0;
                 }
                 return m_data.ReadInt32(index << 2);
             }
 
 
-            public override int vm() {
-                return m_data.length() >> 2;
+            public override int VM() {
+                return (int) (m_data.Length >> 2);
             }
 
             public override void SwapOrder() {
@@ -624,7 +624,7 @@ namespace DicomSharp.Data {
         internal sealed class OB : ValueElement {
             internal OB(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4F42;
             }
 
@@ -633,7 +633,7 @@ namespace DicomSharp.Data {
             }
 
             public override String GetBoundedString(int maxLen, int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return StringUtils.PromptOB(m_data, maxLen);
@@ -644,7 +644,7 @@ namespace DicomSharp.Data {
             }
 
             public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetBoundedString(maxLen, i, null);
                 }
@@ -664,7 +664,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var a = new int[m_data.length() >> 1];
+                    var a = new int[m_data.Length >> 1];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetInt(i);
                     }
@@ -672,12 +672,12 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x4F57;
             }
 
             public override int GetInt(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0;
                 }
                 return m_data.ReadInt16(index << 1) & 0xffff;
@@ -689,7 +689,7 @@ namespace DicomSharp.Data {
             }
 
             public override String GetBoundedString(int maxLen, int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return StringUtils.PromptOW(m_data, maxLen);
@@ -700,7 +700,7 @@ namespace DicomSharp.Data {
             }
 
             public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetBoundedString(maxLen, i, null);
                 }
@@ -722,7 +722,7 @@ namespace DicomSharp.Data {
         internal class SL : IntBase {
             internal SL(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x534C;
             }
         }
@@ -739,7 +739,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var a = new int[vm()];
+                    var a = new int[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetInt(i);
                     }
@@ -747,16 +747,16 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5353;
             }
 
-            public override int vm() {
-                return m_data.length() >> 1;
+            public override int VM() {
+                return (int) (m_data.Length >> 1);
             }
 
             public override int GetInt(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0;
                 }
                 return m_data.ReadInt16(index << 1);
@@ -778,19 +778,19 @@ namespace DicomSharp.Data {
         internal class UL : IntBase {
             internal UL(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x554C;
             }
 
             public override String GetString(int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return GetInt(index).ToString();
             }
 
             public override String[] GetStrings(Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetInt(i).ToString();
                 }
@@ -808,7 +808,7 @@ namespace DicomSharp.Data {
         internal sealed class UN : ValueElement {
             internal UN(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int vr() {
+            public override int VR() {
                 return 0x554E;
             }
 
@@ -817,7 +817,7 @@ namespace DicomSharp.Data {
             }
 
             public override String GetBoundedString(int maxLen, int index, Encoding encoding) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
                 return StringUtils.PromptOB(m_data, maxLen);
@@ -828,7 +828,7 @@ namespace DicomSharp.Data {
             }
 
             public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
-                var a = new String[vm()];
+                var a = new String[VM()];
                 for (int i = 0; i < a.Length; ++i) {
                     a[i] = GetBoundedString(maxLen, i, null);
                 }
@@ -848,7 +848,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var a = new int[vm()];
+                    var a = new int[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = GetInt(i);
                     }
@@ -856,16 +856,16 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int VR() {
                 return 0x5553;
             }
 
-            public override int vm() {
-                return m_data.length() >> 1;
+            public override int VM() {
+                return (int) (m_data.Length >> 1);
             }
 
             public override int GetInt(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return 0;
                 }
                 return m_data.ReadInt16(index << 1) & 0xffff;

@@ -90,7 +90,12 @@ namespace DicomSharp.Data {
             return _dcmElements.BinarySearch(new DcmElement(tag)) >= 0;
         }
 
-        public virtual int vm(uint tag) {
+        public virtual IList<DcmElement> GetElements()
+        {
+            return _dcmElements;
+        }
+
+        public virtual int Vm(uint tag) {
             if (Tags.IsPrivate(tag)) {
                 try {
                     tag = AdjustPrivateTag(tag, false);
@@ -104,7 +109,7 @@ namespace DicomSharp.Data {
                 }
             }
             int index = _dcmElements.BinarySearch(new DcmElement(tag));
-            return index >= 0 ? ((DcmElement) _dcmElements[index]).vm() : -1;
+            return index >= 0 ? ((DcmElement) _dcmElements[index]).VM() : -1;
         }
 
         private uint AdjustPrivateTag(uint tag, bool create) {
@@ -117,12 +122,12 @@ namespace DicomSharp.Data {
             uint el = 0x10;
             int index = _dcmElements.BinarySearch(new DcmElement(gr | el));
             if (index >= 0) {
-                var elm = (DcmElement) _dcmElements[index];
+                var elm = _dcmElements[index];
                 while (++index < _dcmElements.Count) {
                     if (creatorID.Equals(elm.GetString(GetEncoding()))) {
                         return gr | (el << 8) | (tag & 0xff);
                     }
-                    elm = (DcmElement) _dcmElements[index];
+                    elm = _dcmElements[index];
                     if (elm.tag() != (gr | ++el)) {
                         break;
                     }
@@ -181,7 +186,7 @@ namespace DicomSharp.Data {
 
         public virtual String GetString(uint tag, int index, String defVal) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return defVal;
             }
 
@@ -211,7 +216,7 @@ namespace DicomSharp.Data {
 
         public virtual String GetBoundedString(int maxLen, uint tag, int index, String defVal) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return defVal;
             }
 
@@ -233,7 +238,7 @@ namespace DicomSharp.Data {
 
         public virtual Int32 GetInteger(uint tag, int index) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return Int32.MinValue;
             }
 
@@ -246,7 +251,7 @@ namespace DicomSharp.Data {
 
         public virtual int GetInt(uint tag, int index, int defVal) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return defVal;
             }
 
@@ -268,7 +273,7 @@ namespace DicomSharp.Data {
 
         public virtual float GetFloat(uint tag, int index, float defVal) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return defVal;
             }
 
@@ -290,7 +295,7 @@ namespace DicomSharp.Data {
 
         public virtual Double GetDouble(uint tag, int index, Double defVal) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return defVal;
             }
 
@@ -312,7 +317,7 @@ namespace DicomSharp.Data {
 
         public virtual DateTime GetDate(uint tag, int index) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return DateTime.MinValue;
             }
 
@@ -325,7 +330,7 @@ namespace DicomSharp.Data {
 
         public virtual DateTime[] GetDateRange(uint tag, int index) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return null;
             }
 
@@ -387,7 +392,7 @@ namespace DicomSharp.Data {
 
         public virtual DataSet GetItem(uint tag, int index) {
             DcmElement e = Get(tag);
-            if (e == null || e.vm() <= index) {
+            if (e == null || e.VM() <= index) {
                 return null;
             }
 
@@ -1297,16 +1302,16 @@ namespace DicomSharp.Data {
             {
                 if (dcmElement.IsEmpty())
                 {
-                    PutXX(dcmElement.tag(), dcmElement.vr());
+                    PutXX(dcmElement.tag(), dcmElement.VR());
                 }
                 else
                 {
                     DcmElement sq;
-                    switch (dcmElement.vr())
+                    switch (dcmElement.VR())
                     {
                         case VRs.SQ:
                             sq = PutSQ(dcmElement.tag());
-                            for (int i = 0, n = dcmElement.vm(); i < n; ++i)
+                            for (int i = 0, n = dcmElement.VM(); i < n; ++i)
                             {
                                 sq.AddItem(dcmElement.GetItem(i));
                             }
@@ -1317,8 +1322,8 @@ namespace DicomSharp.Data {
                         case VRs.UN:
                             if (dcmElement.HasDataFragments())
                             {
-                                sq = PutXXsq(dcmElement.tag(), dcmElement.vr());
-                                for (int i = 0, n = dcmElement.vm(); i < n; ++i)
+                                sq = PutXXsq(dcmElement.tag(), dcmElement.VR());
+                                for (int i = 0, n = dcmElement.VM(); i < n; ++i)
                                 {
                                     sq.AddDataFragment(dcmElement.GetDataFragment(i));
                                 }
@@ -1327,7 +1332,7 @@ namespace DicomSharp.Data {
                             goto default;
 
                         default:
-                            PutXX(dcmElement.tag(), dcmElement.vr(), dcmElement.GetByteBuffer());
+                            PutXX(dcmElement.tag(), dcmElement.VR(), dcmElement.GetByteBuffer());
                             break;
                     }
                 }
@@ -1340,17 +1345,16 @@ namespace DicomSharp.Data {
             handler.StartElement(grTag, VRs.UL, el1Pos == - 1L ? - 1L : el1Pos - 12);
             handler.Value(b4, 0, 4);
             handler.EndElement();
-            for (int i = 0, n = _dcmElements.Count; i < n; ++i) {
-                var el = _dcmElements[i];
-                handler.StartElement(el.tag(), el.vr(), el.StreamPosition);
-                ByteBuffer bb = el.GetByteBuffer(ByteOrder.LITTLE_ENDIAN);
-                handler.Value(bb.ToArray(), (int) bb.Position, bb.length());
+            foreach (DcmElement dcmElement in _dcmElements) {
+                handler.StartElement(dcmElement.tag(), dcmElement.VR(), dcmElement.StreamPosition);
+                ByteBuffer bb = dcmElement.GetByteBuffer(ByteOrder.LittleEndian);
+                handler.Value(bb.ToArray(), (int) bb.Position, (int)bb.Length);
                 handler.EndElement();
             }
         }
 
         public virtual void WriteHeader(Stream os, DcmEncodeParam encParam, uint tag, int vr, int len) {
-            if (encParam.byteOrder == ByteOrder.LITTLE_ENDIAN) {
+            if (encParam.byteOrder == ByteOrder.LittleEndian) {
                 os.WriteByte((Byte) (tag >> 16));
                 os.WriteByte((Byte) (tag >> 24));
                 os.WriteByte((Byte) (tag >> 0));
@@ -1367,7 +1371,7 @@ namespace DicomSharp.Data {
                 os.WriteByte((Byte) (vr >> 8));
                 os.WriteByte((Byte) (vr >> 0));
                 if (VRs.IsLengthField16Bit(vr)) {
-                    if (encParam.byteOrder == ByteOrder.LITTLE_ENDIAN) {
+                    if (encParam.byteOrder == ByteOrder.LittleEndian) {
                         os.WriteByte((Byte) (len >> 0));
                         os.WriteByte((Byte) (len >> 8));
                     }
@@ -1382,7 +1386,7 @@ namespace DicomSharp.Data {
                     os.WriteByte(0);
                 }
             }
-            if (encParam.byteOrder == ByteOrder.LITTLE_ENDIAN) {
+            if (encParam.byteOrder == ByteOrder.LittleEndian) {
                 os.WriteByte((Byte) (len >> 0));
                 os.WriteByte((Byte) (len >> 8));
                 os.WriteByte((Byte) (len >> 16));

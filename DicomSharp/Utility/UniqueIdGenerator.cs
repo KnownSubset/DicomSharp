@@ -34,46 +34,42 @@ using System.Net;
 using System.Text;
 
 namespace DicomSharp.Utility {
-    public class UIDGenerator {
-        private static readonly String IP;
+    public class UniqueIdGenerator {
+        private static readonly string IpAddress;
 
-        static UIDGenerator() {
-            {
-                String tmp;
-                try {
-                    tmp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
-                }
-                catch (Exception e) {
-                    tmp = "127.0.0.1";
-                }
-                IP = tmp;
+        static UniqueIdGenerator() {
+            try {
+                IpAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
+            }
+            catch (Exception) {
+                IpAddress = "127.0.0.1";
             }
         }
 
 
         /// <summary>
-        /// Creates a new instance of UIDGenerator
+        /// Creates a new instance of UniqueIdGenerator
         /// </summary>
-        private UIDGenerator() {}
+        private UniqueIdGenerator() {}
 
-        public static UIDGenerator Instance {
-            get { return new UIDGenerator(); }
+        public static UniqueIdGenerator Instance {
+            get { return new UniqueIdGenerator(); }
         }
 
-        public virtual String createUID() {
-            return createUID(Implementation.ClassUID);
+        public virtual string CreateUniqueId() {
+            return CreateUniqueId(Implementation.ClassUID);
         }
 
-        public virtual String createUID(String root) {
+        public virtual string CreateUniqueId(string root) {
             StringBuilder sb = new StringBuilder(64).Append(root).Append('.');
-            sb.Append(IP.Replace(".", ""));
-            String str = DateTime.Now.ToString("yyyyMMddHHmmssffffff");
+            sb.Append(IpAddress.Replace(".", ""));
+            string str = DateTime.Now.ToString("yyyyMMddHHmmssffffff");
             sb.Append(str);
             return sb.ToString();
         }
 
         public static void Main() {
-            String uid = Instance.createUID();
+            string uid = Instance.CreateUniqueId();
             Console.Write(uid);
         }
     }

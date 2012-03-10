@@ -112,7 +112,7 @@ namespace DicomSharp.Net {
             if (_dataSet == null) {
                 throw new SystemException("Missing DataSet");
             }
-            _dataSet.WriteDataset(outs, DcmDecodeParam.ValueOf(transferSyntaxUniqueId));
+            _dataSet.WriteDataSet(outs, DcmDecodeParam.ValueOf(transferSyntaxUniqueId));
         }
 
         #endregion

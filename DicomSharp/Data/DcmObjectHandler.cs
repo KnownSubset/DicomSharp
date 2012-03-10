@@ -41,7 +41,7 @@ namespace DicomSharp.Data {
     internal class DcmObjectHandler : IDcmHandler {
         private readonly DcmObject result;
         private readonly Stack seqStack = new Stack();
-        private ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
+        private ByteOrder byteOrder = ByteOrder.LittleEndian;
         private DcmObject curDcmObject;
         private long pos;
         private uint tag;
@@ -111,12 +111,12 @@ namespace DicomSharp.Data {
             }
         }
 
-        public virtual void StartDataset() {
+        public virtual void StartDataSet() {
             curDcmObject = result;
             seqStack.Clear();
         }
 
-        public virtual void EndDataset() {
+        public virtual void EndDataSet() {
             curDcmObject = null;
         }
 
@@ -157,7 +157,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual void EndItem(int len) {
-            curDcmObject = ((DataSet) curDcmObject).Parent;
+            curDcmObject = ((DataSet) curDcmObject).ParentDataSet;
         }
 
         #endregion

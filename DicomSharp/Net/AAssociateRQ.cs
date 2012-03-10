@@ -55,7 +55,7 @@ namespace DicomSharp.Net {
             return "AAssociateRQ";
         }
 
-        protected override void Append(PresContext pc, StringBuilder sb) {
+        protected override void Append(PresentationContext pc, StringBuilder sb) {
             sb.Append("\n\tpc-").Append(pc.pcid()).Append(":\tas=").Append(UIDs.GetName(pc.AbstractSyntaxUID));
             for (IEnumerator enu = pc.TransferSyntaxUIDs.GetEnumerator(); enu.MoveNext();) {
                 sb.Append("\n\t\tts=").Append(UIDs.GetName((String) enu.Current));

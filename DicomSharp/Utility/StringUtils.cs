@@ -373,8 +373,8 @@ namespace DicomSharp.Utility {
             return a;
         }
 
-        public static DateTime[] ParseDateTimeRange(String date, ParseDelegate pd) {
-            if (date == null || date.Length == 0) {
+        public static DateTime[] ParseDateTimeRange(string date, ParseDelegate pd) {
+            if (string.IsNullOrEmpty(date)) {
                 return null;
             }
 

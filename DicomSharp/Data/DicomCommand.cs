@@ -339,7 +339,7 @@ namespace DicomSharp.Data {
                 throw new ArgumentException(newElem.ToString());
             }
 
-            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LITTLE_ENDIAN)
+            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LittleEndian)
             {
                 throw new ArgumentException("The byte order must be LITTLE_ENDIAN: " + newElem.GetByteBuffer());
             }
@@ -484,9 +484,9 @@ namespace DicomSharp.Data {
         private int grLen()
         {
             int len = 0;
-            for (int i = 0, n = _dcmElements.Count; i < n; ++i)
+            foreach (DcmElement dcmElement in _dcmElements) 
             {
-                len += _dcmElements[i].Length() + 8;
+                len += dcmElement.Length() + 8;
             }
 
             return len;

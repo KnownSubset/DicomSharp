@@ -50,13 +50,13 @@ namespace DicomSharp.Net {
         IList<DataSet> CFindInstance(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs);
 
         /// <summary>
-        /// Send C-Move for studies and series to be stored in the specified newAETDestination
+        /// Send C-Move for studies and series to be stored in the specified applicationEntityDestination
         /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
         /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
-        /// <param name="newAETDestination">The SCP that will store the files</param>
+        /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
         IList<DataSet> CMove(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs,
-                             string newAETDestination);
+                             string applicationEntityDestination);
 
         /// <summary>
         /// Send C-GET

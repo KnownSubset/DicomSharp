@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using DicomSharp.Dictionary;
 using DicomSharp.Utility;
@@ -38,7 +39,7 @@ using DicomSharp.Utility;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public class PresContext {
+    public class PresentationContext {
         public const int ACCEPTANCE = 0;
         public const int USER_REJECTION = 1;
         public const int NO_REASON_GIVEN = 2;
@@ -48,10 +49,10 @@ namespace DicomSharp.Net {
 
         private readonly int m_pcid;
         private readonly int m_result;
-        private readonly ArrayList m_tsuids;
+        private readonly IList<string> _transferSyntaxUniqueIds = new List<string>();
         private readonly int m_type;
 
-        public PresContext(int type, int pcid, int result, String asuid, String[] tsuids) {
+        public PresentationContext(int type, int pcid, int result, String asuid, String[] tsuids) {
             if ((m_pcid | 1) == 0 || (m_pcid & ~0xff) != 0) {
                 throw new ArgumentException("pcid=" + pcid);
             }
@@ -62,74 +63,23 @@ namespace DicomSharp.Net {
             m_pcid = pcid;
             m_result = result;
             m_asuid = asuid;
-            m_tsuids = new ArrayList(tsuids);
+            _transferSyntaxUniqueIds = new List<string>(tsuids);
         }
 
-        /// <summary>
-        /// Constructor 1
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="din"></param>
-        /// <param name="len"></param>
-        /*public PresContext(int type, BinaryReader din, int len)
-		{
-			m_type = type;
-			m_pcid = din.ReadByte();
-			din.ReadByte();
-			m_result = din.ReadByte();
-			din.ReadByte();
-			int remain = len - 4;
-			String m_asuid = null;
-			m_tsuids = new ArrayList();
-			while (remain > 0)
-			{
-				int uidtype = din.ReadByte();
-				din.ReadByte();
-				int uidlen = din.ReadUInt16();
-				switch (uidtype)
-				{
-					case 0x30: 
-						if (type == 0x21 || m_asuid != null)
-						{
-							throw new PduException("Unexpected Abstract Syntax sub-item in" + " Presentation Context", new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNEXPECTED_PDU_PARAMETER));
-						}
-						m_asuid = AAssociateRQAC.ReadASCII(din, uidlen);
-						break;
-					
-					case 0x40: 
-						if (type == 0x21 && m_tsuids.Count > 0)
-						{
-							throw new PduException("Unexpected Transfer Syntax sub-item in" + " Presentation Context", new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNEXPECTED_PDU_PARAMETER));
-						}
-						m_tsuids.Add(AAssociateRQAC.ReadASCII(din, uidlen));
-						break;
-					
-					default: 
-						throw new PduException("unrecognized item type " + Convert.ToString(uidtype, 16) + 'H', new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNRECOGNIZED_PDU_PARAMETER));
-					
-				}
-				remain -= 4 + uidlen;
-			}
-			m_asuid = m_asuid;
-			if (remain < 0)
-			{
-				throw new PduException("Presentation item Length: " + len + " mismatch Length of sub-items", new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
-			}
-		}*/
         /// <summary>
         /// Constructor 2
         /// </summary>
         /// <param name="type"></param>
         /// <param name="bb"></param>
         /// <param name="len"></param>
-        public PresContext(int type, ByteBuffer bb, int len) {
+        public PresentationContext(int type, ByteBuffer bb, int len) {
             m_type = type;
             m_pcid = bb.ReadByte();
             bb.Skip();
             m_result = bb.ReadByte();
             bb.Skip();
             int remain = len - 4;
-            m_tsuids = new ArrayList();
+            _transferSyntaxUniqueIds = new List<string>();
             while (remain > 0) {
                 int uidtype = bb.ReadByte();
                 bb.Skip();
@@ -144,12 +94,12 @@ namespace DicomSharp.Net {
                         break;
 
                     case 0x40:
-                        if (type == 0x21 && m_tsuids.Count > 0) {
+                        if (type == 0x21 && _transferSyntaxUniqueIds.Count > 0) {
                             throw new PduException("Unexpected Transfer Syntax sub-item in" + " Presentation Context",
                                                    new AAbort(AAbort.SERVICE_PROVIDER, AAbort.UNEXPECTED_PDU_PARAMETER));
                         }
                         String tsuid = bb.ReadString(uidlen);
-                        m_tsuids.Add(tsuid);
+                        _transferSyntaxUniqueIds.Add(tsuid);
                         break;
 
                     default:
@@ -169,36 +119,36 @@ namespace DicomSharp.Net {
             get { return m_asuid; }
         }
 
-        public virtual ArrayList TransferSyntaxUIDs {
-            get { return m_tsuids; }
+        public virtual IList<string> TransferSyntaxUIDs {
+            get { return _transferSyntaxUniqueIds; }
         }
 
         public virtual String TransferSyntaxUID {
-            get { return (String) m_tsuids[0]; }
+            get { return _transferSyntaxUniqueIds[0]; }
         }
 
-        internal void WriteTo(ByteBuffer buf) {
-            buf.Write((Byte) m_type);
-            buf.Write((Byte) 0);
-            buf.Write((Int16) length());
-            buf.Write((Byte) m_pcid);
-            buf.Write((Byte) 0);
-            buf.Write((Byte) m_result);
-            buf.Write((Byte) 0);
+        internal void WriteTo(ByteBuffer byteBuffer) {
+            byteBuffer.Write((Byte) m_type);
+            byteBuffer.Write((Byte) 0);
+            byteBuffer.Write((Int16) length());
+            byteBuffer.Write((Byte) m_pcid);
+            byteBuffer.Write((Byte) 0);
+            byteBuffer.Write((Byte) m_result);
+            byteBuffer.Write((Byte) 0);
             if (m_asuid != null) {
-                buf.Write((Byte) 0x30);
-                buf.Write((Byte) 0);
-                buf.Write((Int16) m_asuid.Length);
-                buf.Write(m_asuid);
+                byteBuffer.Write((Byte) 0x30);
+                byteBuffer.Write((Byte) 0);
+                byteBuffer.Write((Int16) m_asuid.Length);
+                byteBuffer.Write(m_asuid);
             }
 
-            IEnumerator enu = m_tsuids.GetEnumerator();
+            IEnumerator enu = _transferSyntaxUniqueIds.GetEnumerator();
             while (enu.MoveNext()) {
                 var tsuid = (String) enu.Current;
-                buf.Write((Byte) 0x40);
-                buf.Write((Byte) 0);
-                buf.Write((Int16) tsuid.Length);
-                buf.Write(tsuid);
+                byteBuffer.Write((Byte) 0x40);
+                byteBuffer.Write((Byte) 0);
+                byteBuffer.Write((Int16) tsuid.Length);
+                byteBuffer.Write(tsuid);
             }
         }
 
@@ -207,7 +157,7 @@ namespace DicomSharp.Net {
             if (m_asuid != null) {
                 retval += 4 + m_asuid.Length;
             }
-            IEnumerator enu = m_tsuids.GetEnumerator();
+            IEnumerator enu = _transferSyntaxUniqueIds.GetEnumerator();
             while (enu.MoveNext()) {
                 retval += 4 + ((String) enu.Current).Length;
             }
@@ -228,14 +178,14 @@ namespace DicomSharp.Net {
 
         public override String ToString() {
             var sb = new StringBuilder();
-            sb.Append("PresContext[m_pcid=").Append(m_pcid);
+            sb.Append("PresentationContext[m_pcid=").Append(m_pcid);
             if (m_type == 0x20) {
                 sb.Append(", as=").Append(UIDs.GetName(m_asuid));
             }
             else {
                 sb.Append(", m_result=").Append(ResultAsString());
             }
-            IEnumerator enu = m_tsuids.GetEnumerator();
+            IEnumerator enu = _transferSyntaxUniqueIds.GetEnumerator();
             enu.MoveNext();
             sb.Append(", ts=").Append(UIDs.GetName((String) enu.Current));
             while (enu.MoveNext()) {

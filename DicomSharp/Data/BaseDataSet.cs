@@ -39,20 +39,12 @@ using log4net;
 
 namespace DicomSharp.Data {
     public abstract class BaseDataSet : DcmObject {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        private FileMetaInfo _fileMetaInfo;
-
         private int grCount;
         private int[] grLens = new int[8];
         private uint[] grTags = new uint[8];
         protected internal int totLen;
 
-        public FileMetaInfo FileMetaInfo
-        {
-            get { return _fileMetaInfo; }
-            set { _fileMetaInfo = value; }
-        }
+        public FileMetaInfo FileMetaInfo { get; set; }
 
         public override String ToString() {
             return "[" + Size + " elements]";
@@ -81,10 +73,10 @@ namespace DicomSharp.Data {
             totLen = 0;
             grCount = 0;
 
-            uint curGrTag, prevGrTag = 0;
+            uint prevGrTag = 0;
             foreach (var dcmElement in _dcmElements)
             {
-                curGrTag = dcmElement.tag() & 0xffff0000;
+                uint curGrTag = dcmElement.tag() & 0xffff0000;
                 if (curGrTag != prevGrTag)
                 {
                     grCount++;
@@ -93,7 +85,7 @@ namespace DicomSharp.Data {
                     grTags[grCount - 1] = prevGrTag = curGrTag;
                     grLens[grCount - 1] = 0;
                 }
-                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(dcmElement.vr())) ? 12 : 8;
+                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(dcmElement.VR())) ? 12 : 8;
                 if (dcmElement is ValueElement)
                 {
                     grLens[grCount - 1] += dcmElement.Length();
@@ -117,7 +109,7 @@ namespace DicomSharp.Data {
             return totLen;
         }
 
-        public virtual int length() {
+        public virtual int Length() {
             return totLen;
         }
 
@@ -129,14 +121,14 @@ namespace DicomSharp.Data {
         public abstract long GetItemOffset();
         public abstract DataSet SetItemOffset(long itemOffset);
 
-        public virtual void WriteDataset(IDcmHandler handler, DcmEncodeParam param) {
+        public virtual void WriteDataSet(IDcmHandler handler, DcmEncodeParam param) {
             if (!(param.skipGroupLen && param.undefItemLen && param.undefSeqLen)) {
                 CalcLength(param);
             }
-            handler.StartDataset();
+            handler.StartDataSet();
             handler.DcmDecodeParam = param;
             DoWrite(handler, param);
-            handler.EndDataset();
+            handler.EndDataSet();
         }
 
         private void DoWrite(IDcmHandler handler, DcmEncodeParam param) {
@@ -154,11 +146,11 @@ namespace DicomSharp.Data {
                     int len = param.undefSeqLen ? - 1 : dcmElement.Length();
                     handler.StartElement(dcmElement.tag(), VRs.SQ, dcmElement.StreamPosition);
                     handler.StartSequence(len);
-                    for (int j = 0, m = dcmElement.vm(); j < m;) {
-                        BaseDataSet ds = dcmElement.GetItem(j);
-                        int itemlen = param.undefItemLen ? - 1 : ds.length();
-                        handler.StartItem(++j, ds.GetItemOffset(), itemlen);
-                        ds.DoWrite(handler, param);
+                    for (int j = 0, m = dcmElement.VM(); j < m;) {
+                        BaseDataSet dataSet = dcmElement.GetItem(j);
+                        int itemlen = param.undefItemLen ? - 1 : dataSet.Length();
+                        handler.StartItem(++j, dataSet.GetItemOffset(), itemlen);
+                        dataSet.DoWrite(handler, param);
                         handler.EndItem(itemlen);
                     }
                     handler.EndSequence(len);
@@ -166,16 +158,16 @@ namespace DicomSharp.Data {
                 }
                 else if (dcmElement is FragmentElement) {
                     long offset = dcmElement.StreamPosition;
-                    handler.StartElement(dcmElement.tag(), dcmElement.vr(), offset);
+                    handler.StartElement(dcmElement.tag(), dcmElement.VR(), offset);
                     handler.StartSequence(- 1);
                     if (offset != - 1L) {
                         offset += 12;
                     }
-                    for (int j = 0, m = dcmElement.vm(); j < m;) {
+                    for (int j = 0, m = dcmElement.VM(); j < m;) {
                         ByteBuffer bb = dcmElement.GetDataFragment(j, param.byteOrder);
-                        handler.Fragment(++j, offset, bb.ToArray(), (int) bb.Position, bb.length());
+                        handler.Fragment(++j, offset, bb.ToArray(), (int) bb.Position, (int) bb.Length);
                         if (offset != - 1L) {
-                            offset += (bb.length() + 9) & (~ 1);
+                            offset += (bb.Length + 9) & (~ 1);
                         }
                     }
                     handler.EndSequence(- 1);
@@ -183,7 +175,7 @@ namespace DicomSharp.Data {
                 }
                 else {
 //					int len = el.Length();
-                    handler.StartElement(dcmElement.tag(), dcmElement.vr(), dcmElement.StreamPosition);
+                    handler.StartElement(dcmElement.tag(), dcmElement.VR(), dcmElement.StreamPosition);
                     ByteBuffer bb = dcmElement.GetByteBuffer(param.byteOrder);
                     handler.Value(bb);
                     handler.EndElement();
@@ -191,12 +183,12 @@ namespace DicomSharp.Data {
             }
         }
 
-        public virtual void WriteDataset(Stream outs, DcmEncodeParam param) {
+        public virtual void WriteDataSet(Stream outs, DcmEncodeParam param) {
             if (param == null) {
                 param = DcmDecodeParam.IVR_LE;
             }
             // TODO: Check deflated 
-            WriteDataset(new DcmStreamHandler(outs), param);
+            WriteDataSet(new DcmStreamHandler(outs), param);
         }
 
         public virtual void WriteFile(Stream outs, DcmEncodeParam param) {
@@ -207,7 +199,7 @@ namespace DicomSharp.Data {
                     param = DcmDecodeParam.ValueOf(fmi.TransferSyntaxUniqueId);
                 }
             }
-            WriteDataset(outs, param);
+            WriteDataSet(outs, param);
         }
 
 

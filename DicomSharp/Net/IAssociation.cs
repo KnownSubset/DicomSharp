@@ -11,7 +11,7 @@ namespace DicomSharp.Net {
         IPdu Connect(AAssociateRQ rq, int timeout);
         Dimse Read(int timeout);
         String GetAcceptedTransferSyntaxUID(int pcid);
-        PresContext GetAcceptedPresContext(String asuid, String tsuid);
+        PresentationContext GetAcceptedPresContext(String asuid, String tsuid);
         int NextMsgID();
         int CurrentMessageId();
         void Write(IDimse dimse);

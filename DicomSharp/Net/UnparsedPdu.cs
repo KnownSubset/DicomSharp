@@ -40,52 +40,51 @@ namespace DicomSharp.Net {
     /// </summary>
     public class UnparsedPdu {
         internal const long MAX_LENGTH = 1048576L; // 1 MB
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly byte[] buf;
-        private readonly int len;
-        private readonly int m_type;
+        private readonly byte[] _buffer;
+        private readonly int _length;
+        private readonly int _type;
 
         /// <summary>
         /// Creates a new instance of RawPdu 
         /// </summary>
-        public UnparsedPdu(Stream ins, byte[] buf) {
-            if (buf == null || buf.Length < 6) {
-                buf = new byte[10];
+        public UnparsedPdu(Stream ins, byte[] buffer) {
+            if (buffer == null || buffer.Length < 6) {
+                buffer = new byte[10];
             }
-            ReadFully(ins, buf, 0, 6);
-            m_type = buf[0] & 0xFF;
-            len = ((buf[2] & 0xff) << 24) | ((buf[3] & 0xff) << 16) | ((buf[4] & 0xff) << 8) | ((buf[5] & 0xff) << 0);
-            if ((len & 0xFFFFFFFF) > MAX_LENGTH) {
-                SkipFully(ins, len & 0xFFFFFFFFL);
-                this.buf = null;
+            ReadFully(ins, buffer, 0, 6);
+            _type = buffer[0] & 0xFF;
+            _length = ((buffer[2] & 0xff) << 24) | ((buffer[3] & 0xff) << 16) | ((buffer[4] & 0xff) << 8) | ((buffer[5] & 0xff) << 0);
+            if ((_length & 0xFFFFFFFF) > MAX_LENGTH) {
+                SkipFully(ins, _length & 0xFFFFFFFFL);
+                _buffer = null;
                 return;
             }
-            if (buf.Length < 6 + len) {
-                this.buf = new byte[6 + len];
-                Array.Copy(buf, 0, this.buf, 0, 6);
+            if (buffer.Length < 6 + _length) {
+                _buffer = new byte[6 + _length];
+                Array.Copy(buffer, 0, _buffer, 0, 6);
             }
             else {
-                this.buf = buf;
+                _buffer = buffer;
             }
 
-            //ins.Read( this.buf, 6, len);
-            ReadFully(ins, this.buf, 6, len);
+            //ins.Read( this._buffer, 6, _length);
+            ReadFully(ins, _buffer, 6, _length);
         }
 
         public new int GetType() {
-            return m_type;
+            return _type;
         }
 
-        public int length() {
-            return len;
+        public int Length() {
+            return _length;
         }
 
-        public byte[] buffer() {
-            return buf;
+        public byte[] Buffer() {
+            return _buffer;
         }
 
         public override String ToString() {
-            return "Pdu[type=" + m_type + ", Length=" + (len & 0xFFFFFFFFL) + "]";
+            return "Pdu[type=" + _type + ", Length=" + (_length & 0xFFFFFFFFL) + "]";
         }
 
         internal static void SkipFully(Stream ins, long len) {
