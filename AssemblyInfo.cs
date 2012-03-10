@@ -7,12 +7,12 @@ using System.Runtime.CompilerServices;
 
 // TODO: Review the values of the assembly attributes
 
-[assembly: AssemblyTitle("dicomcs")]
+[assembly: AssemblyTitle("dicomSharp")]
 [assembly: AssemblyDescription("DICOM C# Library")]
-[assembly: AssemblyCompany("Fang Yang")]
+[assembly: AssemblyCompany("Nathan Dauber")]
 [assembly: AssemblyProduct("DICOM Library")]
-[assembly: AssemblyCopyright("Copyright 2002,2008-2010, Fang Yang")]
-[assembly: AssemblyTrademark("Fang Yang")]
+[assembly: AssemblyCopyright("Copyright 2012, Nathan Dauber")]
+[assembly: AssemblyTrademark("Nathan Dauber")]
 [assembly: AssemblyCulture("")]
 
 
@@ -56,9 +56,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDelaySign(false)]
-#if NET_1_1
-[assembly: AssemblyKeyFile("..\\..\\dicomcs.snk")]
-#endif
 [assembly: AssemblyKeyName("")]
 
 

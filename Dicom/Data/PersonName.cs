@@ -2,11 +2,13 @@
 
 // 
 // This library is based on Dicom# see http://sourceforge.net/projects/dicom-cs/
+// Copyright (C) 2002 Fang Yang. All rights reserved.
+// That library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
 // Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
 //
-// Modifications Copyright (C) 2002,2008 Fang Yang. All rights reserved.
+// Modifications Copyright (C) 2012 Nathan Dauber. All rights reserved.
 // 
-// This file is part of dicomSharp, see https://github.com/KnownSubset/DicomSharp
+// This file is part of dicomSharp, see https://github.com/KnownSubset/DicomSharps
 //
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
