@@ -40,11 +40,6 @@ namespace DicomSharp.Data {
     public class DcmObjectFactory {
         private static readonly DcmObjectFactory s_instance = new DcmObjectFactory();
 
-        /// <summary>
-        /// Creates a new instance of DcmParserFactory
-        /// </summary>
-        private DcmObjectFactory() {}
-
         public static DcmObjectFactory Instance {
             get { return s_instance; }
         }
@@ -53,8 +48,8 @@ namespace DicomSharp.Data {
             return new DicomCommand();
         }
 
-        public virtual Dataset NewDataset() {
-            return new Dataset();
+        public virtual DataSet NewDataset() {
+            return new DataSet();
         }
 
         public virtual FileMetaInfo NewFileMetaInfo(String sopClassUID, String sopInstanceUID, String transferSyntaxUID,
@@ -71,10 +66,10 @@ namespace DicomSharp.Data {
             return new PersonName(s);
         }
 
-        public virtual FileMetaInfo NewFileMetaInfo(Dataset ds, String transferSyntaxUID) {
+        public virtual FileMetaInfo NewFileMetaInfo(DataSet ds, String transferSyntaxUID) {
             try {
-                return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUID, null),
-                                               ds.GetString(Tags.SOPInstanceUID, null), transferSyntaxUID,
+                return new FileMetaInfo().Init(ds.GetString(Tags.SOPClassUniqueId, null),
+                                               ds.GetString(Tags.SOPInstanceUniqueId, null), transferSyntaxUID,
                                                Implementation.ClassUID, Implementation.VersionName);
             }
             catch (DcmValueException ex) {

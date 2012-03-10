@@ -45,12 +45,11 @@ namespace DicomSharp.Server {
     /// SCP Server
     /// </summary>
     public class Server {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Server));
 
-        private readonly IHandler handler;
-        private bool m_Stop;
-        private int port = 104;
-        private TcpListener ss;
+        private readonly IHandler _handler;
+        private bool _stop;
+        private TcpListener _tcpListener;
 
         /// <summary>
         /// Constructor
@@ -61,80 +60,90 @@ namespace DicomSharp.Server {
                 throw new NullReferenceException();
             }
 
-            this.handler = handler;
+            this._handler = handler;
         }
 
         public virtual void Start(int port) {
             CheckNotRunning();
-            log.Info("Start Server listening at port " + port);
+            Logger.Info("Start Server listening at port " + port);
 
             // Create the TCP listener
-            ss = new TcpListener(port);
-            ss.Start();
+            IPAddress ipAddress = ((IPEndPoint)_tcpListener.LocalEndpoint).Address;
+            _tcpListener = new TcpListener(ipAddress, port);
+            _tcpListener.Start();
 
             // Fire the thread to listen for incoming associations
             Run();
         }
 
         public virtual void Stop() {
-            if (ss == null) {
+            if (_tcpListener == null) {
                 return;
             }
 
-            IPAddress ia = ((IPEndPoint) ss.LocalEndpoint).Address;
-            int port = ((IPEndPoint) ss.LocalEndpoint).Port;
-            log.Info("Stop Server listening at port " + port);
+            IPAddress ipAddress = ((IPEndPoint) _tcpListener.LocalEndpoint).Address;
+            int port = ((IPEndPoint) _tcpListener.LocalEndpoint).Port;
+            Logger.Info("Stop Server listening at port " + port);
 
             try {
-                ss.Stop();
+                _tcpListener.Stop();
             }
-            catch (IOException ignore) {}
+            catch (IOException ignore)
+            {
+                Logger.Error(ignore);
+            }
 
             // try to connect to server port to ensure to leave blocking accept
             try {
-                new TcpClient(new IPEndPoint(ia, port)).Close();
+                new TcpClient(new IPEndPoint(ipAddress, port)).Close();
             }
-            catch (IOException ignore) {}
-            m_Stop = true;
-            ss = null;
+            catch (IOException ioException)
+            {
+                Logger.Error(ioException);
+            }
+            _stop = true;
+            _tcpListener = null;
         }
 
         /// <summary>
         /// Run the server
         /// </summary>
         public virtual void Run() {
-            if (ss == null) {
+            if (_tcpListener == null) {
                 return;
             }
 
             TcpClient s = null;
-            while (!m_Stop) {
+            while (!_stop) {
                 try {
-                    s = ss.AcceptTcpClient();
-                    if (log.IsInfoEnabled) {
-                        log.Info("handle - " + s);
+                    s = _tcpListener.AcceptTcpClient();
+                    if (Logger.IsInfoEnabled) {
+                        Logger.Info("handle - " + s);
                     }
 
                     // Fire up a new pooled thread to handle this socket.
-                    ThreadPool.QueueUserWorkItem(handler.Handle, s);
+                    ThreadPool.QueueUserWorkItem(_handler.Handle, s);
                 }
                 catch (Exception ioe) {
-                    log.Error(ioe);
+                    Logger.Error(ioe);
                     if (s != null) {
                         try {
                             s.Close();
                         }
-                        catch (Exception ignore) {}
+                        catch (Exception ignore)
+                        {
+                            Logger.Error(ignore);
+                        }
                     }
                 }
-                if (log.IsInfoEnabled) {
-                    log.Info("finished - " + s);
+                if (Logger.IsInfoEnabled) {
+                    Logger.Info("finished - " + s);
                 }
             }
         }
 
         private void CheckNotRunning() {
-            if (ss != null) {
+            if (_tcpListener != null) {
                 throw new SystemException("Already Running");
             }
         }

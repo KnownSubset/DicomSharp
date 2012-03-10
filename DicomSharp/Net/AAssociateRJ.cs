@@ -75,11 +75,11 @@ namespace DicomSharp.Net {
         #endregion
 
         internal static AAssociateRJ Parse(UnparsedPdu raw) {
-            if (raw.length() != 4) {
+            if (raw.Length() != 4) {
                 throw new PduException("Illegal A-ASSOCIATE-RJ " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
-            return new AAssociateRJ(raw.buffer());
+            return new AAssociateRJ(raw.Buffer());
         }
 
         /// <summary>

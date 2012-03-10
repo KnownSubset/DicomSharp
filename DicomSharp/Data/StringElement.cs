@@ -73,7 +73,7 @@ namespace DicomSharp.Data {
             this.trim = trim;
             this.maxLen = maxLen;
             this.IsText = IsText;
-            m_data = toByteBuffer(value, trim, chk == null ? DoCheck : chk, encoding);
+            m_data = ToByteBuffer(value, trim, chk == null ? DoCheck : chk, encoding);
         }
 
         internal StringElement(uint tag, String[] values, int maxLen, bool IsText, Trim trim, Check chk,
@@ -81,7 +81,7 @@ namespace DicomSharp.Data {
             this.trim = trim;
             this.maxLen = maxLen;
             this.IsText = IsText;
-            m_data = toByteBuffer(values, trim, chk == null ? DoCheck : chk, encoding);
+            m_data = ToByteBuffer(values, trim, chk == null ? DoCheck : chk, encoding);
         }
 
         internal StringElement(uint tag, ByteBuffer data, Trim trim) : base(tag, data) {
@@ -91,7 +91,7 @@ namespace DicomSharp.Data {
         protected virtual String DoCheck(String s) {
             char[] a = s.ToCharArray();
             if (a.Length > maxLen) {
-                log.Warn("Value: " + s + " exeeds VR length limit: " + maxLen);
+                log.Warn("Value: " + s + " exeeds VR Length limit: " + maxLen);
             }
             for (int i = 0; i < a.Length; ++i) {
                 if (!DoCheck(a[i])) {
@@ -108,7 +108,7 @@ namespace DicomSharp.Data {
         }
 
         public override String GetString(int index, Encoding encoding) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             try {
@@ -120,7 +120,7 @@ namespace DicomSharp.Data {
         }
 
         public override String[] GetStrings(Encoding encoding) {
-            var a = new String[vm()];
+            var a = new String[VM()];
             for (int i = 0; i < a.Length; ++i) {
                 a[i] = GetString(i, encoding);
             }
@@ -128,7 +128,7 @@ namespace DicomSharp.Data {
         }
 
         public virtual ByteBuffer GetByteBuffer(int index) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
             return m_data.Rewind();
@@ -166,21 +166,19 @@ namespace DicomSharp.Data {
             return s;
         }
 
-        private static ByteBuffer toByteBuffer(String value, Trim trim, Check check, Encoding encoding) {
-            if (value == null || value.Length == 0) {
+        private static ByteBuffer ToByteBuffer(String value, Trim trim, Check check, Encoding encoding) {
+            if (string.IsNullOrEmpty(value)) {
                 return EMPTY_VALUE;
             }
             try {
-                return ByteBuffer.Wrap((encoding != null
-                                            ? encoding
-                                            : Encoding.ASCII).GetBytes(check(trim(value))));
+                return ByteBuffer.Wrap((encoding ?? Encoding.ASCII).GetBytes(check(trim(value))));
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 throw new ArgumentException(value);
             }
         }
 
-        private static ByteBuffer toByteBuffer(ByteBuffer[] bbs, int totLen) {
+        private static ByteBuffer ToByteBuffer(ByteBuffer[] bbs, int totLen) {
             ByteBuffer bb = ByteBuffer.Wrap(new byte[totLen]);
             bb.Write(bbs[0]);
             for (int i = 1; i < bbs.Length; ++i) {
@@ -190,22 +188,22 @@ namespace DicomSharp.Data {
             return bb;
         }
 
-        private static ByteBuffer toByteBuffer(String[] values, Trim trim, Check Check, Encoding encoding) {
+        private static ByteBuffer ToByteBuffer(String[] values, Trim trim, Check Check, Encoding encoding) {
             if (values.Length == 0) {
                 return EMPTY_VALUE;
             }
 
             if (values.Length == 1) {
-                return toByteBuffer(values[0], trim, Check, encoding);
+                return ToByteBuffer(values[0], trim, Check, encoding);
             }
 
             var bbs = new ByteBuffer[values.Length];
             int totLen = - 1;
             for (int i = 0; i < values.Length; ++i) {
-                bbs[i] = toByteBuffer(values[i], trim, Check, encoding);
-                totLen += bbs[i].length() + 1;
+                bbs[i] = ToByteBuffer(values[i], trim, Check, encoding);
+                totLen += (int)(bbs[i].Length + 1);
             }
-            return toByteBuffer(bbs, totLen);
+            return ToByteBuffer(bbs, totLen);
         }
 
         internal static DcmElement CreateLT(uint tag, ByteBuffer data) {
@@ -542,7 +540,7 @@ namespace DicomSharp.Data {
 
             internal AE(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4145;
             }
         }
@@ -563,7 +561,7 @@ namespace DicomSharp.Data {
 
             internal AS(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4153;
             }
 
@@ -618,7 +616,7 @@ namespace DicomSharp.Data {
 
             internal CS(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4353;
             }
 
@@ -656,7 +654,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         // TODO: handle all format
                         a[i] = Parse(GetString(i, null));
@@ -679,7 +677,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4441;
             }
 
@@ -710,7 +708,7 @@ namespace DicomSharp.Data {
 
             public override float[] Floats {
                 get {
-                    var retval = new float[vm()];
+                    var retval = new float[VM()];
                     for (int i = 0; i < retval.Length; ++i) {
                         retval[i] = GetFloat(i);
                     }
@@ -718,7 +716,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4453;
             }
 
@@ -730,7 +728,7 @@ namespace DicomSharp.Data {
                 try {
                     Single.Parse(s);
                     if (s.Length > 16) {
-                        log.Warn("DS Value: " + s + " exeeds DS length limit: 16");
+                        log.Warn("DS Value: " + s + " exeeds DS Length limit: 16");
                     }
                 }
                 catch (FormatException e) {
@@ -763,7 +761,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         // TODO: more formats
                         a[i] = Parse(GetString(i, null));
@@ -788,7 +786,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4454;
             }
 
@@ -816,7 +814,7 @@ namespace DicomSharp.Data {
                 : base(tag, data, trim) {}
 
             public bool IsDataRange() {
-                for (int i = 0, n = m_data.length(); i < n; ++i) {
+                for (int i = 0, n = (int) m_data.Length; i < n; ++i) {
                     if (m_data.ReadByte(i) == HYPHEN) {
                         return true;
                     }
@@ -843,7 +841,7 @@ namespace DicomSharp.Data {
 
             public override int[] Ints {
                 get {
-                    var retval = new int[vm()];
+                    var retval = new int[VM()];
                     for (int i = 0; i < retval.Length; ++i) {
                         retval[i] = GetInt(i);
                     }
@@ -851,7 +849,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4953;
             }
 
@@ -869,11 +867,11 @@ namespace DicomSharp.Data {
                 try {
                     Int32.Parse(s);
                     if (s.Length > 12) {
-                        log.Warn("IS Value: " + s + " exeeds IS length limit: 12");
+                        log.Warn("IS Value: " + s + " exeeds IS Length limit: 12");
                     }
                 }
-                catch (FormatException e) {
-                    log.Warn("Illegal IS Value: " + s);
+                catch (FormatException exception) {
+                    log.Warn(String.Format("Illegal IS Value: {0}, {1}", s, exception.Message));
                 }
                 return s;
             }
@@ -895,7 +893,7 @@ namespace DicomSharp.Data {
 
             internal LO(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4C4F;
             }
         }
@@ -916,7 +914,7 @@ namespace DicomSharp.Data {
 
             internal LT(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x4C54;
             }
         }
@@ -938,7 +936,7 @@ namespace DicomSharp.Data {
                                         Encoding encoding)
                 : base(tag, values, maxLen, IsText, TRAIL_TRIM, chk, encoding) {}
 
-            public override int vm() {
+            public override int VM() {
                 if (delimPos != null) {
                     return delimPos.Length - 1;
                 }
@@ -964,10 +962,10 @@ namespace DicomSharp.Data {
             }
 
             public virtual ByteBuffer GetByteBuffer(int index) {
-                if (index >= vm()) {
+                if (index >= VM()) {
                     return null;
                 }
-                return vm() == 1
+                return VM() == 1
                            ? m_data.Rewind()
                            : ByteBuffer.Wrap(m_data.ToArray(), delimPos[index] + 1,
                                              delimPos[index + 1] - delimPos[index] - 1);
@@ -990,7 +988,7 @@ namespace DicomSharp.Data {
 
             internal PN(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x504E;
             }
 
@@ -1015,7 +1013,7 @@ namespace DicomSharp.Data {
 
             internal SH(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x5348;
             }
         }
@@ -1036,7 +1034,7 @@ namespace DicomSharp.Data {
 
             internal ST(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x5354;
             }
         }
@@ -1061,7 +1059,7 @@ namespace DicomSharp.Data {
 
             public override DateTime[] Dates {
                 get {
-                    var a = new DateTime[vm()];
+                    var a = new DateTime[VM()];
                     for (int i = 0; i < a.Length; ++i) {
                         a[i] = Parse(GetString(i, null));
                     }
@@ -1085,7 +1083,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x544D;
             }
 
@@ -1123,14 +1121,14 @@ namespace DicomSharp.Data {
 
             internal UI(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x5549;
             }
 
             protected override String DoCheck(String s) {
                 char[] a = s.ToCharArray();
                 if (a.Length > maxLen) {
-                    log.Warn("Value: " + s + " exeeds VR length limit: " + maxLen);
+                    log.Warn("Value: " + s + " exeeds VR Length limit: " + maxLen);
                 }
                 int state = StringUtils.UID_DIGIT1;
                 for (int i = 0; i < a.Length; ++i) {
@@ -1162,7 +1160,7 @@ namespace DicomSharp.Data {
 
             internal UT(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return 0x5554;
             }
         }

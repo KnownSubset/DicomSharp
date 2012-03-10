@@ -36,58 +36,55 @@ using DicomSharp.Dictionary;
 namespace DicomSharp.Data {
     public class FileMetaInfo : DcmObject {
         internal static byte[] DICM_PREFIX = new[] {(byte) 'D', (byte) 'I', (byte) 'C', (byte) 'M'};
-
         internal static byte[] VERSION = new byte[] {0, 1};
-
-        private readonly byte[] preamble = new byte[128];
-        private String implClassUID;
-        private String implVersionName;
-        private String sopClassUID;
-        private String sopInstanceUID;
-        private String tsUID;
+        private readonly byte[] _preamble = new byte[128];
+        private String _implementationClassUniqueId;
+        private String _implementationVersionName;
+        private String _sopClassUniqueId;
+        private String _sopInstanceUniqueId;
+        private String _tsUniqueId;
 
         public virtual byte[] Preamble {
-            get { return preamble; }
+            get { return _preamble; }
         }
 
-        public virtual String MediaStorageSOPClassUID {
-            get { return sopClassUID; }
+        public virtual String MediaStorageSOPClassUniqueId {
+            get { return _sopClassUniqueId; }
         }
 
-        public virtual String MediaStorageSOPInstanceUID {
-            get { return sopInstanceUID; }
+        public virtual String MediaStorageSOPInstanceUniqueId {
+            get { return _sopInstanceUniqueId; }
         }
 
-        public virtual String TransferSyntaxUID {
-            get { return tsUID; }
+        public virtual String TransferSyntaxUniqueId {
+            get { return _tsUniqueId; }
         }
 
-        public virtual String ImplementationClassUID {
-            get { return implClassUID; }
+        public virtual String ImplementationClassUniqueId {
+            get { return _implementationClassUniqueId; }
         }
 
         public virtual String ImplementationVersionName {
-            get { return implVersionName; }
+            get { return _implementationVersionName; }
         }
 
 
         public override String ToString() {
-            return "FileMetaInfo[uid=" + sopInstanceUID + "\n\tclass=" + UIDs.GetName(sopClassUID) + "\n\tts=" +
-                   UIDs.GetName(tsUID) + "\n\timpl=" + implClassUID + "-" + implVersionName + "]";
+            return "FileMetaInfo[uid=" + _sopInstanceUniqueId + "\n\tclass=" + UIDs.GetName(_sopClassUniqueId) + "\n\tts=" +
+                   UIDs.GetName(_tsUniqueId) + "\n\timpl=" + _implementationClassUniqueId + "-" + _implementationVersionName + "]";
         }
 
 
-        internal FileMetaInfo Init(String sopClassUID, String sopInstUID, String tsUID, String implClassUID,
-                                   String implVersName) {
-            var generated_var = new byte[VERSION.Length];
-            VERSION.CopyTo(generated_var, 0);
-            PutOB(Tags.FileMetaInformationVersion, generated_var);
-            PutUI(Tags.MediaStorageSOPClassUID, sopClassUID);
-            PutUI(Tags.MediaStorageSOPInstanceUID, sopInstUID);
-            PutUI(Tags.TransferSyntaxUID, tsUID);
-            PutUI(Tags.ImplementationClassUID, implClassUID);
-            if (implVersName != null) {
-                PutSH(Tags.ImplementationVersionName, implVersName);
+        internal FileMetaInfo Init(String sopClassUniqueId, String sopInstanceUniqueId, String transferSyntaxUniqueId, String implementationClassUniqueId, String implementationVersionName) {
+            var generatedVar = new byte[VERSION.Length];
+            VERSION.CopyTo(generatedVar, 0);
+            PutOB(Tags.FileMetaInformationVersion, generatedVar);
+            PutUI(Tags.MediaStorageSOPClassUniqueId, sopClassUniqueId);
+            PutUI(Tags.MediaStorageSOPInstanceUID, sopInstanceUniqueId);
+            PutUI(Tags.TransferSyntaxUniqueId, transferSyntaxUniqueId);
+            PutUI(Tags.ImplementationClassUID, implementationClassUniqueId);
+            if (implementationVersionName != null) {
+                PutSH(Tags.ImplementationVersionName, implementationVersionName);
             }
             return this;
         }
@@ -100,48 +97,48 @@ namespace DicomSharp.Data {
 
             try {
                 switch (tag) {
-                    case Tags.MediaStorageSOPClassUID:
-                        sopClassUID = newElem.GetString(null);
+                    case Tags.MediaStorageSOPClassUniqueId:
+                        _sopClassUniqueId = newElem.GetString(null);
                         break;
 
                     case Tags.MediaStorageSOPInstanceUID:
-                        sopInstanceUID = newElem.GetString(null);
+                        _sopInstanceUniqueId = newElem.GetString(null);
                         break;
 
-                    case Tags.TransferSyntaxUID:
-                        tsUID = newElem.GetString(null);
+                    case Tags.TransferSyntaxUniqueId:
+                        _tsUniqueId = newElem.GetString(null);
                         break;
 
                     case Tags.ImplementationClassUID:
-                        implClassUID = newElem.GetString(null);
+                        _implementationClassUniqueId = newElem.GetString(null);
                         break;
 
                     case Tags.ImplementationVersionName:
-                        implVersionName = newElem.GetString(null);
+                        _implementationVersionName = newElem.GetString(null);
                         break;
                 }
             }
-            catch (DcmValueException ex) {
+            catch (DcmValueException) {
                 throw new ArgumentException(newElem.ToString());
             }
             return base.Put(newElem);
         }
 
-        public virtual int length() {
+        public virtual int Length() {
             return grLen() + 12;
         }
 
         private int grLen() {
-            int len = 0;
+            int length = 0;
             for (int i = 0, n = Size; i < n; ++i) {
-                var e = (DcmElement) m_list[i];
-                len += e.Length() + (VRs.IsLengthField16Bit(e.vr()) ? 8 : 12);
+                var dcmElement = _dcmElements[i];
+                length += dcmElement.Length() + (VRs.IsLengthField16Bit(dcmElement.ValueRepresentation()) ? 8 : 12);
             }
-            return len;
+            return length;
         }
 
         public void Write(IDcmHandler handler) {
-            handler.StartFileMetaInfo(preamble);
+            handler.StartFileMetaInfo(_preamble);
             handler.DcmDecodeParam = DcmDecodeParam.EVR_LE;
             Write(0x00020000, grLen(), handler);
             handler.EndFileMetaInfo();

@@ -41,8 +41,8 @@ namespace DicomSharp.Data {
         void EndDcmFile();
         void StartFileMetaInfo(byte[] preamble);
         void EndFileMetaInfo();
-        void StartDataset();
-        void EndDataset();
+        void StartDataSet();
+        void EndDataSet();
         void StartElement(uint tag, int vr, long pos);
         void EndElement();
         void StartSequence(int length);

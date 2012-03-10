@@ -38,16 +38,10 @@ namespace DicomSharp.Utility {
     /// Summary description for ByteBuffer.
     /// </summary>
     public class ByteBuffer : MemoryStream {
-        private ByteOrder order = ByteOrder.LITTLE_ENDIAN;
-        private BinaryReader reader;
-        private BinaryWriter writer;
+        private ByteOrder _order = ByteOrder.LittleEndian;
+        private BinaryReader _reader;
+        private BinaryWriter _writer;
 
-        ///////////////////////////////////////////////////////////////////////
-        /// Constructor
-        ///////////////////////////////////////////////////////////////////////
-        //private ByteBuffer( byte[] buf ) : this( buf, ByteOrder.LITTLE_ENDIAN )
-        //{			
-        //}
         public ByteBuffer(byte[] buf, ByteOrder order) : base(buf) {
             SetOrder(order);
         }
@@ -66,32 +60,21 @@ namespace DicomSharp.Utility {
             get { return (int) (Length - Position); }
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        /// Public Instance Methods
-        ///////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// Return length as int, o/w, we can use Length (long) directly
-        /// </summary>
-        /// <returns></returns>
-        public int length() {
-            return (int) Length;
-        }
-
         public ByteOrder GetOrder() {
-            return order;
+            return _order;
         }
 
         public ByteBuffer SetOrder(ByteOrder order) {
-            this.order = order;
+            _order = order;
 
             // Both reader and writer work on the same back store: MemoryStream
-            if (order == ByteOrder.LITTLE_ENDIAN) {
-                reader = new BinaryReader(this);
-                writer = new BinaryWriter(this);
+            if (order == ByteOrder.LittleEndian) {
+                _reader = new BinaryReader(this);
+                _writer = new BinaryWriter(this);
             }
             else {
-                reader = new BEBinaryReader(this);
-                writer = new BEBinaryWriter(this);
+                _reader = new BEBinaryReader(this);
+                _writer = new BEBinaryWriter(this);
             }
             return this;
         }
@@ -136,18 +119,18 @@ namespace DicomSharp.Utility {
         /// <param name="data"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(ByteBuffer data) {
-            writer.Write(data.ToArray());
+            _writer.Write(data.ToArray());
             return this;
         }
 
         public virtual ByteBuffer ReadBuffer(int len) {
-            reader.ReadBytes(len);
+            _reader.ReadBytes(len);
             return this;
         }
 
         public virtual ByteBuffer ReadBuffer(int offset, int len) {
             Position = offset;
-            reader.ReadBytes(len);
+            _reader.ReadBytes(len);
             return this;
         }
 
@@ -157,23 +140,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(byte value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public new virtual byte ReadByte() {
-            return reader.ReadByte();
+            return _reader.ReadByte();
         }
 
         public virtual ByteBuffer Write(byte value, int off) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual byte ReadByte(int off) {
             Position = off;
-            return reader.ReadByte();
+            return _reader.ReadByte();
         }
 
         /// <summary>
@@ -182,7 +165,7 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(byte[] value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
@@ -192,23 +175,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(short value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual short ReadInt16() {
-            return reader.ReadInt16();
+            return _reader.ReadInt16();
         }
 
         public virtual ByteBuffer Write(int off, short value) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual short ReadInt16(int off) {
             Position = off;
-            return reader.ReadInt16();
+            return _reader.ReadInt16();
         }
 
         /// <summary>
@@ -217,23 +200,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(int value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual int ReadInt32() {
-            return reader.ReadInt32();
+            return _reader.ReadInt32();
         }
 
         public virtual ByteBuffer Write(int off, int value) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual int ReadInt32(int off) {
             Position = off;
-            return reader.ReadInt32();
+            return _reader.ReadInt32();
         }
 
         /// <summary>
@@ -242,23 +225,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(long value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual long ReadInt64() {
-            return reader.ReadInt64();
+            return _reader.ReadInt64();
         }
 
         public virtual ByteBuffer Write(int off, long value) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual long ReadInt64(int off) {
             Position = off;
-            return reader.ReadInt64();
+            return _reader.ReadInt64();
         }
 
         /// <summary>
@@ -267,23 +250,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(float value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual float ReadSingle() {
-            return reader.ReadSingle();
+            return _reader.ReadSingle();
         }
 
         public virtual ByteBuffer Write(int off, float value) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual float ReadSingle(int off) {
             Position = off;
-            return reader.ReadSingle();
+            return _reader.ReadSingle();
         }
 
         /// <summary>
@@ -292,23 +275,23 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(Double value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual Double ReadDouble() {
-            return reader.ReadDouble();
+            return _reader.ReadDouble();
         }
 
         public virtual ByteBuffer Write(int off, Double value) {
             Position = off;
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual Double ReadDouble(int off) {
             Position = off;
-            return reader.ReadDouble();
+            return _reader.ReadDouble();
         }
 
         /// <summary>
@@ -317,22 +300,22 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(String value) {
-            writer.Write(Encoding.ASCII.GetBytes(value));
+            _writer.Write(Encoding.ASCII.GetBytes(value));
             return this;
         }
 
         public virtual String ReadString() {
             Rewind();
-            return ReadString(length());
+            return ReadString((int) Length);
         }
 
-        public virtual String ReadString(int len) {
-            var b = new byte[len];
-            reader.Read(b, 0, len);
-            while (len > 0 && b[len - 1] == 0) {
-                --len;
+        public virtual String ReadString(int length) {
+            var b = new byte[length];
+            _reader.Read(b, 0, length);
+            while (length > 0 && b[length - 1] == 0) {
+                --length;
             }
-            return Encoding.ASCII.GetString(b, 0, len).Trim();
+            return Encoding.ASCII.GetString(b, 0, length).Trim();
         }
 
         /// <summary>
@@ -341,12 +324,12 @@ namespace DicomSharp.Utility {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual ByteBuffer Write(bool value) {
-            writer.Write(value);
+            _writer.Write(value);
             return this;
         }
 
         public virtual bool ReadBoolean() {
-            return reader.ReadBoolean();
+            return _reader.ReadBoolean();
         }
 
         public override String ToString() {
@@ -364,7 +347,7 @@ namespace DicomSharp.Utility {
         /// Public Class Methods
         ///////////////////////////////////////////////////////////////////////
         public static ByteBuffer Wrap(byte[] buf) {
-            return Wrap(buf, ByteOrder.LITTLE_ENDIAN);
+            return Wrap(buf, ByteOrder.LittleEndian);
         }
 
         public static ByteBuffer Wrap(byte[] buf, ByteOrder order) {
@@ -372,7 +355,7 @@ namespace DicomSharp.Utility {
         }
 
         public static ByteBuffer Wrap(byte[] buf, int offset, int len) {
-            return Wrap(buf, offset, len, ByteOrder.LITTLE_ENDIAN);
+            return Wrap(buf, offset, len, ByteOrder.LittleEndian);
         }
 
         public static ByteBuffer Wrap(byte[] buf, int offset, int len, ByteOrder order) {
@@ -386,7 +369,7 @@ namespace DicomSharp.Utility {
         /// Main() For Testing
         ///////////////////////////////////////////////////////////////////////
         public static void Main() {
-            ByteBuffer buf = Wrap(new Byte[40], ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer buf = Wrap(new Byte[40], ByteOrder.LittleEndian);
             buf.Write(0x01020304);
             buf.Write(16, (short) 10);
             //buf.PutInt16( 11 );
@@ -410,16 +393,16 @@ namespace DicomSharp.Utility {
     /// Encoding byte order
     /// </summary>
     public class ByteOrder {
-        public static readonly ByteOrder BIG_ENDIAN = new ByteOrder("BIG_ENDIAN");
-        public static readonly ByteOrder LITTLE_ENDIAN = new ByteOrder("LITTLE_ENDIAN");
-        private readonly String name;
+        public static readonly ByteOrder BigEndian = new ByteOrder("BIG_ENDIAN");
+        public static readonly ByteOrder LittleEndian = new ByteOrder("LITTLE_ENDIAN");
+        private readonly String _name;
 
         private ByteOrder(String name) {
-            this.name = name;
+            _name = name;
         }
 
         public override String ToString() {
-            return name;
+            return _name;
         }
     }
 }

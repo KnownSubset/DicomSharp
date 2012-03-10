@@ -33,13 +33,8 @@ using System;
 using System.Collections;
 
 namespace DicomSharp {
-    public class Implementation {
-        public static Hashtable rb = new Hashtable();
-
-        static Implementation() {
-            rb.Add("dicomSharp.ImplementationClassUID", "1.0.0.0.168");
-            rb.Add("dicomSharp.ImplementationVersionName", "dicomSharp20120310");
-        }
+    public static class Implementation {
+        public static Hashtable rb = new Hashtable() { { "dicomSharp.ImplementationClassUID", "1.0.0.0.168" }, { "dicomSharp.ImplementationVersionName", "dicomSharp20120310" } };
 
         public static String ClassUID {
             get { return (String)rb["dicomSharp.ImplementationClassUID"]; }

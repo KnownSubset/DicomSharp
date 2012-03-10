@@ -51,7 +51,7 @@ namespace DicomSharp.Net {
 
         internal AsyncOpsWindow(ByteBuffer bb, int len) {
             if (len != 4) {
-                throw new PduException("Illegal length of AsyncOpsWindow sub-item: " + len,
+                throw new PduException("Illegal Length of AsyncOpsWindow sub-item: " + len,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
             maxOpsInvoked = bb.ReadInt16();

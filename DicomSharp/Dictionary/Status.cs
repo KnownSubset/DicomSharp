@@ -225,7 +225,7 @@ namespace DicomSharp.Dictionary {
             try {
                 return (int) typeof (Status).GetField(name, BindingFlags.Instance | BindingFlags.Public).GetValue(null);
             }
-            catch (Exception e) {
+            catch (Exception) {
                 throw new ArgumentException("Unkown Status Name: " + name);
             }
         }

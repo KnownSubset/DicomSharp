@@ -53,7 +53,7 @@ namespace DicomSharp.Data {
         /// Creates a new instance of DcmStreamHandlerImpl 
         /// </summary>
         public DcmStreamHandler(Stream os) {
-            bb12 = ByteBuffer.Wrap(b12, ByteOrder.LITTLE_ENDIAN);
+            bb12 = ByteBuffer.Wrap(b12, ByteOrder.LittleEndian);
             this.os = new BinaryWriter(os);
         }
 
@@ -93,11 +93,11 @@ namespace DicomSharp.Data {
             // noop
         }
 
-        public virtual void StartDataset() {
+        public virtual void StartDataSet() {
             // noop
         }
 
-        public virtual void EndDataset() {
+        public virtual void EndDataSet() {
             // noop
         }
 
@@ -138,7 +138,7 @@ namespace DicomSharp.Data {
         }
 
         public void Value(ByteBuffer bb) {
-            int length = bb.length();
+            int length = (int) bb.Length;
 
             WriteHeader(tag, vr, (length + 1) & (~1));
 

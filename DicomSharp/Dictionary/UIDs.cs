@@ -1145,7 +1145,7 @@ namespace DicomSharp.Dictionary {
             try {
                 return (String) typeof (UIDs).GetField(name, BindingFlags.Static | BindingFlags.Public).GetValue(null);
             }
-            catch (Exception e) {
+            catch (Exception) {
                 throw new ArgumentException("Unkown UID Name: " + name);
             }
         }

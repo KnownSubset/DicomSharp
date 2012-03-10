@@ -31,53 +31,52 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using DicomSharp.Dictionary;
 using log4net;
 
 namespace DicomSharp.Data {
     /// <summary>
-    /// Implementation of <code>Dataset</code> container objects.
+    /// Implementation of <code>DataSet</code> container objects.
     /// </summary>
-    public class Dataset : BaseDataset {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    public class DataSet : BaseDataSet {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DataSet));
 
-        private readonly Dataset parent;
-        private Encoding encoding;
-        private long itemOffset = - 1L;
-        private String privateCreatorID;
+        private readonly DataSet _parentDataSet;
+        private Encoding _encoding;
+        private long _itemOffset = - 1L;
+        private String _privateCreatorId;
 
-        public Dataset() : this(null) {}
+        public DataSet() : this(null) {}
 
-        public Dataset(Dataset parent) {
-            this.parent = parent;
+        public DataSet(DataSet parentDataSet) {
+            this._parentDataSet = parentDataSet;
         }
 
         public override String PrivateCreatorID {
-            get { return privateCreatorID != null ? privateCreatorID : parent != null ? parent.PrivateCreatorID : null; }
-            set { privateCreatorID = value; }
+            get { return _privateCreatorId ?? (_parentDataSet != null ? _parentDataSet.PrivateCreatorID : null); }
+            set { _privateCreatorId = value; }
         }
 
         public virtual Encoding Encoding {
-            get { return encoding != null ? encoding : parent != null ? parent.Encoding : null; }
+            get { return _encoding ?? (_parentDataSet != null ? _parentDataSet.Encoding : null); }
         }
 
-        public virtual Dataset Parent {
-            get { return parent; }
+        public virtual DataSet ParentDataSet {
+            get { return _parentDataSet; }
         }
 
         public override long GetItemOffset() {
-            if (itemOffset != - 1L || m_list.Count == 0) {
-                return itemOffset;
+            if (_itemOffset != - 1L || _dcmElements.Count == 0) {
+                return _itemOffset;
             }
 
-            long elm1pos = ((DcmElement) m_list[0]).StreamPosition;
+            long elm1pos = ((DcmElement) _dcmElements[0]).StreamPosition;
             return elm1pos == - 1L ? - 1L : elm1pos - 8L;
         }
 
-        public override Dataset SetItemOffset(long itemOffset) {
-            this.itemOffset = itemOffset;
+        public override DataSet SetItemOffset(long itemOffset) {
+            this._itemOffset = itemOffset;
             return this;
         }
 
@@ -96,8 +95,8 @@ namespace DicomSharp.Data {
                     //this.encoding = Encodings.lookup(newElem.GetStrings(null));
                 }
                 catch (Exception ex) {
-                    log.Warn("Failed to consider specified Encoding!", ex);
-                    encoding = null;
+                    Logger.Warn("Failed to consider specified Encoding!", ex);
+                    _encoding = null;
                 }
             }
 
@@ -106,14 +105,14 @@ namespace DicomSharp.Data {
 
         public override DcmElement Remove(uint tag) {
             if (tag == Tags.SpecificCharacterSet) {
-                encoding = null;
+                _encoding = null;
             }
             return base.Remove(tag);
         }
 
         public override void Clear() {
             base.Clear();
-            encoding = null;
+            _encoding = null;
             totLen = 0;
         }
 

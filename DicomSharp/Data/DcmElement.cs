@@ -118,9 +118,9 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Get element as Dataset value
+        /// Get element as DataSet value
         /// </summary>
-        public virtual Dataset Item {
+        public virtual DataSet Item {
             get { return GetItem(0); }
         }
 
@@ -152,16 +152,16 @@ namespace DicomSharp.Data {
             tagValue = tag;
         }
 
-        public virtual int vr() {
+        public virtual int ValueRepresentation() {
             return VRs.NONE;
         }
 
-        public virtual int vm() {
+        public virtual int VM() {
             return 0;
         }
 
         public virtual bool IsEmpty() {
-            return vm() == 0;
+            return VM() == 0;
         }
 
         public virtual int Length() {
@@ -169,10 +169,10 @@ namespace DicomSharp.Data {
         }
 
         public override String ToString() {
-            int vr1 = vr();
+            int vr1 = ValueRepresentation();
             ByteBuffer bb = GetByteBuffer();
             String val = StringUtils.PromptValue(vr1, bb, 64);
-            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(vr()) + ",*" + vm() + ",#" + Length() +
+            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(ValueRepresentation()) + ",*" + VM() + ",#" + Length() +
                          ",[" + val + "]";
             return tmp;
         }
@@ -225,8 +225,9 @@ namespace DicomSharp.Data {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual uint GetTag(int index) {
-            throw new NotSupportedException(ToString());
+        public virtual uint GetTag(int index)
+        {
+            return tagValue;
         }
 
         public virtual float GetFloat(int index) {
@@ -253,27 +254,27 @@ namespace DicomSharp.Data {
             return false;
         }
 
-        public virtual Dataset AddNewItem() {
+        public virtual DataSet AddNewItem() {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual void AddItem(Dataset item) {
+        public virtual void AddItem(DataSet item) {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual Dataset GetItem(int index) {
+        public virtual DataSet GetItem(int index) {
             throw new NotSupportedException(ToString());
         }
 
         internal static ByteOrder Swap(ByteOrder from) {
-            return from == ByteOrder.LITTLE_ENDIAN
-                       ? ByteOrder.BIG_ENDIAN
-                       : ByteOrder.LITTLE_ENDIAN;
+            return from == ByteOrder.LittleEndian
+                       ? ByteOrder.BigEndian
+                       : ByteOrder.LittleEndian;
         }
 
         internal static void SwapWords(ByteBuffer bb) {
             if ((bb.Length & 1) != 0) {
-                throw new ArgumentException("illegal value length: " + bb);
+                throw new ArgumentException("illegal value Length: " + bb);
             }
 
             ByteOrder from = bb.GetOrder();
@@ -288,7 +289,7 @@ namespace DicomSharp.Data {
 
         internal static void SwapInts(ByteBuffer bb) {
             if ((bb.Length & 3) != 0) {
-                throw new ArgumentException("illegal value length " + bb);
+                throw new ArgumentException("illegal value Length " + bb);
             }
 
             ByteOrder from = bb.GetOrder();
@@ -303,7 +304,7 @@ namespace DicomSharp.Data {
 
         internal static void SwapLongs(ByteBuffer bb) {
             if ((bb.Length & 7) != 0) {
-                throw new ArgumentException("illegal value length " + bb);
+                throw new ArgumentException("illegal value Length " + bb);
             }
 
             ByteOrder from = bb.GetOrder();

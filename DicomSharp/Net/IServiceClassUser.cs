@@ -16,47 +16,47 @@ namespace DicomSharp.Net {
         /// <param name="patientId">The id of the patient</param>
         /// <param name="patientName">The name of the patient</param>
         /// </summary>
-        IList<Dataset> CFindStudy(string patientId, string patientName);
+        IList<DataSet> CFindStudy(string patientId, string patientName);
 
         /// <summary>
         /// Find a the study for the study Instance UIDs
         /// <param name="studyInstanceUID">The studu instance UIDs</param>
         /// </summary>
-        IList<Dataset> CFindStudy(string studyInstanceUID);
+        IList<DataSet> CFindStudy(string studyInstanceUID);
 
         /// <summary>
         /// Find all the studies for the studies Instance UIDs
         /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
         /// </summary>
-        IList<Dataset> CFindStudies(IEnumerable<string> studyInstanceUIDs);
+        IList<DataSet> CFindStudies(IEnumerable<string> studyInstanceUIDs);
 
         /// <summary>
         /// Send C-FIND for series
         /// <param name="seriesInstanceUID">A series instance UID</param>
         /// </summary>
-        IList<Dataset> CFindSeries(string seriesInstanceUID);
+        IList<DataSet> CFindSeries(string seriesInstanceUID);
 
         /// <summary>
         /// Send C-FIND for series
         /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
         /// </summary>
-        IList<Dataset> CFindSeries(IEnumerable<string> seriesInstanceUIDs);
+        IList<DataSet> CFindSeries(IEnumerable<string> seriesInstanceUIDs);
 
         /// <summary>
         /// Send C-FIND for instance
         /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
         /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
         /// </summary>
-        IList<Dataset> CFindInstance(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs);
+        IList<DataSet> CFindInstance(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs);
 
         /// <summary>
-        /// Send C-Move for studies and series to be stored in the specified newAETDestination
+        /// Send C-Move for studies and series to be stored in the specified applicationEntityDestination
         /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
         /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
-        /// <param name="newAETDestination">The SCP that will store the files</param>
+        /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
-        IList<Dataset> CMove(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs,
-                             string newAETDestination);
+        IList<DataSet> CMove(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs,
+                             string applicationEntityDestination);
 
         /// <summary>
         /// Send C-GET
@@ -64,7 +64,7 @@ namespace DicomSharp.Net {
         /// <param name="seriesInstanceUID">A series instance UID</param>
         /// <param name="sopInstanceUID">A sop instance instance UID</param>
         /// </summary>
-        IList<Dataset> CGet(string studyInstanceUID, string seriesInstanceUID, string sopInstanceUID);
+        IList<DataSet> CGet(string studyInstanceUID, string seriesInstanceUID, string sopInstanceUID);
 
         /*/// <summary>
         /// Send C-STORE

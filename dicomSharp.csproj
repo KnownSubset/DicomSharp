@@ -96,7 +96,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>bin\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>SecurityRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
@@ -191,6 +191,7 @@
     <Compile Include="DicomSharp\Net\IAssociation.cs" />
     <Compile Include="DicomSharp\Net\IDimse.cs" />
     <Compile Include="DicomSharp\Net\IServiceClassUser.cs" />
+    <Compile Include="DicomSharp\Net\PresentationContext.cs" />
     <Compile Include="DicomSharp\Net\ServiceClassUser.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceBase.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceException.cs" />
@@ -210,7 +211,6 @@
     <Compile Include="DicomSharp\Net\Multicaster.cs" />
     <Compile Include="DicomSharp\Net\PDataTF.cs" />
     <Compile Include="DicomSharp\Net\PduException.cs" />
-    <Compile Include="DicomSharp\Net\PresContext.cs" />
     <Compile Include="DicomSharp\Net\RoleSelection.cs" />
     <Compile Include="DicomSharp\Net\UnparsedPdu.cs" />
     <Compile Include="DicomSharp\Server\DcmAssociationHandler.cs" />
@@ -226,7 +226,7 @@
     <Compile Include="DicomSharp\Utility\LF_ThreadPool.cs" />
     <Compile Include="DicomSharp\Utility\StringUtils.cs" />
     <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
-    <Compile Include="DicomSharp\Utility\UIDGenerator.cs" />
+    <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

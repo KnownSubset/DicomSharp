@@ -42,8 +42,6 @@ namespace DicomSharp.Net {
     public class AssociationFactory {
         private static readonly AssociationFactory s_instance = new AssociationFactory();
 
-        private AssociationFactory() {}
-
         public static AssociationFactory Instance {
             get { return s_instance; }
         }
@@ -76,12 +74,12 @@ namespace DicomSharp.Net {
             return new AAbort(source, reason);
         }
 
-        public virtual PresContext NewPresContext(int pcid, String asuid, String[] tsuids) {
-            return new PresContext(0x020, pcid, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids));
+        public virtual PresentationContext NewPresContext(int pcid, String asuid, String[] tsuids) {
+            return new PresentationContext(0x020, pcid, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids));
         }
 
-        public virtual PresContext NewPresContext(int pcid, int result, String tsuid) {
-            return new PresContext(0x021, pcid, result, null, new[] {StringUtils.CheckUID(tsuid)});
+        public virtual PresentationContext NewPresContext(int pcid, int result, String tsuid) {
+            return new PresentationContext(0x021, pcid, result, null, new[] {StringUtils.CheckUID(tsuid)});
         }
 
         public virtual AsyncOpsWindow NewAsyncOpsWindow(int maxOpsInvoked, int maxOpsPerfomed) {
@@ -147,8 +145,8 @@ namespace DicomSharp.Net {
             return new Dimse(presentationContextId, dicomCommand, null, null);
         }
 
-        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand, Dataset dataset) {
-            return new Dimse(presentationContextId, dicomCommand, dataset, null);
+        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand, DataSet dataSet) {
+            return new Dimse(presentationContextId, dicomCommand, dataSet, null);
         }
 
         public virtual Dimse NewDimse(int presentationContextId, DicomCommand dicomCommand, IDataSource dataSource) {

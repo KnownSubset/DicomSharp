@@ -40,7 +40,7 @@ namespace DicomSharp.Net {
     /// </summary>
     public class DcmServiceRegistry : Hashtable {
         public DcmServiceRegistry() {
-            Add(UIDs.Verification, DcmServiceBase.VERIFICATION_SCP);
+            Add(UIDs.Verification, DcmServiceBase.VerificationScp);
         }
 
         public virtual bool Bind(String uid, IDcmService service) {
@@ -62,7 +62,7 @@ namespace DicomSharp.Net {
 
         public virtual IDcmService Lookup(String uid) {
             var retval = (IDcmService) this[StringUtils.CheckUID(uid)];
-            return retval != null ? retval : DcmServiceBase.NO_SUCH_SOP_CLASS_SCP;
+            return retval ?? DcmServiceBase.NoSuchSOPClassScp;
         }
     }
 }

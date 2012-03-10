@@ -70,7 +70,7 @@ namespace DicomSharp.Data {
         /// </summary>
         /// <param name="ins"></param>
         public DcmParser(Stream ins) {
-            bb12 = ByteBuffer.Wrap(b12, ByteOrder.LITTLE_ENDIAN);
+            bb12 = ByteBuffer.Wrap(b12, ByteOrder.LittleEndian);
             m_ins = new BinaryReader(ins);
         }
 
@@ -139,7 +139,7 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Test if this is Explicit VR format
+        /// Test if this is Explicit ValueRepresentation format
         /// </summary>
         /// <param name="decodeParam"></param>
         /// <returns></returns>
@@ -158,7 +158,7 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Test if this is Implicit VR format
+        /// Test if this is Implicit ValueRepresentation format
         /// </summary>
         /// <param name="decodeParam"></param>
         /// <returns></returns>
@@ -263,7 +263,7 @@ namespace DicomSharp.Data {
             try {
                 b12[0] = m_ins.ReadByte();
             }
-            catch (EndOfStreamException ex) {
+            catch (EndOfStreamException) {
                 eof = true;
                 log.Debug("Detect EOF");
                 return -1;
@@ -367,7 +367,7 @@ namespace DicomSharp.Data {
             long rPos0 = rPos;
             int hlen = ParseHeader();
 
-            // Group length is optional so we should not throw exception here
+            // Group Length is optional so we should not throw exception here
             if (hlen != 8 || (rTag >> 16) != groupTag || rVR != VRs.UL || rLen != 4) {
                 throw new DcmParseException("hlen=" + hlen + ", " + LogMsg());
             }
@@ -387,12 +387,12 @@ namespace DicomSharp.Data {
         public long ParseDataset(DcmDecodeParam param, uint stopTag) {
             DcmDecodeParam = param;
             if (handler != null) {
-                handler.StartDataset();
+                handler.StartDataSet();
                 handler.DcmDecodeParam = decodeParam;
             }
             long read = DoParse(stopTag, -1);
             if (handler != null) {
-                handler.EndDataset();
+                handler.EndDataSet();
             }
             return read;
         }
@@ -445,7 +445,7 @@ namespace DicomSharp.Data {
                 log.Debug("rpos:" + (rPos - 8) + ",(fffe,e0dd)");
             }
             if (handler != null) {
-                handler.StartDataset();
+                handler.StartDataSet();
             }
             long lread;
             if (itemlen == -1) {
@@ -458,7 +458,7 @@ namespace DicomSharp.Data {
                 lread = DoParse(UNDEFINED_TAG, itemlen);
             }
             if (handler != null) {
-                handler.EndDataset();
+                handler.EndDataSet();
             }
             return 8 + lread;
         }
@@ -471,7 +471,7 @@ namespace DicomSharp.Data {
         /// <returns></returns>
         private long DoParse(uint stopTag, int length) {
             if (log.IsDebugEnabled) {
-                log.Debug("rpos:" + rPos + ",stopTag:" + Tags.ToHexString(stopTag) + ",length:" + length);
+                log.Debug("rpos:" + rPos + ",stopTag:" + Tags.ToHexString(stopTag) + ",Length:" + length);
             }
             long lread = 0;
             if (length != 0) {
@@ -564,7 +564,7 @@ namespace DicomSharp.Data {
                         case SEQ_DELIMITATION_ITEM_TAG:
                             if (sqLen != -1) {
                                 log.Warn("Unexpected Sequence Delimination Item" +
-                                         " (fffe,e0dd) for Sequence with explicit length: " + sqLen);
+                                         " (fffe,e0dd) for Sequence with explicit Length: " + sqLen);
                             }
                             // solves a bug with some files, but might be completly wrong
                             if ((itemlen != 0)
@@ -629,7 +629,7 @@ namespace DicomSharp.Data {
                 DcmDecodeParam tmpDecodeParam = decodeParam;
                 try {
                     DcmDecodeParam = DcmDecodeParam.IVR_LE;
-                    bb12.SetOrder(ByteOrder.LITTLE_ENDIAN);
+                    bb12.SetOrder(ByteOrder.LittleEndian);
                     retval = ParseSQItem(id, itemlen);
                     if (handler != null) {
                         handler.Fragment(id, rPos0 - 8, unBuf.ToArray(), 0, (int) (unBuf.Length - 8));

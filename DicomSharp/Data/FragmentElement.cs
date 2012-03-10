@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -45,15 +46,15 @@ namespace DicomSharp.Data {
     public abstract class FragmentElement : DcmElement {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ArrayList m_list = new ArrayList();
+        private readonly IList<ByteBuffer> _byteBuffers = new List<ByteBuffer>();
 
         /// <summary>
         /// Creates a new instance of ElementImpl 
         /// </summary>
         public FragmentElement(uint tag) : base(tag) {}
 
-        public override int vm() {
-            return m_list.Count;
+        public override int VM() {
+            return _byteBuffers.Count;
         }
 
         public override bool HasDataFragments() {
@@ -61,23 +62,23 @@ namespace DicomSharp.Data {
         }
 
         public override ByteBuffer GetDataFragment(int index) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
 
             int offsetSize = Marshal.SizeOf(typeof (uint)),
-                end = m_list.Count - 1;
+                end = _byteBuffers.Count - 1;
 
-            var data = (ByteBuffer) m_list[index];
+            var data = _byteBuffers[index];
 
             if ((0 == index)
                 && (tag() == Dictionary.Tags.PixelData)
-                && (data.length() == (end*offsetSize))) {
+                && (data.Length == (end*offsetSize))) {
                 uint nOffsetCorrection = 0;
                 var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
 
                 for (int i = 1; i < end; i++) {
-                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
+                    var sizeofElement = (uint) _byteBuffers[i].Length;
 
                     nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
 
@@ -93,23 +94,23 @@ namespace DicomSharp.Data {
         }
 
         public override ByteBuffer GetDataFragment(int index, ByteOrder byteOrder) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
 
             int offsetSize = Marshal.SizeOf(typeof (uint)),
-                end = m_list.Count - 1;
+                end = _byteBuffers.Count - 1;
 
-            var data = (ByteBuffer) m_list[index];
+            var data = _byteBuffers[index];
 
             if ((0 == index)
                 && (tag() == Dictionary.Tags.PixelData)
-                && (data.length() == (end*offsetSize))) {
+                && (data.Length == (end*offsetSize))) {
                 uint nOffsetCorrection = 0;
                 var mybuffy = new ByteBuffer((int) data.Length, data.GetOrder());
 
                 for (int i = 1; i < end; i++) {
-                    var sizeofElement = (uint) ((ByteBuffer) m_list[i]).length();
+                    var sizeofElement = (uint)_byteBuffers[i].Length;
 
                     nOffsetCorrection += (uint) (sizeofElement + (((sizeofElement & 0x01) == 0x01) ? 9 : 8));
 
@@ -128,11 +129,11 @@ namespace DicomSharp.Data {
         }
 
         public override int GetDataFragmentLength(int index) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return 0;
             }
-            var data = (ByteBuffer) m_list[index];
-            return (data.length() + 1) & (~ 1);
+            var data = _byteBuffers[index];
+            return (int) ((data.Length + 1) & (~1));
         }
 
         public override String GetString(int index, Encoding encoding) {
@@ -140,10 +141,10 @@ namespace DicomSharp.Data {
         }
 
         public override String GetBoundedString(int maxLen, int index, Encoding encoding) {
-            if (index >= vm()) {
+            if (index >= VM()) {
                 return null;
             }
-            return StringUtils.PromptValue(vr(), GetDataFragment(index), maxLen);
+            return StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(index), maxLen);
         }
 
         public virtual String[] GetStrings(Encoding encoding) {
@@ -151,23 +152,23 @@ namespace DicomSharp.Data {
         }
 
         public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
-            var a = new String[vm()];
+            var a = new String[VM()];
             for (int i = 0; i < a.Length; ++i) {
-                a[i] = StringUtils.PromptValue(vr(), GetDataFragment(i), maxLen);
+                a[i] = StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(i), maxLen);
             }
             return a;
         }
 
         public virtual int CalcLength() {
             int len = 8;
-            for (int i = 0, n = vm(); i < n; ++i) {
+            for (int i = 0, n = VM(); i < n; ++i) {
                 len += GetDataFragmentLength(i) + 8;
             }
             return len;
         }
 
         public override void AddDataFragment(ByteBuffer data) {
-            m_list.Add(data != null ? data : EMPTY_VALUE);
+            _byteBuffers.Add(data ?? EMPTY_VALUE);
         }
 
         protected internal virtual void SwapOrder(ByteBuffer data) {
@@ -185,16 +186,16 @@ namespace DicomSharp.Data {
 			{
 			}
 			
-			public int vr()
+			public int ValueRepresentation()
 			{
 				return VRs.OF;
 			}
 			
 			public void  AddDataFragment(ByteBuffer data)
 			{
-				if ((data.length() & 3) != 0)
+				if ((data.Length() & 3) != 0)
 				{
-					log.warn("Ignore odd length fragment of " + DicomSharp.Dictionary.Tags.toString(tag) + " OF #" + data.length());
+					log.warn("Ignore odd Length fragment of " + DicomSharp.Dictionary.Tags.toString(tag) + " OF #" + data.Length());
 					data = null;
 				}
 				base.AddDataFragment(data);
@@ -222,11 +223,11 @@ namespace DicomSharp.Data {
 
         public override String ToString() {
             var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
-            sb.Append(",").Append(VRs.ToString(vr()));
+            sb.Append(",").Append(VRs.ToString(ValueRepresentation()));
             if (!IsEmpty()) {
-                for (int i = 0, n = vm(); i < n; ++i) {
+                for (int i = 0, n = VM(); i < n; ++i) {
                     sb.Append("\n\tFrag-").Append(i + 1).Append(",#").Append(GetDataFragmentLength(i)).Append("[").
-                        Append(StringUtils.PromptValue(vr(), GetDataFragment(i), 64)).Append("]");
+                        Append(StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(i), 64)).Append("]");
                 }
             }
             return sb.ToString();
@@ -240,7 +241,7 @@ namespace DicomSharp.Data {
         private sealed class OB : FragmentElement {
             internal OB(uint tag) : base(tag) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return VRs.OB;
             }
         }
@@ -255,14 +256,13 @@ namespace DicomSharp.Data {
         private sealed class OW : FragmentElement {
             internal OW(uint tag) : base(tag) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return VRs.OW;
             }
 
             public override void AddDataFragment(ByteBuffer data) {
-                if ((data.length() & 1) != 0) {
-                    log.Warn("Ignore odd length fragment of " + Dictionary.Tags.ToHexString(tag()) + " OW #" +
-                             data.length());
+                if ((data.Length & 1) != 0) {
+                    log.Warn("Ignore odd Length fragment of " + Dictionary.Tags.ToHexString(tag()) + " OW #" +data.Length);
                     data = null;
                 }
                 base.AddDataFragment(data);
@@ -283,7 +283,7 @@ namespace DicomSharp.Data {
         private sealed class UN : FragmentElement {
             internal UN(uint tag) : base(tag) {}
 
-            public override int vr() {
+            public override int ValueRepresentation() {
                 return VRs.UN;
             }
         }

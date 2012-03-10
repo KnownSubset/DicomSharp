@@ -60,7 +60,7 @@ namespace DicomSharp.Net {
         #endregion
 
         public static AReleaseRP Parse(UnparsedPdu raw) {
-            if (raw.length() != 4) {
+            if (raw.Length() != 4) {
                 throw new PduException("Illegal A-RELEASE-RQ " + raw,
                                        new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }

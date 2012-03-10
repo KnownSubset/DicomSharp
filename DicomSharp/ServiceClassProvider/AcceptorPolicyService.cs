@@ -248,7 +248,7 @@ namespace DicomSharp.ServiceClassProvider {
                 ArrayList list = policy.ListPresContext();
                 var retval = new String[list.Count];
                 for (int i = 0; i < retval.Length; ++i) {
-                    retval[i] = toString((PresContext) list[i]);
+                    retval[i] = toString((PresentationContext) list[i]);
                 }
                 return retval;
             }
@@ -299,7 +299,7 @@ namespace DicomSharp.ServiceClassProvider {
         }
 
 
-        private String toString(PresContext pc) {
+        private String toString(PresentationContext pc) {
             var sb = new StringBuilder(64);
             sb.Append(UIDs.GetName(pc.AbstractSyntaxUID)).Append(pc.TransferSyntaxUIDs);
             return sb.ToString();

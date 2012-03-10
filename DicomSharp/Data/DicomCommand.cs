@@ -46,8 +46,8 @@ namespace DicomSharp.Data {
         private int cmdField = -1;
         private int dataSetType = -1;
         private int msgId = -1;
-        private String sopClassUID;
-        private String sopInstUID;
+        private String _sopClassUniqueId;
+        private String _sopInstUniqueId;
         private int status = -1;
 
         #region IDicomCommand Members
@@ -67,24 +67,24 @@ namespace DicomSharp.Data {
             get { return msgId; }
         }
 
-        public virtual String AffectedSOPClassUID
+        public virtual String AffectedSOPClassUniqueId
         {
-            get { return sopClassUID; }
+            get { return _sopClassUniqueId; }
         }
 
-        public virtual String RequestedSOPClassUID
+        public virtual String RequestedSOPClassUniqueId
         {
-            get { return sopClassUID; }
+            get { return _sopClassUniqueId; }
         }
 
-        public virtual String AffectedSOPInstanceUID
+        public virtual String AffectedSOPInstanceUniqueId
         {
-            get { return sopInstUID; }
+            get { return _sopInstUniqueId; }
         }
 
-        public virtual String RequestedSOPInstanceUID
+        public virtual String RequestedSOPInstanceUniqueId
         {
-            get { return sopInstUID; }
+            get { return _sopInstUniqueId; }
         }
 
         public virtual int Status
@@ -339,7 +339,7 @@ namespace DicomSharp.Data {
                 throw new ArgumentException(newElem.ToString());
             }
 
-            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LITTLE_ENDIAN)
+            if (newElem.GetByteBuffer().GetOrder() != ByteOrder.LittleEndian)
             {
                 throw new ArgumentException("The byte order must be LITTLE_ENDIAN: " + newElem.GetByteBuffer());
             }
@@ -350,7 +350,7 @@ namespace DicomSharp.Data {
                 {
                     case Tags.AffectedSOPClassUID:
                     case Tags.RequestedSOPClassUID:
-                        sopClassUID = newElem.GetString(null);
+                        _sopClassUniqueId = newElem.GetString(null);
                         break;
 
                     case Tags.CommandField:
@@ -372,7 +372,7 @@ namespace DicomSharp.Data {
 
                     case Tags.AffectedSOPInstanceUID:
                     case Tags.RequestedSOPInstanceUID:
-                        sopInstUID = newElem.GetString(null);
+                        _sopInstUniqueId = newElem.GetString(null);
                         break;
                 }
             }
@@ -484,9 +484,9 @@ namespace DicomSharp.Data {
         private int grLen()
         {
             int len = 0;
-            for (int i = 0, n = m_list.Count; i < n; ++i)
+            foreach (DcmElement dcmElement in _dcmElements) 
             {
-                len += m_list[i].Length() + 8;
+                len += dcmElement.Length() + 8;
             }
 
             return len;
@@ -502,15 +502,15 @@ namespace DicomSharp.Data {
             sb.Append(msgId).Append(':').Append(CommandFieldAsString());
             if (dataSetType != (int)DicomCommandMessage.NO_DATASET)
             {
-                sb.Append(" with Dataset");
+                sb.Append(" with DataSet");
             }
-            if (sopClassUID != null)
+            if (_sopClassUniqueId != null)
             {
-                sb.Append("\n\tclass:\t").Append(UIDs.ToString(sopClassUID));
+                sb.Append("\n\tclass:\t").Append(UIDs.ToString(_sopClassUniqueId));
             }
-            if (sopInstUID != null)
+            if (_sopInstUniqueId != null)
             {
-                sb.Append("\n\tinstance:\t").Append(sopInstUID);
+                sb.Append("\n\tinstance:\t").Append(_sopInstUniqueId);
             }
             if (status != -1)
             {

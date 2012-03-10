@@ -37,18 +37,17 @@ using DicomSharp.Server;
 
 namespace DicomSharp.ServiceClassProvider {
     public class DcmSrv {
-        private static readonly ServerFactory srvFact = ServerFactory.Instance;
-        private static readonly AssociationFactory assocFact = AssociationFactory.Instance;
+        private static readonly ServerFactory ServerFactory = ServerFactory.Instance;
+        private static readonly AssociationFactory AssociationFactory = AssociationFactory.Instance;
         private readonly String[] STORAGE_AS;
         private readonly DcmServiceRegistry services;
         private readonly StoreSCP storeSCP;
         private IDcmAssociationHandler _associationHandler;
-        private AcceptorPolicy policy;
         private int port = 104;
         private Server.Server server;
 
         public DcmSrv() {
-            services = assocFact.NewDcmServiceRegistry();
+            services = AssociationFactory.NewDcmServiceRegistry();
             storeSCP = new StoreSCP();
             STORAGE_AS = new[] {
                                    UIDs.Verification,
@@ -206,8 +205,8 @@ namespace DicomSharp.ServiceClassProvider {
 
         public virtual AcceptorPolicy Policy {
             set {
-                _associationHandler = srvFact.newDcmHandler(value, services);
-                server = srvFact.newServer(_associationHandler);
+                _associationHandler = ServerFactory.newDcmHandler(value, services);
+                server = ServerFactory.newServer(_associationHandler);
             }
         }
 

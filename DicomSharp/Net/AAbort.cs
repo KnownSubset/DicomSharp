@@ -71,11 +71,11 @@ namespace DicomSharp.Net {
         #endregion
 
         internal static AAbort Parse(UnparsedPdu raw) {
-            if (raw.length() != 4) {
+            if (raw.Length() != 4) {
                 throw new PduException("Illegal A-ABORT " + raw,
                                        new AAbort(SERVICE_PROVIDER, INVALID_PDU_PARAMETER_VALUE));
             }
-            return new AAbort(raw.buffer());
+            return new AAbort(raw.Buffer());
         }
 
         /// <summary>

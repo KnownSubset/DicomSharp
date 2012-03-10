@@ -39,21 +39,21 @@ namespace DicomSharp.Data {
     /// </summary>
     public class SQElement : DcmElement {
         private readonly ArrayList m_list = new ArrayList();
-        private readonly Dataset parent;
+        private readonly DataSet parent;
         private int totlen = - 1;
 
         /// <summary>
         /// Creates a new instance of ElementImpl 
         /// </summary>
-        public SQElement(uint tag, Dataset parent) : base(tag) {
+        public SQElement(uint tag, DataSet parent) : base(tag) {
             this.parent = parent;
         }
 
-        public override int vr() {
+        public override int ValueRepresentation() {
             return VRs.SQ;
         }
 
-        public override int vm() {
+        public override int VM() {
             return m_list.Count;
         }
 
@@ -61,26 +61,26 @@ namespace DicomSharp.Data {
             return true;
         }
 
-        public override Dataset GetItem(int index) {
-            if (index >= vm()) {
+        public override DataSet GetItem(int index) {
+            if (index >= VM()) {
                 return null;
             }
-            return (Dataset) m_list[index];
+            return (DataSet) m_list[index];
         }
 
-        public override void AddItem(Dataset item) {
+        public override void AddItem(DataSet item) {
             m_list.Add(item);
         }
 
-        public override Dataset AddNewItem() {
-            var item = new Dataset(parent);
+        public override DataSet AddNewItem() {
+            var item = new DataSet(parent);
             m_list.Add(item);
             return item;
         }
 
         public virtual int CalcLength(DcmEncodeParam param) {
             totlen = param.undefSeqLen ? 8 : 0;
-            for (int i = 0, n = vm(); i < n; ++i) {
+            for (int i = 0, n = VM(); i < n; ++i) {
                 totlen += GetItem(i).CalcLength(param) + (param.undefItemLen ? 16 : 8);
             }
             return totlen;
@@ -94,7 +94,7 @@ namespace DicomSharp.Data {
             var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
             sb.Append(",SQ");
             if (!IsEmpty()) {
-                for (int i = 0, n = vm(); i < n; ++i) {
+                for (int i = 0, n = VM(); i < n; ++i) {
                     sb.Append("\n\tItem-").Append(i + 1).Append(GetItem(i));
                 }
             }

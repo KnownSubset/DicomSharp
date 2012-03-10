@@ -36,22 +36,22 @@ using DicomSharp.Utility;
 
 namespace DicomSharp.Data {
     public class DcmDecodeParam {
-        public static readonly DcmEncodeParam IVR_LE = new DcmEncodeParam(ByteOrder.LITTLE_ENDIAN, false, false, false,
+        public static readonly DcmEncodeParam IVR_LE = new DcmEncodeParam(ByteOrder.LittleEndian, false, false, false,
                                                                           false, false, false);
 
-        public static readonly DcmEncodeParam IVR_BE = new DcmEncodeParam(ByteOrder.BIG_ENDIAN, false, false, false,
+        public static readonly DcmEncodeParam IVR_BE = new DcmEncodeParam(ByteOrder.BigEndian, false, false, false,
                                                                           true, true, true);
 
-        public static readonly DcmEncodeParam EVR_LE = new DcmEncodeParam(ByteOrder.LITTLE_ENDIAN, true, false, false,
+        public static readonly DcmEncodeParam EVR_LE = new DcmEncodeParam(ByteOrder.LittleEndian, true, false, false,
                                                                           true, true, true);
 
-        public static readonly DcmEncodeParam EVR_BE = new DcmEncodeParam(ByteOrder.BIG_ENDIAN, true, false, false, true,
+        public static readonly DcmEncodeParam EVR_BE = new DcmEncodeParam(ByteOrder.BigEndian, true, false, false, true,
                                                                           true, true);
 
-        public static readonly DcmEncodeParam DEFL_EVR_LE = new DcmEncodeParam(ByteOrder.LITTLE_ENDIAN, true, true,
+        public static readonly DcmEncodeParam DEFL_EVR_LE = new DcmEncodeParam(ByteOrder.LittleEndian, true, true,
                                                                                false, true, true, true);
 
-        public static readonly DcmEncodeParam ENCAPS_EVR_LE = new DcmEncodeParam(ByteOrder.LITTLE_ENDIAN, true, false,
+        public static readonly DcmEncodeParam ENCAPS_EVR_LE = new DcmEncodeParam(ByteOrder.LittleEndian, true, false,
                                                                                  true, true, true, true);
 
         public readonly ByteOrder byteOrder;

@@ -54,7 +54,7 @@ namespace DicomSharp.Net {
 			int uidLen = din.ReadUInt16();
 			if (uidLen + 4 != len)
 			{
-				throw new PduException("SCP/SCU role selection sub-item length: " + len + " mismatch UID-length:" + uidLen, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+				throw new PduException("SCP/SCU role selection sub-item Length: " + len + " mismatch UID-length:" + uidLen, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
 			}
 			this.m_asuid = AAssociateRQAC.ReadASCII(din, uidLen);
 			this.m_isScu = din.ReadBoolean();
@@ -65,7 +65,7 @@ namespace DicomSharp.Net {
             int uidLen = bb.ReadInt16();
             if (uidLen + 4 != len) {
                 throw new PduException(
-                    "SCP/SCU role selection sub-item length: " + len + " mismatch UID-length:" + uidLen,
+                    "SCP/SCU role selection sub-item Length: " + len + " mismatch UID-Length:" + uidLen,
                     new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
             m_asuid = bb.ReadString(uidLen);

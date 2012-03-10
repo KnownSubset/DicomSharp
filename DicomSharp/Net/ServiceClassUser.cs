@@ -49,28 +49,28 @@ namespace DicomSharp.Net
     /// </summary>
     public class ServiceClassUser : IServiceClassUser
     {
-        private const string TRANSFER_SYNTAX_UID = UIDs.ImplicitVRLittleEndian;
-        private const int ASSOCIATE_TIME_OUT = 0;
-        private static readonly ILog LOGGER = LogManager.GetLogger(typeof (ServiceClassUser));
-        private static readonly String[] DEF_TS = new[] {TRANSFER_SYNTAX_UID};
-        private readonly AAssociateRQ aAssociateRequest;
-        private readonly AssociationFactory associationFactory;
-        private readonly Dictionary<string, IList<Dataset>> cacheManager = new Dictionary<string, IList<Dataset>>(50);
-        private readonly IUnityContainer container;
-        private readonly DcmObjectFactory dcmObjectFactory;
-        private readonly DcmParserFactory dcmParserFactory;
-        private IActiveAssociation activeAssociation;
-        private String hostName = "localhost";
-        private int pcidStart = 1;
-        private int port = 104;
+        private const string TransferSyntaxUniqueId = UIDs.ImplicitVRLittleEndian;
+        private const int AssociateTimeOut = 0;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (ServiceClassUser));
+        private static readonly String[] DefinedTransferSyntaxes = new[] {TransferSyntaxUniqueId};
+        private readonly AAssociateRQ _aAssociateRequest;
+        private readonly AssociationFactory _associationFactory;
+        private readonly Dictionary<string, IList<DataSet>> _cacheManager = new Dictionary<string, IList<DataSet>>(50);
+        private readonly IUnityContainer _container;
+        private readonly DcmObjectFactory _dcmObjectFactory;
+        private readonly DcmParserFactory _dcmParserFactory;
+        private IActiveAssociation _activeAssociation;
+        private string _hostName = "localhost";
+        private int _presentationContextIdStart = 1;
+        private int _port = 104;
 
         public ServiceClassUser(IUnityContainer unityContainer, String name, String title, String hostName, int port)
         {
-            container = unityContainer;
-            associationFactory = container.Resolve<AssociationFactory>();
-            dcmObjectFactory = container.Resolve<DcmObjectFactory>();
-            dcmParserFactory = container.Resolve<DcmParserFactory>();
-            aAssociateRequest = associationFactory.NewAAssociateRQ();
+            _container = unityContainer;
+            _associationFactory = _container.Resolve<AssociationFactory>();
+            _dcmObjectFactory = _container.Resolve<DcmObjectFactory>();
+            _dcmParserFactory = _container.Resolve<DcmParserFactory>();
+            _aAssociateRequest = _associationFactory.NewAAssociateRQ();
             SetUpForOperation(name, title, hostName, port);
             var timer = new Timer(5*60*1000);
             timer.Elapsed += ClearCache;
@@ -81,26 +81,26 @@ namespace DicomSharp.Net
 
         public string Name
         {
-            get { return aAssociateRequest.Name; }
-            set { aAssociateRequest.Name = value; }
+            get { return _aAssociateRequest.Name; }
+            set { _aAssociateRequest.Name = value; }
         }
 
         public string HostName
         {
-            get { return hostName; }
-            set { hostName = value; }
+            get { return _hostName; }
+            set { _hostName = value; }
         }
 
         public string Title
         {
-            get { return aAssociateRequest.ApplicationEntityTitle; }
-            set { aAssociateRequest.ApplicationEntityTitle = value; }
+            get { return _aAssociateRequest.ApplicationEntityTitle; }
+            set { _aAssociateRequest.ApplicationEntityTitle = value; }
         }
 
         public uint Port
         {
-            get { return (uint) port; }
-            set { port = (int) value; }
+            get { return (uint) _port; }
+            set { _port = (int) value; }
         }
 
         /// <summary>
@@ -112,13 +112,13 @@ namespace DicomSharp.Net
         /// </summary>
         public void SetUpForOperation(string name, string title, string newHostName, int newPort)
         {
-            aAssociateRequest.ApplicationEntityTitle = title;
-            aAssociateRequest.Name = name;
-            aAssociateRequest.AsyncOpsWindow = associationFactory.NewAsyncOpsWindow(0, 1);
-            aAssociateRequest.MaxPduLength = 16352;
-            hostName = newHostName;
-            port = newPort;
-            pcidStart = 1;
+            _aAssociateRequest.ApplicationEntityTitle = title;
+            _aAssociateRequest.Name = name;
+            _aAssociateRequest.AsyncOpsWindow = _associationFactory.NewAsyncOpsWindow(0, 1);
+            _aAssociateRequest.MaxPduLength = 16352;
+            _hostName = newHostName;
+            _port = newPort;
+            _presentationContextIdStart = 1;
         }
 
         /// <summary>
@@ -126,24 +126,24 @@ namespace DicomSharp.Net
         /// </summary>
         public bool CEcho()
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
             bool success = false;
             try
             {
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, UIDs.Verification, DEF_TS));
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, UIDs.Verification, DefinedTransferSyntaxes));
                 IActiveAssociation active = OpenAssociation();
                 if (active != null)
                 {
                     if (active.Association.GetAcceptedTransferSyntaxUID(pcid) == null)
                     {
-                        LOGGER.Error("Verification SOP class is not supported");
+                        Logger.Error("Verification SOP class is not supported");
                     } else
                     {
-                        IDicomCommand cEchoDicomCommand = dcmObjectFactory.NewCommand().InitCEchoRQ(0);
-                        IDimse dimse = associationFactory.NewDimse(pcid, cEchoDicomCommand);
-                        LOGGER.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.ApplicationEntityTitle,
-                                                  hostName, port));
+                        IDicomCommand cEchoDicomCommand = _dcmObjectFactory.NewCommand().InitCEchoRQ(0);
+                        IDimse dimse = _associationFactory.NewDimse(pcid, cEchoDicomCommand);
+                        Logger.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle,
+                                                  _hostName, _port));
                         active.Invoke(dimse);
                         success = true;
                     }
@@ -151,28 +151,28 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
             return success;
         }
 
         public bool Cancel()
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
             bool success = false;
             try
             {
-                activeAssociation = activeAssociation ?? OpenAssociation();
-                IDicomCommand cCancelRequest = dcmObjectFactory.NewCommand().InitCCancelRQ(activeAssociation.Association.CurrentMessageId());
-                IDimse dimse = associationFactory.NewDimse(pcid, cCancelRequest);
-                IActiveAssociation active = associationFactory.NewActiveAssociation(activeAssociation.Association, null);
+                _activeAssociation = _activeAssociation ?? OpenAssociation();
+                IDicomCommand cCancelRequest = _dcmObjectFactory.NewCommand().InitCCancelRQ(_activeAssociation.Association.CurrentMessageId());
+                IDimse dimse = _associationFactory.NewDimse(pcid, cCancelRequest);
+                IActiveAssociation active = _associationFactory.NewActiveAssociation(_activeAssociation.Association, null);
                 active.Start();
                 active.Invoke(dimse);
                 success = true;
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
             return success;
         }
@@ -181,40 +181,40 @@ namespace DicomSharp.Net
 
         /// <summary>
         /// Send C-FIND for series
-        /// <param name="seriesInstanceUID">A series instance UID</param>
+        /// <param name="seriesInstanceUniqueId">A series instance UniqueId</param>
         /// </summary>
-        public IList<Dataset> CFindSeries(string seriesInstanceUID)
+        public IList<DataSet> CFindSeries(string seriesInstanceUniqueId)
         {
-            if (cacheManager.ContainsKey(seriesInstanceUID))
+            if (_cacheManager.ContainsKey(seriesInstanceUniqueId))
             {
-                return cacheManager[seriesInstanceUID];
+                return _cacheManager[seriesInstanceUniqueId];
             }
-            IList<Dataset> datasets = CFindSeries(new List<string> {seriesInstanceUID});
+            IList<DataSet> datasets = CFindSeries(new List<string> {seriesInstanceUniqueId});
             if (datasets.Count > 0)
             {
-                cacheManager.Add(seriesInstanceUID, datasets);
+                _cacheManager.Add(seriesInstanceUniqueId, datasets);
             }
             return datasets;
         }
 
         /// <summary>
         /// Send C-FIND for series
-        /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
+        /// <param name="seriesInstanceUniqueIds">The series' instance UniqueIds</param>
         /// </summary>
-        public IList<Dataset> CFindSeries(IEnumerable<string> seriesInstanceUIDs)
+        public IList<DataSet> CFindSeries(IEnumerable<string> seriesInstanceUniqueIds)
         {
-            var dataset = new Dataset();
-            const string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelFIND;
-            dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
+            var dataset = new DataSet();
+            const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelFIND;
+            dataset.FileMetaInfo = GenerateFileMetaInfo(sopClassUniqueId);
             dataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
             dataset.PutCS(Tags.Modality);
-            dataset.PutUI(Tags.StudyInstanceUID, seriesInstanceUIDs.ToArray());
-            dataset.PutUI(Tags.SeriesInstanceUID);
+            dataset.PutUI(Tags.StudyInstanceUniqueId, seriesInstanceUniqueIds.ToArray());
+            dataset.PutUI(Tags.SeriesInstanceUniqueId);
             dataset.PutIS(Tags.SeriesNumber);
             dataset.PutDA(Tags.SeriesDate);
             dataset.PutTM(Tags.SeriesTime);
             dataset.PutLO(Tags.SeriesDescription);
-            return seriesInstanceUIDs.Any() ? RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID) : new List<Dataset>();
+            return seriesInstanceUniqueIds.Any() ? RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUniqueId) : new List<DataSet>();
         }
 
         /// <summary>
@@ -222,16 +222,16 @@ namespace DicomSharp.Net
         /// <param name="patientId">The id of the patient</param>
         /// <param name="patientName">The name of the patient</param>
         /// </summary>
-        public IList<Dataset> CFindStudy(string patientId, string patientName)
+        public IList<DataSet> CFindStudy(string patientId, string patientName)
         {
-            string queryKey = aAssociateRequest.ApplicationEntityTitle + port + hostName + patientId + patientName;
-            if (cacheManager.ContainsKey(queryKey))
+            string queryKey = _aAssociateRequest.ApplicationEntityTitle + _port + _hostName + patientId + patientName;
+            if (_cacheManager.ContainsKey(queryKey))
             {
-                return cacheManager[queryKey];
+                return _cacheManager[queryKey];
             }
-            const string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelFIND;
-            var dataset = new Dataset();
-            dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
+            const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelFIND;
+            var dataset = new DataSet();
+            dataset.FileMetaInfo = GenerateFileMetaInfo(sopClassUniqueId);
             dataset.PutDA(Tags.StudyDate);
             dataset.PutTM(Tags.StudyTime);
             dataset.PutSH(Tags.AccessionNumber);
@@ -246,43 +246,43 @@ namespace DicomSharp.Net
             dataset.PutDA(Tags.PatientBirthDate);
             dataset.PutCS(Tags.PatientSex);
             dataset.PutAS(Tags.PatientAge);
-            dataset.PutUI(Tags.StudyInstanceUID);
+            dataset.PutUI(Tags.StudyInstanceUniqueId);
             dataset.PutSH(Tags.StudyID);
-            List<Dataset> datasets = RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID);
+            List<DataSet> datasets = RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUniqueId);
             if (datasets.Any())
             {
-                cacheManager.Add(queryKey, datasets);
+                _cacheManager.Add(queryKey, datasets);
             }
             return datasets;
         }
 
         /// <summary>
-        /// Find a the study for the study Instance UIDs
-        /// <param name="studyInstanceUID">The studu instance UIDs</param>
+        /// Find a the study for the study Instance UniqueIds
+        /// <param name="studyInstanceUniqueId">The studu instance UniqueIds</param>
         /// </summary>
-        public IList<Dataset> CFindStudy(string studyInstanceUID)
+        public IList<DataSet> CFindStudy(string studyInstanceUniqueId)
         {
-            if (cacheManager.ContainsKey(studyInstanceUID))
+            if (_cacheManager.ContainsKey(studyInstanceUniqueId))
             {
-                return cacheManager[studyInstanceUID];
+                return _cacheManager[studyInstanceUniqueId];
             }
-            IList<Dataset> datasets = CFindStudies(new List<string> {studyInstanceUID});
+            IList<DataSet> datasets = CFindStudies(new List<string> {studyInstanceUniqueId});
             if (datasets.Count > 0)
             {
-                cacheManager.Add(studyInstanceUID, datasets);
+                _cacheManager.Add(studyInstanceUniqueId, datasets);
             }
             return datasets;
         }
 
         /// <summary>
-        /// Find all the studies for the studies Instance UIDs
-        /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
+        /// Find all the studies for the studies Instance UniqueIds
+        /// <param name="studyInstanceUniqueIds">The studies' instance UniqueIds</param>
         /// </summary>
-        public IList<Dataset> CFindStudies(IEnumerable<string> studyInstanceUIDs)
+        public IList<DataSet> CFindStudies(IEnumerable<string> studyInstanceUniqueIds)
         {
-            const string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelFIND;
-            var dataset = new Dataset();
-            dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
+            const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelFIND;
+            var dataset = new DataSet();
+            dataset.FileMetaInfo = GenerateFileMetaInfo(sopClassUniqueId);
             dataset.PutDA(Tags.StudyDate);
             dataset.PutTM(Tags.StudyTime);
             dataset.PutSH(Tags.AccessionNumber);
@@ -296,84 +296,83 @@ namespace DicomSharp.Net
             dataset.PutDA(Tags.PatientBirthDate);
             dataset.PutCS(Tags.PatientSex);
             dataset.PutAS(Tags.PatientAge);
-            dataset.PutUI(Tags.StudyInstanceUID, studyInstanceUIDs.ToArray());
+            dataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUniqueIds.ToArray());
             dataset.PutSH(Tags.StudyID);
-            return studyInstanceUIDs.Any() ? RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID) : new List<Dataset>();
+            return studyInstanceUniqueIds.Any() ? RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUniqueId) : new List<DataSet>();
         }
 
         /// <summary>
         /// Send C-FIND for instance
-        /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
-        /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
+        /// <param name="studyInstanceUniqueIds">The studies' instance UniqueIds</param>
+        /// <param name="seriesInstanceUniqueIds">The series' instance UniqueIds</param>
         /// </summary>
-        public IList<Dataset> CFindInstance(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs)
+        public IList<DataSet> CFindInstance(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds)
         {
-            const string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelFIND;
-            var datasets = new List<Dataset>();
-            List<string> seriesNotCached = RetrieveItemsFromTheCache(seriesInstanceUIDs, datasets);
-            List<string> studiesNotCached = RetrieveItemsFromTheCache(studyInstanceUIDs, datasets);
-            var dataset = new Dataset();
-            dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
-            dataset.PutUI(Tags.SOPInstanceUID);
+            const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelFIND;
+            var datasets = new List<DataSet>();
+            List<string> seriesNotCached = RetrieveItemsFromTheCache(seriesInstanceUniqueIds, datasets);
+            List<string> studiesNotCached = RetrieveItemsFromTheCache(studyInstanceUniqueIds, datasets);
+            var dataset = new DataSet();
+            dataset.FileMetaInfo = GenerateFileMetaInfo(sopClassUniqueId);
+            dataset.PutUI(Tags.SOPInstanceUniqueId);
             dataset.PutCS(Tags.QueryRetrieveLevel, "IMAGE");
-            dataset.PutUI(Tags.SeriesInstanceUID, seriesNotCached.ToArray());
-            dataset.PutUI(Tags.StudyInstanceUID, studiesNotCached.ToArray());
-            datasets.AddRange(RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUID));
+            dataset.PutUI(Tags.SeriesInstanceUniqueId, seriesNotCached.ToArray());
+            dataset.PutUI(Tags.StudyInstanceUniqueId, studiesNotCached.ToArray());
+            datasets.AddRange(RetrieveDatasetsFromServiceClassProvider(dataset, sopClassUniqueId));
             return datasets;
         }
 
         /// <summary>
-        /// Send C-Move for studies and series to be stored in the specified newAETDestination
-        /// <param name="studyInstanceUIDs">The studies' instance UIDs</param>
-        /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
-        /// <param name="newAETDestination">The SCP that will store the files</param>
+        /// Send C-Move for studies and series to be stored in the specified applicationEntityDestination
+        /// <param name="studyInstanceUniqueIds">The studies' instance UniqueIds</param>
+        /// <param name="seriesInstanceUniqueIds">The series' instance UniqueIds</param>
+        /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
-        public IList<Dataset> CMove(IEnumerable<string> studyInstanceUIDs, IEnumerable<string> seriesInstanceUIDs,
-                                    string newAETDestination)
+        public IList<DataSet> CMove(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination)
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
 
-            var foundDatasets = new List<Dataset>();
-            var dataSetsToMove = new List<Dataset>();
-            List<string> studies = RetrieveItemsFromTheCache(studyInstanceUIDs, dataSetsToMove);
-            List<string> series = RetrieveItemsFromTheCache(seriesInstanceUIDs, dataSetsToMove);
+            var foundDatasets = new List<DataSet>();
+            var dataSetsToMove = new List<DataSet>();
+            List<string> studies = RetrieveItemsFromTheCache(studyInstanceUniqueIds, dataSetsToMove);
+            List<string> series = RetrieveItemsFromTheCache(seriesInstanceUniqueIds, dataSetsToMove);
             dataSetsToMove.AddRange(CFindSeries(series));
             dataSetsToMove.AddRange(CFindStudies(studies));
             try
             {
-                const string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelMOVE;
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, sopClassUID, DEF_TS));
+                const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelMOVE;
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
                 IActiveAssociation activeAssociation = OpenAssociation();
                 if (activeAssociation != null)
                 {
                     IAssociation association = activeAssociation.Association;
-                    if (association.GetAcceptedPresContext(sopClassUID, TRANSFER_SYNTAX_UID) == null)
+                    if (association.GetAcceptedPresContext(sopClassUniqueId, TransferSyntaxUniqueId) == null)
                     {
-                        LOGGER.Error("SOP class UID not supported");
+                        Logger.Error("SOP class UniqueId not supported");
                     } else
                     {
-                        foreach (Dataset dataset in dataSetsToMove)
+                        foreach (DataSet dataset in dataSetsToMove)
                         {
-                            DicomCommand dicomCommand = dcmObjectFactory.NewCommand();
-                            IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUID, 1,
-                                                                                  newAETDestination);
-                            IDimse dimseRequest = associationFactory.NewDimse(pcid, cMoveRequest, dataset);
-                            LOGGER.Info(String.Format("CMove from {0} @ {1} {2}:{3} to {4}", aAssociateRequest.Name,
-                                                      aAssociateRequest.ApplicationEntityTitle, hostName, port, newAETDestination));
+                            DicomCommand dicomCommand = _dcmObjectFactory.NewCommand();
+                            IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUniqueId, 1,
+                                                                                  applicationEntityDestination);
+                            IDimse dimseRequest = _associationFactory.NewDimse(pcid, cMoveRequest, dataset);
+                            Logger.Info(String.Format("CMove from {0} @ {1} {2}:{3} to {4}", _aAssociateRequest.Name,
+                                                      _aAssociateRequest.ApplicationEntityTitle, _hostName, _port, applicationEntityDestination));
                             FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
                             while (!dimseResponse.IsReady())
                             {
                                 Thread.Sleep(0);
                             }
-                            foundDatasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.Dataset));
+                            foundDatasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.DataSet));
                         }
                         activeAssociation.Release(true);
                     }
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
 
             return foundDatasets;
@@ -381,52 +380,52 @@ namespace DicomSharp.Net
 
         /// <summary>
         /// Send C-GET
-        /// <param name="studyInstanceUID">A study instance UID</param>
-        /// <param name="seriesInstanceUID">A series instance UID</param>
-        /// <param name="sopInstanceUID">A sop instance instance UID</param>
+        /// <param name="studyInstanceUniqueId">A study instance UniqueId</param>
+        /// <param name="seriesInstanceUniqueId">A series instance UniqueId</param>
+        /// <param name="sopInstanceUniqueId">A sop instance instance UniqueId</param>
         /// </summary>
-        public IList<Dataset> CGet(string studyInstanceUID, string seriesInstanceUID, string sopInstanceUID)
+        public IList<DataSet> CGet(string studyInstanceUniqueId, string seriesInstanceUniqueId, string sopInstanceUniqueId)
         {
-            if ((studyInstanceUID == null) && (seriesInstanceUID == null) && (sopInstanceUID == null))
+            if ((studyInstanceUniqueId == null) && (seriesInstanceUniqueId == null) && (sopInstanceUniqueId == null))
             {
                 return null;
             }
-            int pcid = pcidStart;
-            pcidStart += 2;
-            var datasets = new List<Dataset>();
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
+            var datasets = new List<DataSet>();
             try
             {
-                string sopClassUID = UIDs.StudyRootQueryRetrieveInformationModelGET;
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, sopClassUID, DEF_TS));
+                string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelGET;
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
                 IActiveAssociation active = OpenAssociation();
                 if (active != null)
                 {
-                    var dataset = new Dataset();
-                    dataset.SetFileMetaInfo(GenerateFileMetaInfo(sopClassUID));
-                    dataset.PutUI(Tags.StudyInstanceUID, studyInstanceUID);
-                    dataset.PutUI(Tags.SeriesInstanceUID, seriesInstanceUID);
-                    dataset.PutUI(Tags.SOPInstanceUID, sopInstanceUID);
+                    var dataset = new DataSet();
+                    dataset.FileMetaInfo = GenerateFileMetaInfo(sopClassUniqueId);
+                    dataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUniqueId);
+                    dataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueId);
+                    dataset.PutUI(Tags.SOPInstanceUniqueId, sopInstanceUniqueId);
                     IAssociation association = active.Association;
-                    if ((association.GetAcceptedPresContext(sopClassUID, TRANSFER_SYNTAX_UID)) == null)
+                    if ((association.GetAcceptedPresContext(sopClassUniqueId, TransferSyntaxUniqueId)) == null)
                     {
-                        LOGGER.Error("SOP class UID not supported");
+                        Logger.Error("SOP class UniqueId not supported");
                         return null;
                     }
-                    DicomCommand cGetDicomCommand = dcmObjectFactory.NewCommand().InitCGetRQ(association.NextMsgID(), sopClassUID,
+                    DicomCommand cGetDicomCommand = _dcmObjectFactory.NewCommand().InitCGetRQ(association.NextMsgID(), sopClassUniqueId,
                                                                                         (int) DicomCommandMessage.HIGH);
-                    IDimse dimseRequest = associationFactory.NewDimse(pcid, cGetDicomCommand, dataset);
+                    IDimse dimseRequest = _associationFactory.NewDimse(pcid, cGetDicomCommand, dataset);
                     FutureDimseResponse dimseResponse = active.Invoke(dimseRequest);
                     active.Release(true);
                     while (!dimseResponse.IsReady())
                     {
                         Thread.Sleep(0);
                     }
-                    datasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.Dataset));
-                    aAssociateRequest.RemovePresentationContext(pcid);
+                    datasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.DataSet));
+                    _aAssociateRequest.RemovePresentationContext(pcid);
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
             return datasets;
         }
@@ -437,12 +436,12 @@ namespace DicomSharp.Net
         /// <param name="fileName"></param>
         public bool CStore(String fileName)
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
 
             Stream ins = null;
             DcmParser dcmParser = null;
-            Dataset dataset = null;
+            DataSet dataSet = null;
 
             try
             {
@@ -450,46 +449,46 @@ namespace DicomSharp.Net
                 try
                 {
                     ins = new BufferedStream(new FileStream(fileName, FileMode.Open, FileAccess.Read));
-                    dcmParser = dcmParserFactory.NewDcmParser(ins);
+                    dcmParser = _dcmParserFactory.NewDcmParser(ins);
                     FileFormat format = dcmParser.DetectFileFormat();
                     if (format != null)
                     {
-                        dataset = dcmObjectFactory.NewDataset();
-                        dcmParser.DcmHandler = dataset.DcmHandler;
+                        dataSet = _dcmObjectFactory.NewDataset();
+                        dcmParser.DcmHandler = dataSet.DcmHandler;
                         dcmParser.ParseDcmFile(format, Tags.PixelData);
-                        LOGGER.Debug("Reading done");
+                        Logger.Debug("Reading done");
                     } else
                     {
-                        LOGGER.Error("Unknown format!");
+                        Logger.Error("Unknown format!");
                     }
                 } catch (IOException e)
                 {
-                    LOGGER.Error(e);
+                    Logger.Error(e);
                 }
 
                 //
                 // Prepare association
                 //
-                string classUID = dataset.GetString(Tags.SOPClassUID);
-                string tsUID = dataset.GetString(Tags.TransferSyntaxUID);
+                string classUniqueId = dataSet.GetString(Tags.SOPClassUniqueId);
+                string tsUniqueId = dataSet.GetString(Tags.TransferSyntaxUniqueId);
 
-                if ((tsUID == null || tsUID.Equals("")) && (dataset.GetFileMetaInfo() != null))
+                if ((tsUniqueId == null || tsUniqueId.Equals("")) && (dataSet.FileMetaInfo != null))
                 {
-                    tsUID = dataset.GetFileMetaInfo().GetString(Tags.TransferSyntaxUID);
+                    tsUniqueId = dataSet.FileMetaInfo.GetString(Tags.TransferSyntaxUniqueId);
                 }
 
-                if (tsUID == null || tsUID.Equals(""))
+                if (tsUniqueId == null || tsUniqueId.Equals(""))
                 {
-                    tsUID = UIDs.ImplicitVRLittleEndian;
+                    tsUniqueId = UIDs.ImplicitVRLittleEndian;
                 }
 
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, classUID, new[] {tsUID}));
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, classUniqueId, new[] {tsUniqueId}));
                 IActiveAssociation active = OpenAssociation();
                 if (active != null)
                 {
                     bool bResponse = false;
 
-                    FutureDimseResponse frsp = SendDataset(active, dcmParser, dataset);
+                    FutureDimseResponse frsp = SendDataset(active, dcmParser, dataSet);
                     if (frsp != null)
                     {
                         active.WaitOnRSP();
@@ -500,7 +499,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
                 if (ins != null)
                 {
                     try
@@ -516,36 +515,36 @@ namespace DicomSharp.Net
         /// <summary>
         /// Send C-STORE
         /// </summary>
-        /// <param name="ds"></param>
-        public bool CStore(Dataset ds)
+        /// <param name="dataSet"></param>
+        public bool CStore(DataSet dataSet)
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
 
             try
             {
                 //
                 // Prepare association
                 //
-                String classUID = ds.GetString(Tags.SOPClassUID);
-                String tsUID = ds.GetString(Tags.TransferSyntaxUID);
+                String classUniqueId = dataSet.GetString(Tags.SOPClassUniqueId);
+                String tsUniqueId = dataSet.GetString(Tags.TransferSyntaxUniqueId);
 
-                if ((tsUID == null || tsUID.Equals("")) && (ds.GetFileMetaInfo() != null))
+                if ((tsUniqueId == null || tsUniqueId.Equals("")) && (dataSet.FileMetaInfo != null))
                 {
-                    tsUID = ds.GetFileMetaInfo().GetString(Tags.TransferSyntaxUID);
+                    tsUniqueId = dataSet.FileMetaInfo.GetString(Tags.TransferSyntaxUniqueId);
                 }
 
-                if (tsUID == null || tsUID.Equals(""))
+                if (tsUniqueId == null || tsUniqueId.Equals(""))
                 {
-                    tsUID = UIDs.ImplicitVRLittleEndian;
+                    tsUniqueId = UIDs.ImplicitVRLittleEndian;
                 }
 
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, classUID, new[] {tsUID}));
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, classUniqueId, new[] {tsUniqueId}));
                 IActiveAssociation active = OpenAssociation();
                 if (active != null)
                 {
                     bool bResponse = false;
-                    FutureDimseResponse frsp = SendDataset(active, null, ds);
+                    FutureDimseResponse frsp = SendDataset(active, null, dataSet);
                     if (frsp != null)
                     {
                         active.WaitOnRSP();
@@ -556,7 +555,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
 
             return false;
@@ -564,162 +563,162 @@ namespace DicomSharp.Net
 
         private void ClearCache(object sender, ElapsedEventArgs e)
         {
-            LOGGER.Info("Clearing Cache");
-            cacheManager.Clear();
+            Logger.Info("Clearing Cache");
+            _cacheManager.Clear();
         }
 
-        private List<string> RetrieveItemsFromTheCache(IEnumerable<string> uids, List<Dataset> datasets)
+        private List<string> RetrieveItemsFromTheCache(IEnumerable<string> UniqueIds, List<DataSet> datasets)
         {
-            var uidsNotCached = new List<string>();
-            foreach (string uid in uids)
+            var UniqueIdsNotCached = new List<string>();
+            foreach (string UniqueId in UniqueIds)
             {
-                if (cacheManager.ContainsKey(uid))
+                if (_cacheManager.ContainsKey(UniqueId))
                 {
-                    datasets.AddRange(cacheManager[uid]);
+                    datasets.AddRange(_cacheManager[UniqueId]);
                 } else
                 {
-                    uidsNotCached.Add(uid);
+                    UniqueIdsNotCached.Add(UniqueId);
                 }
             }
-            return uidsNotCached;
+            return UniqueIdsNotCached;
         }
 
         private IActiveAssociation OpenAssociation()
         {
-            IAssociation association = associationFactory.NewRequestor(hostName, port);
-            IPdu assocAC = association.Connect(aAssociateRequest, ASSOCIATE_TIME_OUT);
+            IAssociation association = _associationFactory.NewRequestor(_hostName, _port);
+            IPdu assocAC = association.Connect(_aAssociateRequest, AssociateTimeOut);
             if (assocAC is AAssociateRJ)
             {
                 var aAssociateRj = ((AAssociateRJ) assocAC);
                 throw new DcmServiceException(aAssociateRj.Reason(), aAssociateRj.ReasonAsString());
             }
-            activeAssociation = associationFactory.NewActiveAssociation(association, null);
-            activeAssociation.Timeout = ASSOCIATE_TIME_OUT;
-            activeAssociation.Start();
-            return activeAssociation;
+            _activeAssociation = _associationFactory.NewActiveAssociation(association, null);
+            _activeAssociation.Timeout = AssociateTimeOut;
+            _activeAssociation.Start();
+            return _activeAssociation;
         }
 
-        private List<Dataset> RetrieveDatasetsFromServiceClassProvider(Dataset dataset, string sopClassUID)
+        private List<DataSet> RetrieveDatasetsFromServiceClassProvider(DataSet dataSet, string sopClassUniqueId)
         {
-            int pcid = pcidStart;
-            pcidStart += 2;
-            var datasets = new List<Dataset>();
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
+            var datasets = new List<DataSet>();
             try
             {
-                aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, sopClassUID, DEF_TS));
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
                 IActiveAssociation activeAssociation = OpenAssociation();
                 if (activeAssociation != null)
                 {
-                    datasets = ExecuteCFindDicomCommand(activeAssociation, dataset, pcid);
+                    datasets = ExecuteCFindDicomCommand(activeAssociation, dataSet, pcid);
                 }
             } finally
             {
-                aAssociateRequest.RemovePresentationContext(pcid);
+                _aAssociateRequest.RemovePresentationContext(pcid);
             }
             return datasets;
         }
 
-        private List<Dataset> ExecuteCFindDicomCommand(IActiveAssociation active, Dataset dataset, int pcid)
+        private List<DataSet> ExecuteCFindDicomCommand(IActiveAssociation active, DataSet dataSet, int pcid)
         {
             IAssociation association = active.Association;
-            if (association.GetAcceptedPresContext(UIDs.StudyRootQueryRetrieveInformationModelFIND, TRANSFER_SYNTAX_UID) == null)
+            if (association.GetAcceptedPresContext(UIDs.StudyRootQueryRetrieveInformationModelFIND, TransferSyntaxUniqueId) == null)
             {
-                LOGGER.Error("SOP class UID not supported");
+                Logger.Error("SOP class UniqueId not supported");
                 return null;
             }
-            IDicomCommand cFindDicomCommand = dcmObjectFactory.NewCommand().InitCFindRQ(association.NextMsgID(),
+            IDicomCommand cFindDicomCommand = _dcmObjectFactory.NewCommand().InitCFindRQ(association.NextMsgID(),
                                                                                   UIDs.StudyRootQueryRetrieveInformationModelFIND,
                                                                                   (int) DicomCommandMessage.HIGH);
-            IDimse dimseRequest = associationFactory.NewDimse(pcid, cFindDicomCommand, dataset);
-            LOGGER.Info(String.Format("CFind as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.ApplicationEntityTitle, hostName, port));
+            IDimse dimseRequest = _associationFactory.NewDimse(pcid, cFindDicomCommand, dataSet);
+            Logger.Info(String.Format("CFind as {0} @ {1} {2}:{3}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle, _hostName, _port));
             FutureDimseResponse dimseResponse = active.Invoke(dimseRequest);
             active.Release(true);
             while (!dimseResponse.IsReady())
             {
                 Thread.Sleep(0);
             }
-            return dimseResponse.ListPending().Select(dimse => dimse.Dataset).ToList();
+            return dimseResponse.ListPending().Select(dimse => dimse.DataSet).ToList();
         }
 
-        private FutureDimseResponse SendDataset(IActiveAssociation activeAssociation, DcmParser parser, Dataset dataset)
+        private FutureDimseResponse SendDataset(IActiveAssociation activeAssociation, DcmParser parser, DataSet dataSet)
         {
-            String sopInstUID = dataset.GetString(Tags.SOPInstanceUID);
-            if (sopInstUID == null)
+            String sopInstUniqueId = dataSet.GetString(Tags.SOPInstanceUniqueId);
+            if (sopInstUniqueId == null)
             {
-                LOGGER.Error("SOP instance UID is null");
+                Logger.Error("SOP instance UniqueId is null");
                 return null;
             }
-            String sopClassUID = dataset.GetString(Tags.SOPClassUID);
-            if (sopClassUID == null)
+            String sopClassUniqueId = dataSet.GetString(Tags.SOPClassUniqueId);
+            if (sopClassUniqueId == null)
             {
-                LOGGER.Error("SOP class UID is null");
+                Logger.Error("SOP class UniqueId is null");
                 return null;
             }
-            PresContext pc = null;
+            PresentationContext pc = null;
             IAssociation association = activeAssociation.Association;
 
             if (parser != null)
             {
                 if (parser.DcmDecodeParam.encapsulated)
                 {
-                    String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUID;
-                    if ((pc = association.GetAcceptedPresContext(sopClassUID, tsuid)) == null)
+                    String tsUniqueId = dataSet.FileMetaInfo.TransferSyntaxUniqueId;
+                    if ((pc = association.GetAcceptedPresContext(sopClassUniqueId, tsUniqueId)) == null)
                     {
-                        LOGGER.Error("SOP class UID not supported");
+                        Logger.Error("SOP class UniqueId not supported");
                         return null;
                     }
-                } else if (IsSopClassUIDNotSupported(association, sopClassUID, out pc))
+                } else if (IsSopClassUniqueIdNotSupported(association, sopClassUniqueId, out pc))
                 {
-                    LOGGER.Error("SOP class UID not supported");
+                    Logger.Error("SOP class UniqueId not supported");
                     return null;
                 }
 
-                DicomCommand cStoreRequest = dcmObjectFactory.NewCommand().InitCStoreRQ(association.NextMsgID(), sopClassUID,
-                                                                                        sopInstUID, (int) DicomCommandMessage.HIGH);
+                DicomCommand cStoreRequest = _dcmObjectFactory.NewCommand().InitCStoreRQ(association.NextMsgID(), sopClassUniqueId,
+                                                                                        sopInstUniqueId, (int) DicomCommandMessage.HIGH);
                 return
-                    activeAssociation.Invoke(associationFactory.NewDimse(pc.pcid(), cStoreRequest,
-                                                                         new FileDataSource(parser, dataset, new byte[2048])));
+                    activeAssociation.Invoke(_associationFactory.NewDimse(pc.pcid(), cStoreRequest,
+                                                                         new FileDataSource(parser, dataSet, new byte[2048])));
             }
-            if ((dataset.GetFileMetaInfo() != null) && (dataset.GetFileMetaInfo().TransferSyntaxUID != null))
+            if ((dataSet.FileMetaInfo != null) && (dataSet.FileMetaInfo.TransferSyntaxUniqueId != null))
             {
-                String tsuid = dataset.GetFileMetaInfo().TransferSyntaxUID;
-                if ((pc = association.GetAcceptedPresContext(sopClassUID, tsuid)) == null)
+                String tsUniqueId = dataSet.FileMetaInfo.TransferSyntaxUniqueId;
+                if ((pc = association.GetAcceptedPresContext(sopClassUniqueId, tsUniqueId)) == null)
                 {
-                    LOGGER.Error("SOP class UID not supported");
+                    Logger.Error("SOP class UniqueId not supported");
                     return null;
                 }
-            } else if (IsSopClassUIDNotSupported(association, sopClassUID, out pc))
+            } else if (IsSopClassUniqueIdNotSupported(association, sopClassUniqueId, out pc))
             {
-                LOGGER.Error("SOP class UID not supported");
+                Logger.Error("SOP class UniqueId not supported");
                 return null;
             }
 
-            DicomCommand cStoreRq = dcmObjectFactory.NewCommand().InitCStoreRQ(association.NextMsgID(), sopClassUID, sopInstUID,
+            DicomCommand cStoreRq = _dcmObjectFactory.NewCommand().InitCStoreRQ(association.NextMsgID(), sopClassUniqueId, sopInstUniqueId,
                                                                                (int) DicomCommandMessage.HIGH);
-            IDimse dimse = associationFactory.NewDimse(pc.pcid(), cStoreRq, dataset);
+            IDimse dimse = _associationFactory.NewDimse(pc.pcid(), cStoreRq, dataSet);
             return activeAssociation.Invoke(dimse);
         }
 
-        private static bool IsSopClassUIDNotSupported(IAssociation association, string sopClassUID, out PresContext pc)
+        private static bool IsSopClassUniqueIdNotSupported(IAssociation association, string sopClassUniqueId, out PresentationContext pc)
         {
-            return (pc = association.GetAcceptedPresContext(sopClassUID, UIDs.ImplicitVRLittleEndian)) == null;
+            return (pc = association.GetAcceptedPresContext(sopClassUniqueId, UIDs.ImplicitVRLittleEndian)) == null;
         }
 
-        private FileMetaInfo GenerateFileMetaInfo(string sopClassUID)
+        private FileMetaInfo GenerateFileMetaInfo(string sopClassUniqueId)
         {
             var fileMetaInfo = new FileMetaInfo();
             fileMetaInfo.PutOB(Tags.FileMetaInformationVersion, new byte[] {0, 1});
-            fileMetaInfo.PutUI(Tags.MediaStorageSOPClassUID, sopClassUID);
-            fileMetaInfo.PutUI(Tags.TransferSyntaxUID, TRANSFER_SYNTAX_UID);
+            fileMetaInfo.PutUI(Tags.MediaStorageSOPClassUniqueId, sopClassUniqueId);
+            fileMetaInfo.PutUI(Tags.TransferSyntaxUniqueId, TransferSyntaxUniqueId);
             fileMetaInfo.PutSH(Tags.ImplementationVersionName, "dicomSharp-SCU");
             return fileMetaInfo;
         }
 
-        private static void copy(Stream ins, Stream outs, int len, bool swap, byte[] buffer)
+        private static void Copy(Stream ins, Stream outs, int len, bool swap, byte[] buffer)
         {
             if (swap && (len & 1) != 0)
             {
-                throw new DcmParseException("Illegal length of OW Pixel Data: " + len);
+                throw new DcmParseException("Illegal Length of OW Pixel Data: " + len);
             }
             if (buffer == null)
             {
@@ -772,50 +771,50 @@ namespace DicomSharp.Net
         /// </summary>
         public sealed class FileDataSource : IDataSource
         {
-            private readonly byte[] buffer;
-            private readonly Dataset ds;
-            private readonly DcmParser parser;
+            private readonly byte[] _buffer;
+            private readonly DataSet _dataSet;
+            private readonly DcmParser _parser;
 
-            public FileDataSource(DcmParser parser, Dataset ds, byte[] buffer)
+            public FileDataSource(DcmParser parser, DataSet dataSet, byte[] buffer)
             {
-                this.parser = parser;
-                this.ds = ds;
-                this.buffer = buffer;
+                _parser = parser;
+                _dataSet = dataSet;
+                _buffer = buffer;
             }
 
             public void WriteTo(Stream outs, String transferSyntaxUniqueId)
             {
                 DcmEncodeParam netParam = DcmDecodeParam.ValueOf(transferSyntaxUniqueId);
-                ds.WriteDataset(outs, netParam);
-                if (parser.ReadTag == Tags.PixelData)
+                _dataSet.WriteDataSet(outs, netParam);
+                if (_parser.ReadTag == Tags.PixelData)
                 {
-                    DcmDecodeParam fileParam = parser.DcmDecodeParam;
-                    ds.WriteHeader(outs, netParam, parser.ReadTag, parser.ReadVR, parser.ReadLength);
+                    DcmDecodeParam fileParam = _parser.DcmDecodeParam;
+                    _dataSet.WriteHeader(outs, netParam, _parser.ReadTag, _parser.ReadVR, _parser.ReadLength);
                     if (netParam.encapsulated)
                     {
-                        parser.ParseHeader();
-                        while (parser.ReadTag == Tags.Item)
+                        _parser.ParseHeader();
+                        while (_parser.ReadTag == Tags.Item)
                         {
-                            ds.WriteHeader(outs, netParam, parser.ReadTag, parser.ReadVR, parser.ReadLength);
-                            copy(parser.InputStream, outs, parser.ReadLength, false, buffer);
+                            _dataSet.WriteHeader(outs, netParam, _parser.ReadTag, _parser.ReadVR, _parser.ReadLength);
+                            Copy(_parser.InputStream, outs, _parser.ReadLength, false, _buffer);
                         }
-                        if (parser.ReadTag != Tags.SeqDelimitationItem)
+                        if (_parser.ReadTag != Tags.SeqDelimitationItem)
                         {
-                            throw new DcmParseException("Unexpected Tag:" + Tags.ToHexString(parser.ReadTag));
+                            throw new DcmParseException("Unexpected Tag:" + Tags.ToHexString(_parser.ReadTag));
                         }
-                        if (parser.ReadLength != 0)
+                        if (_parser.ReadLength != 0)
                         {
-                            throw new DcmParseException("(fffe,e0dd), Length:" + parser.ReadLength);
+                            throw new DcmParseException("(fffe,e0dd), Length:" + _parser.ReadLength);
                         }
-                        ds.WriteHeader(outs, netParam, Tags.SeqDelimitationItem, VRs.NONE, 0);
+                        _dataSet.WriteHeader(outs, netParam, Tags.SeqDelimitationItem, VRs.NONE, 0);
                     } else
                     {
-                        bool swap = fileParam.byteOrder != netParam.byteOrder && parser.ReadVR == VRs.OW;
-                        copy(parser.InputStream, outs, parser.ReadLength, swap, buffer);
+                        bool swap = fileParam.byteOrder != netParam.byteOrder && _parser.ReadVR == VRs.OW;
+                        Copy(_parser.InputStream, outs, _parser.ReadLength, swap, _buffer);
                     }
-                    ds.Clear();
-                    parser.ParseDataset(fileParam, 0);
-                    ds.WriteDataset(outs, netParam);
+                    _dataSet.Clear();
+                    _parser.ParseDataset(fileParam, 0);
+                    _dataSet.WriteDataSet(outs, netParam);
                 }
             }
         }

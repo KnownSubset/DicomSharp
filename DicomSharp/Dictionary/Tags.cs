@@ -229,7 +229,7 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0002,0002) VR=UI Media Storage SOP Class UID 
         /// </summary>
-        public const uint MediaStorageSOPClassUID = 0x00020002;
+        public const uint MediaStorageSOPClassUniqueId = 0x00020002;
 
         /// <summary>(0002,0003) VR=UI Media Storage SOP Instance UID 
         /// </summary>
@@ -237,7 +237,7 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0002,0010) VR=UI Transfer Syntax UID 
         /// </summary>
-        public const uint TransferSyntaxUID = 0x00020010;
+        public const uint TransferSyntaxUniqueId = 0x00020010;
 
         /// <summary>(0002,0012) VR=UI Implementation Class UID 
         /// </summary>
@@ -365,11 +365,11 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0008,0016) VR=UI SOP Class UID 
         /// </summary>
-        public const uint SOPClassUID = 0x00080016;
+        public const uint SOPClassUniqueId = 0x00080016;
 
         /// <summary>(0008,0018) VR=UI SOP Instance UID 
         /// </summary>
-        public const uint SOPInstanceUID = 0x00080018;
+        public const uint SOPInstanceUniqueId = 0x00080018;
 
         /// <summary>(0008,0020) VR=DA Study Date 
         /// </summary>
@@ -2797,11 +2797,11 @@ namespace DicomSharp.Dictionary {
 
         /// <summary>(0020,000D) VR=UI Study Instance UID 
         /// </summary>
-        public const uint StudyInstanceUID = 0x0020000D;
+        public const uint StudyInstanceUniqueId = 0x0020000D;
 
         /// <summary>(0020,000E) VR=UI Series Instance UID 
         /// </summary>
-        public const uint SeriesInstanceUID = 0x0020000E;
+        public const uint SeriesInstanceUniqueId = 0x0020000E;
 
         /// <summary>(0020,0010) VR=SH Study ID 
         /// </summary>
@@ -7516,7 +7516,7 @@ namespace DicomSharp.Dictionary {
             try {
                 return (uint) typeof (Tags).GetField(name, BindingFlags.Static | BindingFlags.Public).GetValue(null);
             }
-            catch (Exception e) {
+            catch (Exception) {
                 throw new ArgumentException("Unkown Tag Name: " + name);
             }
         }

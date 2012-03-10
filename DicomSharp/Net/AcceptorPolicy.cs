@@ -168,15 +168,15 @@ namespace DicomSharp.Net {
         public void PutPresContext(String asuid, String[] tsuids) {
             if (tsuids != null) {
                 presCtxMap.Add(asuid,
-                               new PresContext(0x020, 1, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids)));
+                               new PresentationContext(0x020, 1, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids)));
             }
             else {
                 presCtxMap.Remove(asuid);
             }
         }
 
-        public virtual PresContext GetPresContext(String syntax) {
-            return (PresContext) presCtxMap[syntax];
+        public virtual PresentationContext GetPresContext(String syntax) {
+            return (PresentationContext) presCtxMap[syntax];
         }
 
         public virtual void PutRoleSelection(String uid, bool scu, bool scp) {
@@ -267,26 +267,26 @@ namespace DicomSharp.Net {
 
         private void NegotiatePresCtx(AAssociateRQ rq, AAssociateAC ac) {
             for (IEnumerator enu = rq.ListPresContext().GetEnumerator(); enu.MoveNext();) {
-                ac.AddPresContext(NegotiatePresCtx((PresContext) enu.Current));
+                ac.AddPresContext(NegotiatePresCtx((PresentationContext) enu.Current));
             }
         }
 
-        private PresContext NegotiatePresCtx(PresContext offered) {
-            int result = PresContext.ABSTRACT_SYNTAX_NOT_SUPPORTED;
+        private PresentationContext NegotiatePresCtx(PresentationContext offered) {
+            int result = PresentationContext.ABSTRACT_SYNTAX_NOT_SUPPORTED;
             String tsuid = UIDs.ImplicitVRLittleEndian;
 
-            PresContext accept = GetPresContext(offered.AbstractSyntaxUID);
+            PresentationContext accept = GetPresContext(offered.AbstractSyntaxUID);
             if (accept != null) {
-                result = PresContext.TRANSFER_SYNTAXES_NOT_SUPPORTED;
+                result = PresentationContext.TRANSFER_SYNTAXES_NOT_SUPPORTED;
                 for (IEnumerator enu = accept.TransferSyntaxUIDs.GetEnumerator(); enu.MoveNext();) {
                     tsuid = (String) enu.Current;
                     if (offered.TransferSyntaxUIDs.IndexOf(tsuid) != - 1) {
-                        result = PresContext.ACCEPTANCE;
+                        result = PresentationContext.ACCEPTANCE;
                         break;
                     }
                 }
             }
-            return new PresContext(0x021, offered.pcid(), result, null, new[] {tsuid});
+            return new PresentationContext(0x021, offered.pcid(), result, null, new[] {tsuid});
         }
 
         private void NegotiateRoleSelection(AAssociateRQ rq, AAssociateAC ac) {
