@@ -34,6 +34,6 @@ using System.IO;
 
 namespace DicomSharp.Net {
     public interface IDataSource {
-        void WriteTo(Stream outs, String tsUID);
+        void WriteTo(Stream outs, String transferSyntaxUniqueId);
     }
 }

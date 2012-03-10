@@ -42,10 +42,10 @@ namespace DicomSharp.Net {
     /// <summary>
     /// 
     /// </summary>
-    public class ActiveAssociation : LF_ThreadPool.ThreadHandlerI {
+    public class ActiveAssociation : LF_ThreadPool.ThreadHandlerI, IActiveAssociation {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly Association assoc;
+        private readonly IAssociation _association;
         private readonly Hashtable cancelDispatcher = new Hashtable();
         private readonly LF_ThreadPool m_threadPool;
         private readonly Hashtable rspDispatcher = new Hashtable();
@@ -56,19 +56,19 @@ namespace DicomSharp.Net {
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="assoc"></param>
+        /// <param name="association"> </param>
         /// <param name="services"></param>
-        public ActiveAssociation(Association assoc, DcmServiceRegistry services) {
-            if (assoc.State != AssociationState.ASSOCIATION_ESTABLISHED) {
-                throw new SystemException("Association not esrablished - " + assoc.State);
+        public ActiveAssociation(IAssociation association, DcmServiceRegistry services) {
+            if (association.State != AssociationState.ASSOCIATION_ESTABLISHED) {
+                throw new SystemException("Association not esrablished - " + association.State);
             }
 
             m_threadPool = new LF_ThreadPool(this);
 
-            this.assoc = assoc;
+            this._association = association;
             this.services = services;
-            this.assoc.ActiveAssociation = this;
-            this.assoc.SetThreadPool(m_threadPool);
+            this._association.ActiveAssociation = this;
+            this._association.SetThreadPool(m_threadPool);
         }
 
         public virtual int Timeout {
@@ -76,8 +76,8 @@ namespace DicomSharp.Net {
             set { timeout = value; }
         }
 
-        public virtual Association Association {
-            get { return assoc; }
+        public virtual IAssociation Association {
+            get { return _association; }
         }
 
         #region ThreadHandlerI Members
@@ -88,7 +88,7 @@ namespace DicomSharp.Net {
         public void Run(LF_ThreadPool pool) {
             try {
                 lock (this) {
-                    Dimse dimse = assoc.Read(timeout);
+                    Dimse dimse = _association.Read(timeout);
 
                     // if Association was released
                     if (dimse == null) {
@@ -203,22 +203,22 @@ namespace DicomSharp.Net {
         /// Send a DIMSE message
         /// </summary>
         /// <param name="rq"></param>
-        /// <param name="l"></param>
-        public void Invoke(Dimse rq, IDimseListener l) {
+        /// <param name="dimseListener"></param>
+        public void Invoke(IDimse rq, IDimseListener dimseListener) {
             int msgID = rq.DicomCommand.MessageID;
-            int maxOps = assoc.MaxOpsInvoked;
+            int maxOps = _association.MaxOpsInvoked;
             if (maxOps == 0) {
-                rspDispatcher.Add(msgID, l);
+                rspDispatcher.Add(msgID, dimseListener);
             }
             else {
                 lock (rspDispatcher) {
                     while (rspDispatcher.Count >= maxOps) {
                         Monitor.Wait(rspDispatcher);
                     }
-                    rspDispatcher.Add(msgID, l);
+                    rspDispatcher.Add(msgID, dimseListener);
                 }
             }
-            assoc.Write(rq);
+            _association.Write(rq);
         }
 
         /// <summary>
@@ -226,9 +226,9 @@ namespace DicomSharp.Net {
         /// </summary>
         /// <param name="rq"></param>
         /// <returns></returns>
-        public FutureDimseResponse Invoke(Dimse rq) {
+        public FutureDimseResponse Invoke(IDimse rq) {
             var retval = new FutureDimseResponse();
-            assoc.AddAssociationListener(retval);
+            _association.AddAssociationListener(retval);
             Invoke(rq, retval);
             return retval;
         }
@@ -253,7 +253,7 @@ namespace DicomSharp.Net {
                 WaitOnRSP();
             }
             if (!m_released) {
-                (assoc).WriteReleaseRQ();
+                (_association).WriteReleaseRQ();
             }
         }
 
@@ -273,20 +273,20 @@ namespace DicomSharp.Net {
             IDicomCommand cmd = dimse.DicomCommand;
             Dataset ds = dimse.Dataset; // read out dataset, if any
             int msgID = cmd.MessageIDToBeingRespondedTo;
-            IDimseListener l = null;
+            IDimseListener dimseListener = null;
             if (cmd.IsPending()) {
-                l = (IDimseListener) rspDispatcher[msgID];
+                dimseListener = (IDimseListener) rspDispatcher[msgID];
             }
             else {
                 lock (rspDispatcher) {
-                    l = (IDimseListener) rspDispatcher[msgID];
+                    dimseListener = (IDimseListener) rspDispatcher[msgID];
                     rspDispatcher.Remove(msgID);
                     Monitor.Pulse(rspDispatcher);
                 }
             }
 
-            if (l != null) {
-                l.DimseReceived(assoc, dimse);
+            if (dimseListener != null) {
+                dimseListener.DimseReceived(_association, dimse);
             }
         }
 
@@ -302,7 +302,7 @@ namespace DicomSharp.Net {
             cancelDispatcher.Remove(msgID);
 
             if (l != null) {
-                l.DimseReceived(assoc, dimse);
+                l.DimseReceived(_association, dimse);
             }
         }
     }

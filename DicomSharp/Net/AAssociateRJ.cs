@@ -88,7 +88,7 @@ namespace DicomSharp.Net {
         /// <returns>
         /// Result field value. 
         /// </returns>
-        public int result() {
+        public int Result() {
             return buf[7] & 0xff;
         }
 
@@ -98,7 +98,7 @@ namespace DicomSharp.Net {
         /// <returns>
         /// Source field value. 
         /// </returns>
-        public int source() {
+        public int Source() {
             return buf[8] & 0xff;
         }
 
@@ -108,7 +108,7 @@ namespace DicomSharp.Net {
         /// <returns>
         /// Reason field value. 
         /// </returns>
-        public int reason() {
+        public int Reason() {
             return buf[9] & 0xff;
         }
 
@@ -123,7 +123,7 @@ namespace DicomSharp.Net {
         }
 
         private String resultAsString() {
-            switch (result()) {
+            switch (Result()) {
                 case REJECTED_PERMANENT:
                     return "1 - rejected-permanent";
 
@@ -131,12 +131,12 @@ namespace DicomSharp.Net {
                     return "2 - rejected-transient";
 
                 default:
-                    return result().ToString();
+                    return Result().ToString();
             }
         }
 
         private String sourceAsString() {
-            switch (source()) {
+            switch (Source()) {
                 case SERVICE_USER:
                     return "1 - service-user";
 
@@ -147,14 +147,14 @@ namespace DicomSharp.Net {
                     return "3 - service-provider (Presentation)";
 
                 default:
-                    return source().ToString();
+                    return Source().ToString();
             }
         }
 
-        private String ReasonAsString() {
-            switch (source()) {
+        public String ReasonAsString() {
+            switch (Source()) {
                 case SERVICE_USER:
-                    switch (reason()) {
+                    switch (Reason()) {
                         case NO_REASON_GIVEN:
                             return "1 - no-reason-given";
 
@@ -170,7 +170,7 @@ namespace DicomSharp.Net {
                     goto case SERVICE_PROVIDER_ACSE;
 
                 case SERVICE_PROVIDER_ACSE:
-                    switch (reason()) {
+                    switch (Reason()) {
                         case NO_REASON_GIVEN:
                             return "1 - no-reason-given";
 
@@ -180,7 +180,7 @@ namespace DicomSharp.Net {
                     goto case SERVICE_PROVIDER_PRES;
 
                 case SERVICE_PROVIDER_PRES:
-                    switch (reason()) {
+                    switch (Reason()) {
                         case TEMPORARY_CONGESTION:
                             return "1 - temporary-congestion";
 
@@ -189,7 +189,7 @@ namespace DicomSharp.Net {
                     }
                     break;
             }
-            return reason().ToString();
+            return Reason().ToString();
         }
     }
 }

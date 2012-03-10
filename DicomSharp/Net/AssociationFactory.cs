@@ -96,7 +96,7 @@ namespace DicomSharp.Net {
             return new ExtNegotiation(uid, info);
         }
 
-        public virtual IPdu readFrom(Stream ins, byte[] buf) {
+        public virtual IPdu ReadFrom(Stream ins, byte[] buf) {
             var raw = new UnparsedPdu(ins, buf);
             switch (raw.GetType()) {
                 case 1:
@@ -126,6 +126,11 @@ namespace DicomSharp.Net {
             }
         }
 
+        public virtual IAssociation NewRequestor(String hostName, int port)
+        {
+            return new Association(new TcpClient(hostName, port), true);
+        }
+
         public virtual Association NewRequestor(TcpClient s) {
             return new Association(s, true);
         }
@@ -134,20 +139,20 @@ namespace DicomSharp.Net {
             return new Association(s, false);
         }
 
-        public virtual ActiveAssociation NewActiveAssociation(Association assoc, DcmServiceRegistry services) {
-            return new ActiveAssociation(assoc, services);
+        public virtual IActiveAssociation NewActiveAssociation(IAssociation association, DcmServiceRegistry services) {
+            return new ActiveAssociation(association, services);
         }
 
-        public virtual IDimse NewDimse(int pcid, IDicomCommand cmd) {
-            return new Dimse(pcid, cmd, null, null);
+        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand) {
+            return new Dimse(presentationContextId, dicomCommand, null, null);
         }
 
-        public virtual IDimse NewDimse(int pcid, DicomCommand cmd, Dataset ds) {
-            return new Dimse(pcid, cmd, ds, null);
+        public virtual IDimse NewDimse(int presentationContextId, IDicomCommand dicomCommand, Dataset dataset) {
+            return new Dimse(presentationContextId, dicomCommand, dataset, null);
         }
 
-        public virtual Dimse NewDimse(int pcid, DicomCommand cmd, IDataSource src) {
-            return new Dimse(pcid, cmd, null, src);
+        public virtual Dimse NewDimse(int presentationContextId, DicomCommand dicomCommand, IDataSource dataSource) {
+            return new Dimse(presentationContextId, dicomCommand, null, dataSource);
         }
 
         public virtual AcceptorPolicy NewAcceptorPolicy() {

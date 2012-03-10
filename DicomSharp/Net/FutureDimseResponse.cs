@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -39,7 +40,7 @@ namespace DicomSharp.Net {
     /// 
     /// </summary>
     public class FutureDimseResponse : IDimseListener, IAssociationListener {
-        private readonly ArrayList pending = new ArrayList();
+        private readonly List<IDimse> pendingResponses = new List<IDimse>();
         private bool closed;
         private IOException exception;
         private bool ready;
@@ -87,9 +88,9 @@ namespace DicomSharp.Net {
 
         #region IDimseListener Members
 
-        public virtual void DimseReceived(Association assoc, Dimse dimse) {
+        public virtual void DimseReceived(IAssociation assoc, Dimse dimse) {
             if (dimse.DicomCommand.IsPending()) {
-                pending.Add(dimse);
+                pendingResponses.Add(dimse);
             }
             else {
                 Set(dimse);
@@ -120,9 +121,9 @@ namespace DicomSharp.Net {
             }
         }
 
-        public virtual ArrayList ListPending() {
+        public virtual IList<IDimse> ListPending() {
             lock (this) {
-                return pending;
+                return pendingResponses;
             }
         }
 

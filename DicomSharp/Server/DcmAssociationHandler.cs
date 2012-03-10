@@ -70,7 +70,7 @@ namespace DicomSharp.Server {
             }
 
             if (assoc.Accept(policy, requestTO) is AAssociateAC) {
-                ActiveAssociation active = assocFact.NewActiveAssociation(assoc, services);
+                IActiveAssociation active = assocFact.NewActiveAssociation(assoc, services);
                 active.Start();
             }
         }

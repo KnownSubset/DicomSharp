@@ -38,57 +38,57 @@ namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
     public class Dimse : IDimse {
-        private readonly DicomCommand cmd;
-        private readonly int m_pcid;
-        private readonly IDataSource src;
-        private Dataset ds;
+        private readonly IDicomCommand _dicomCommand;
+        private readonly int _presentationContextId;
+        private readonly IDataSource _dataSource;
+        private Dataset _dataset;
         private Stream m_ins;
-        private String tsUID;
+        private String _transferSyntaxUniqueId;
 
-        public Dimse(int pcid, String tsUID, DicomCommand cmd, Stream ins) {
-            m_pcid = pcid;
-            this.cmd = cmd;
-            ds = null;
-            src = null;
+        public Dimse(int presentationContextId, string transferSyntaxUniqueId, IDicomCommand dicomCommand, Stream ins) {
+            _presentationContextId = presentationContextId;
+            _dicomCommand = dicomCommand;
+            _dataset = null;
+            _dataSource = null;
             m_ins = ins;
-            this.tsUID = tsUID;
+            _transferSyntaxUniqueId = transferSyntaxUniqueId;
         }
 
-        public Dimse(int pcid, DicomCommand cmd, Dataset ds, IDataSource src) {
-            m_pcid = pcid;
-            this.cmd = cmd;
-            this.ds = ds;
-            this.src = src;
+        public Dimse(int presentationContextId, IDicomCommand dicomCommand, Dataset dataset, IDataSource dataSource) {
+            _presentationContextId = presentationContextId;
+            _dicomCommand = dicomCommand;
+            _dataset = dataset;
+            _dataSource = dataSource;
             m_ins = null;
-            tsUID = null;
-            this.cmd.PutUS(Tags.DataSetType, ds == null && src == null ? (int)DicomCommandMessage.NO_DATASET : 0);
+            _transferSyntaxUniqueId = null;
+            _dicomCommand.PutUS(Tags.DataSetType, dataset == null && dataSource == null ? (int)DicomCommandMessage.NO_DATASET : 0);
         }
 
         public virtual IDicomCommand DicomCommand {
-            get { return cmd; }
+            get { return _dicomCommand; }
         }
 
         public virtual String TransferSyntaxUID {
-            get { return tsUID; }
-            set { tsUID = value; }
+            get { return _transferSyntaxUniqueId; }
+            set { _transferSyntaxUniqueId = value; }
         }
 
         public virtual Dataset Dataset {
             get {
-                if (ds != null) {
-                    return ds;
+                if (_dataset != null) {
+                    return _dataset;
                 }
                 if (m_ins == null) {
                     return null;
                 }
-                if (tsUID == null) {
+                if (_transferSyntaxUniqueId == null) {
                     throw new SystemException();
                 }
-                ds = new Dataset();
-                ds.ReadDataset(m_ins, DcmDecodeParam.ValueOf(tsUID), 0);
+                _dataset = new Dataset();
+                _dataset.ReadDataset(m_ins, DcmDecodeParam.ValueOf(_transferSyntaxUniqueId), 0);
                 m_ins.Close();
                 m_ins = null;
-                return ds;
+                return _dataset;
             }
         }
 
@@ -98,26 +98,26 @@ namespace DicomSharp.Net {
 
         #region DataSourceI Members
 
-        public virtual void WriteTo(Stream outs, String tsUID) {
-            if (src != null) {
-                src.WriteTo(outs, tsUID);
+        public virtual void WriteTo(Stream outs, String transferSyntaxUniqueId) {
+            if (_dataSource != null) {
+                _dataSource.WriteTo(outs, transferSyntaxUniqueId);
                 return;
             }
-            if (ds == null) {
+            if (_dataset == null) {
                 throw new SystemException("Missing Dataset");
             }
-            ds.WriteDataset(outs, DcmDecodeParam.ValueOf(tsUID));
+            _dataset.WriteDataset(outs, DcmDecodeParam.ValueOf(transferSyntaxUniqueId));
         }
 
         #endregion
 
         public int pcid() {
-            return m_pcid;
+            return _presentationContextId;
         }
 
 
         public override String ToString() {
-            return "[pc-" + m_pcid + "] " + cmd;
+            return "[pc-" + _presentationContextId + "] " + _dicomCommand;
         }
     }
 }

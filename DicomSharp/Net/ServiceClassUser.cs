@@ -141,7 +141,7 @@ namespace DicomSharp.Net
                     } else
                     {
                         IDicomCommand cEchoDicomCommand = dcmObjectFactory.NewCommand().InitCEchoRQ(0);
-                        Dimse dimse = associationFactory.NewDimse(pcid, cEchoDicomCommand);
+                        IDimse dimse = associationFactory.NewDimse(pcid, cEchoDicomCommand);
                         LOGGER.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.ApplicationEntityTitle,
                                                   hostName, port));
                         active.Invoke(dimse);
@@ -164,9 +164,8 @@ namespace DicomSharp.Net
             try
             {
                 activeAssociation = activeAssociation ?? OpenAssociation();
-                DicomCommand cCancelRequest =
-                    dcmObjectFactory.NewCommand().InitCCancelRQ(activeAssociation.Association.CurrentMessageId());
-                Dimse dimse = associationFactory.NewDimse(pcid, cCancelRequest);
+                IDicomCommand cCancelRequest = dcmObjectFactory.NewCommand().InitCCancelRQ(activeAssociation.Association.CurrentMessageId());
+                IDimse dimse = associationFactory.NewDimse(pcid, cCancelRequest);
                 IActiveAssociation active = associationFactory.NewActiveAssociation(activeAssociation.Association, null);
                 active.Start();
                 active.Invoke(dimse);
@@ -361,7 +360,7 @@ namespace DicomSharp.Net
                                                                                   newAETDestination);
                             IDimse dimseRequest = associationFactory.NewDimse(pcid, cMoveRequest, dataset);
                             LOGGER.Info(String.Format("CMove from {0} @ {1} {2}:{3} to {4}", aAssociateRequest.Name,
-                                                      aAssociateRequest.Title, hostName, port, newAETDestination));
+                                                      aAssociateRequest.ApplicationEntityTitle, hostName, port, newAETDestination));
                             FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
                             while (!dimseResponse.IsReady())
                             {
@@ -481,7 +480,7 @@ namespace DicomSharp.Net
 
                 if (tsUID == null || tsUID.Equals(""))
                 {
-                    tsUID = UIDs.IMPLICIT_VR_LITTLE_ENDIAN;
+                    tsUID = UIDs.ImplicitVRLittleEndian;
                 }
 
                 aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, classUID, new[] {tsUID}));
@@ -538,7 +537,7 @@ namespace DicomSharp.Net
 
                 if (tsUID == null || tsUID.Equals(""))
                 {
-                    tsUID = UIDs.IMPLICIT_VR_LITTLE_ENDIAN;
+                    tsUID = UIDs.ImplicitVRLittleEndian;
                 }
 
                 aAssociateRequest.AddPresContext(associationFactory.NewPresContext(pcid, classUID, new[] {tsUID}));
@@ -628,11 +627,11 @@ namespace DicomSharp.Net
                 LOGGER.Error("SOP class UID not supported");
                 return null;
             }
-            DicomCommand cFindDicomCommand = dcmObjectFactory.NewCommand().InitCFindRQ(association.NextMsgID(),
+            IDicomCommand cFindDicomCommand = dcmObjectFactory.NewCommand().InitCFindRQ(association.NextMsgID(),
                                                                                   UIDs.StudyRootQueryRetrieveInformationModelFIND,
                                                                                   (int) DicomCommandMessage.HIGH);
             IDimse dimseRequest = associationFactory.NewDimse(pcid, cFindDicomCommand, dataset);
-            LOGGER.Info(String.Format("CFind as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.Title, hostName, port));
+            LOGGER.Info(String.Format("CFind as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.ApplicationEntityTitle, hostName, port));
             FutureDimseResponse dimseResponse = active.Invoke(dimseRequest);
             active.Release(true);
             while (!dimseResponse.IsReady())
@@ -703,7 +702,7 @@ namespace DicomSharp.Net
 
         private static bool IsSopClassUIDNotSupported(IAssociation association, string sopClassUID, out PresContext pc)
         {
-            return (pc = association.GetAcceptedPresContext(sopClassUID, UIDs.IMPLICIT_VR_LITTLE_ENDIAN)) == null;
+            return (pc = association.GetAcceptedPresContext(sopClassUID, UIDs.ImplicitVRLittleEndian)) == null;
         }
 
         private FileMetaInfo GenerateFileMetaInfo(string sopClassUID)
@@ -784,9 +783,9 @@ namespace DicomSharp.Net
                 this.buffer = buffer;
             }
 
-            public void WriteTo(Stream outs, String tsUID)
+            public void WriteTo(Stream outs, String transferSyntaxUniqueId)
             {
-                DcmEncodeParam netParam = DcmDecodeParam.ValueOf(tsUID);
+                DcmEncodeParam netParam = DcmDecodeParam.ValueOf(transferSyntaxUniqueId);
                 ds.WriteDataset(outs, netParam);
                 if (parser.ReadTag == Tags.PixelData)
                 {

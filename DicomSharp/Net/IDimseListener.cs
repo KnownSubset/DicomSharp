@@ -33,6 +33,6 @@ namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
     public interface IDimseListener {
-        void DimseReceived(Association assoc, Dimse dimse);
+        void DimseReceived(IAssociation assoc, Dimse dimse);
     }
 }
