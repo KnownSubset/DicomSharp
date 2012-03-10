@@ -428,7 +428,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4154;
             }
 
@@ -489,7 +489,7 @@ namespace DicomSharp.Data {
                 return (int) (m_data.Length >> 3);
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4644;
             }
 
@@ -545,7 +545,7 @@ namespace DicomSharp.Data {
                 return (int) (m_data.Length >> 2);
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x464C;
             }
 
@@ -624,7 +624,7 @@ namespace DicomSharp.Data {
         internal sealed class OB : ValueElement {
             internal OB(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4F42;
             }
 
@@ -672,7 +672,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4F57;
             }
 
@@ -722,7 +722,7 @@ namespace DicomSharp.Data {
         internal class SL : IntBase {
             internal SL(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x534C;
             }
         }
@@ -747,7 +747,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5353;
             }
 
@@ -778,7 +778,7 @@ namespace DicomSharp.Data {
         internal class UL : IntBase {
             internal UL(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x554C;
             }
 
@@ -808,7 +808,7 @@ namespace DicomSharp.Data {
         internal sealed class UN : ValueElement {
             internal UN(uint tag, ByteBuffer data) : base(tag, data) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x554E;
             }
 
@@ -856,7 +856,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5553;
             }
 

@@ -123,22 +123,22 @@ namespace DicomSharp.Utility {
             return val.Length > maxlen ? (val.Substring(0, (maxlen - 2) - (0)) + "..") : val;
         }
 
-        public static String PromptValue(int vr, ByteBuffer bb) {
-            return PromptValue(vr, bb, Int32.MaxValue);
+        public static String PromptValue(int valueRepresentation, ByteBuffer bb) {
+            return PromptValue(valueRepresentation, bb, Int32.MaxValue);
         }
 
-        public static String PromptValue(int vr, ByteBuffer bb, int maxlen) {
+        public static String PromptValue(int valueRepresentation, ByteBuffer bb, int maxlen) {
             if (bb.Length == 0) {
                 return "";
             }
 
-            if (VRs.IsStringValue(vr)) {
+            if (VRs.IsStringValue(valueRepresentation)) {
                 String val = bb.ReadString();
                 val = Truncate(val, maxlen);
                 return val;
             }
 
-            switch (vr) {
+            switch (valueRepresentation) {
                 case VRs.AT:
                     return PromptAT(bb, maxlen);
 
@@ -167,7 +167,7 @@ namespace DicomSharp.Utility {
                 case VRs.US:
                     return PromptUS(bb, maxlen);
             }
-            throw new ArgumentException("VR:" + VRs.ToString(vr));
+            throw new ArgumentException("VR:" + VRs.ToString(valueRepresentation));
         }
 
         public static String PromptAT(ByteBuffer bb, int maxlen) {

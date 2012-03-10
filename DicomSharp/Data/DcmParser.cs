@@ -139,7 +139,7 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Test if this is Explicit VR format
+        /// Test if this is Explicit ValueRepresentation format
         /// </summary>
         /// <param name="decodeParam"></param>
         /// <returns></returns>
@@ -158,7 +158,7 @@ namespace DicomSharp.Data {
         }
 
         /// <summary>
-        /// Test if this is Implicit VR format
+        /// Test if this is Implicit ValueRepresentation format
         /// </summary>
         /// <param name="decodeParam"></param>
         /// <returns></returns>

@@ -1302,12 +1302,12 @@ namespace DicomSharp.Data {
             {
                 if (dcmElement.IsEmpty())
                 {
-                    PutXX(dcmElement.tag(), dcmElement.VR());
+                    PutXX(dcmElement.tag(), dcmElement.ValueRepresentation());
                 }
                 else
                 {
                     DcmElement sq;
-                    switch (dcmElement.VR())
+                    switch (dcmElement.ValueRepresentation())
                     {
                         case VRs.SQ:
                             sq = PutSQ(dcmElement.tag());
@@ -1322,7 +1322,7 @@ namespace DicomSharp.Data {
                         case VRs.UN:
                             if (dcmElement.HasDataFragments())
                             {
-                                sq = PutXXsq(dcmElement.tag(), dcmElement.VR());
+                                sq = PutXXsq(dcmElement.tag(), dcmElement.ValueRepresentation());
                                 for (int i = 0, n = dcmElement.VM(); i < n; ++i)
                                 {
                                     sq.AddDataFragment(dcmElement.GetDataFragment(i));
@@ -1332,7 +1332,7 @@ namespace DicomSharp.Data {
                             goto default;
 
                         default:
-                            PutXX(dcmElement.tag(), dcmElement.VR(), dcmElement.GetByteBuffer());
+                            PutXX(dcmElement.tag(), dcmElement.ValueRepresentation(), dcmElement.GetByteBuffer());
                             break;
                     }
                 }
@@ -1346,7 +1346,7 @@ namespace DicomSharp.Data {
             handler.Value(b4, 0, 4);
             handler.EndElement();
             foreach (DcmElement dcmElement in _dcmElements) {
-                handler.StartElement(dcmElement.tag(), dcmElement.VR(), dcmElement.StreamPosition);
+                handler.StartElement(dcmElement.tag(), dcmElement.ValueRepresentation(), dcmElement.StreamPosition);
                 ByteBuffer bb = dcmElement.GetByteBuffer(ByteOrder.LittleEndian);
                 handler.Value(bb.ToArray(), (int) bb.Position, (int)bb.Length);
                 handler.EndElement();

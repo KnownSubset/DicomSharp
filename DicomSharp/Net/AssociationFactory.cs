@@ -42,8 +42,6 @@ namespace DicomSharp.Net {
     public class AssociationFactory {
         private static readonly AssociationFactory s_instance = new AssociationFactory();
 
-        private AssociationFactory() {}
-
         public static AssociationFactory Instance {
             get { return s_instance; }
         }

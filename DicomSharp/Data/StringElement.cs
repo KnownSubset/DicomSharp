@@ -540,7 +540,7 @@ namespace DicomSharp.Data {
 
             internal AE(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4145;
             }
         }
@@ -561,7 +561,7 @@ namespace DicomSharp.Data {
 
             internal AS(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4153;
             }
 
@@ -616,7 +616,7 @@ namespace DicomSharp.Data {
 
             internal CS(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4353;
             }
 
@@ -677,7 +677,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4441;
             }
 
@@ -716,7 +716,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4453;
             }
 
@@ -786,7 +786,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4454;
             }
 
@@ -849,7 +849,7 @@ namespace DicomSharp.Data {
                 }
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4953;
             }
 
@@ -893,7 +893,7 @@ namespace DicomSharp.Data {
 
             internal LO(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4C4F;
             }
         }
@@ -914,7 +914,7 @@ namespace DicomSharp.Data {
 
             internal LT(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x4C54;
             }
         }
@@ -988,7 +988,7 @@ namespace DicomSharp.Data {
 
             internal PN(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x504E;
             }
 
@@ -1013,7 +1013,7 @@ namespace DicomSharp.Data {
 
             internal SH(uint tag, ByteBuffer data) : base(tag, data, TOT_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5348;
             }
         }
@@ -1034,7 +1034,7 @@ namespace DicomSharp.Data {
 
             internal ST(uint tag, ByteBuffer data) : base(tag, data, TRAIL_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5354;
             }
         }
@@ -1083,7 +1083,7 @@ namespace DicomSharp.Data {
                 return DateTime.MinValue;
             }
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x544D;
             }
 
@@ -1121,7 +1121,7 @@ namespace DicomSharp.Data {
 
             internal UI(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5549;
             }
 
@@ -1160,7 +1160,7 @@ namespace DicomSharp.Data {
 
             internal UT(uint tag, ByteBuffer data) : base(tag, data, NO_TRIM) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return 0x5554;
             }
         }

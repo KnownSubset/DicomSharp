@@ -35,11 +35,6 @@ namespace DicomSharp.Data {
     public class DcmParserFactory {
         private static readonly DcmParserFactory s_instance = new DcmParserFactory();
 
-        /// <summary>
-        /// Creates a new instance of DcmParserFactory
-        /// </summary>
-        private DcmParserFactory() {}
-
         public static DcmParserFactory Instance {
             get { return s_instance; }
         }

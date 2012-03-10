@@ -152,7 +152,7 @@ namespace DicomSharp.Data {
             tagValue = tag;
         }
 
-        public virtual int VR() {
+        public virtual int ValueRepresentation() {
             return VRs.NONE;
         }
 
@@ -169,10 +169,10 @@ namespace DicomSharp.Data {
         }
 
         public override String ToString() {
-            int vr1 = VR();
+            int vr1 = ValueRepresentation();
             ByteBuffer bb = GetByteBuffer();
             String val = StringUtils.PromptValue(vr1, bb, 64);
-            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(VR()) + ",*" + VM() + ",#" + Length() +
+            String tmp = Dictionary.Tags.ToHexString(tag()) + "," + VRs.ToString(ValueRepresentation()) + ",*" + VM() + ",#" + Length() +
                          ",[" + val + "]";
             return tmp;
         }
@@ -225,8 +225,9 @@ namespace DicomSharp.Data {
             throw new NotSupportedException(ToString());
         }
 
-        public virtual uint GetTag(int index) {
-            throw new NotSupportedException(ToString());
+        public virtual uint GetTag(int index)
+        {
+            return tagValue;
         }
 
         public virtual float GetFloat(int index) {

@@ -144,7 +144,7 @@ namespace DicomSharp.Data {
             if (index >= VM()) {
                 return null;
             }
-            return StringUtils.PromptValue(VR(), GetDataFragment(index), maxLen);
+            return StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(index), maxLen);
         }
 
         public virtual String[] GetStrings(Encoding encoding) {
@@ -154,7 +154,7 @@ namespace DicomSharp.Data {
         public override String[] GetBoundedStrings(int maxLen, Encoding encoding) {
             var a = new String[VM()];
             for (int i = 0; i < a.Length; ++i) {
-                a[i] = StringUtils.PromptValue(VR(), GetDataFragment(i), maxLen);
+                a[i] = StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(i), maxLen);
             }
             return a;
         }
@@ -186,7 +186,7 @@ namespace DicomSharp.Data {
 			{
 			}
 			
-			public int VR()
+			public int ValueRepresentation()
 			{
 				return VRs.OF;
 			}
@@ -223,11 +223,11 @@ namespace DicomSharp.Data {
 
         public override String ToString() {
             var sb = new StringBuilder(Dictionary.Tags.ToHexString(tag()));
-            sb.Append(",").Append(VRs.ToString(VR()));
+            sb.Append(",").Append(VRs.ToString(ValueRepresentation()));
             if (!IsEmpty()) {
                 for (int i = 0, n = VM(); i < n; ++i) {
                     sb.Append("\n\tFrag-").Append(i + 1).Append(",#").Append(GetDataFragmentLength(i)).Append("[").
-                        Append(StringUtils.PromptValue(VR(), GetDataFragment(i), 64)).Append("]");
+                        Append(StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(i), 64)).Append("]");
                 }
             }
             return sb.ToString();
@@ -241,7 +241,7 @@ namespace DicomSharp.Data {
         private sealed class OB : FragmentElement {
             internal OB(uint tag) : base(tag) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return VRs.OB;
             }
         }
@@ -256,7 +256,7 @@ namespace DicomSharp.Data {
         private sealed class OW : FragmentElement {
             internal OW(uint tag) : base(tag) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return VRs.OW;
             }
 
@@ -283,7 +283,7 @@ namespace DicomSharp.Data {
         private sealed class UN : FragmentElement {
             internal UN(uint tag) : base(tag) {}
 
-            public override int VR() {
+            public override int ValueRepresentation() {
                 return VRs.UN;
             }
         }

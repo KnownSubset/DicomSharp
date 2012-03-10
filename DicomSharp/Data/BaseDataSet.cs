@@ -85,7 +85,7 @@ namespace DicomSharp.Data {
                     grTags[grCount - 1] = prevGrTag = curGrTag;
                     grLens[grCount - 1] = 0;
                 }
-                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(dcmElement.VR())) ? 12 : 8;
+                grLens[grCount - 1] += (param.explicitVR && !VRs.IsLengthField16Bit(dcmElement.ValueRepresentation())) ? 12 : 8;
                 if (dcmElement is ValueElement)
                 {
                     grLens[grCount - 1] += dcmElement.Length();
@@ -158,7 +158,7 @@ namespace DicomSharp.Data {
                 }
                 else if (dcmElement is FragmentElement) {
                     long offset = dcmElement.StreamPosition;
-                    handler.StartElement(dcmElement.tag(), dcmElement.VR(), offset);
+                    handler.StartElement(dcmElement.tag(), dcmElement.ValueRepresentation(), offset);
                     handler.StartSequence(- 1);
                     if (offset != - 1L) {
                         offset += 12;
@@ -175,7 +175,7 @@ namespace DicomSharp.Data {
                 }
                 else {
 //					int len = el.Length();
-                    handler.StartElement(dcmElement.tag(), dcmElement.VR(), dcmElement.StreamPosition);
+                    handler.StartElement(dcmElement.tag(), dcmElement.ValueRepresentation(), dcmElement.StreamPosition);
                     ByteBuffer bb = dcmElement.GetByteBuffer(param.byteOrder);
                     handler.Value(bb);
                     handler.EndElement();

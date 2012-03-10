@@ -49,7 +49,7 @@ namespace DicomSharp.Data {
             this.parent = parent;
         }
 
-        public override int VR() {
+        public override int ValueRepresentation() {
             return VRs.SQ;
         }
 

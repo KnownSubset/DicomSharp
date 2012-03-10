@@ -38,8 +38,6 @@ namespace DicomSharp.Server {
     public class ServerFactory {
         private static readonly ServerFactory s_instance = new ServerFactory();
 
-        private ServerFactory() {}
-
         public static ServerFactory Instance {
             get { return s_instance; }
         }
