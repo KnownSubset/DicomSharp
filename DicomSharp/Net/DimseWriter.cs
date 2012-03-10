@@ -49,7 +49,7 @@ namespace DicomSharp.Net {
             this.fsm = fsm;
         }
 
-        public void Write(Dimse dimse) {
+        public void Write(IDimse dimse) {
             lock (this) {
                 pcid = dimse.pcid();
                 String tsUID = fsm.GetAcceptedTransferSyntaxUID(pcid);
@@ -63,7 +63,7 @@ namespace DicomSharp.Net {
                 }
                 pDataTF.OpenPDV(pcid, cmd = true);
                 Stream outs = new PDataTFOutputStream(this);
-                DicomCommand c = dimse.DicomCommand;
+                IDicomCommand c = dimse.DicomCommand;
                 try {
                     c.Write(outs);
                 }

@@ -132,11 +132,12 @@ namespace DicomSharp.Net {
         /// </summary>
         private void ForkNextReadNext() {
             if (cmd.IsRequest()) {
-                switch (cmd.CommandField) {
-                    case DicomCommand.C_GET_RQ:
-                    case DicomCommand.C_FIND_RQ:
-                    case DicomCommand.C_MOVE_RQ:
-                    case DicomCommand.C_CANCEL_RQ:
+                switch ((DicomCommandMessage)cmd.CommandField)
+                {
+                    case DicomCommandMessage.C_GET_RQ:
+                    case DicomCommandMessage.C_FIND_RQ:
+                    case DicomCommandMessage.C_MOVE_RQ:
+                    case DicomCommandMessage.C_CANCEL_RQ:
                         break;
 
                     default:

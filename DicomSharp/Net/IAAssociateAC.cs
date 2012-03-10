@@ -1,6 +1,4 @@
-using DicomSharp.Net;
-
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IAAssociateAC : IPdu {
         int countAcceptedPresContext();
     }

@@ -209,7 +209,7 @@ namespace DicomSharp.Net {
                 return new AAssociateRJ(AAssociateRJ.REJECTED_PERMANENT, AAssociateRJ.SERVICE_PROVIDER_ACSE,
                                         AAssociateRJ.PROTOCOL_VERSION_NOT_SUPPORTED);
             }
-            String calledAET = rq.CalledAET;
+            String calledAET = rq.ApplicationEntityTitle;
             if (calledAETs != null && !calledAETs.Contains(calledAET)) {
                 return new AAssociateRJ(AAssociateRJ.REJECTED_PERMANENT, AAssociateRJ.SERVICE_USER,
                                         AAssociateRJ.CALLED_AE_TITLE_NOT_RECOGNIZED);
@@ -219,7 +219,7 @@ namespace DicomSharp.Net {
                 policy1 = this;
             }
 
-            String callingAET = rq.CalledAET;
+            String callingAET = rq.ApplicationEntityTitle;
             if (policy1.callingAETs != null && !policy1.callingAETs.Contains(callingAET)) {
                 return new AAssociateRJ(AAssociateRJ.REJECTED_PERMANENT, AAssociateRJ.SERVICE_USER,
                                         AAssociateRJ.CALLING_AE_TITLE_NOT_RECOGNIZED);
@@ -240,8 +240,8 @@ namespace DicomSharp.Net {
             }
             var ac = new AAssociateAC();
             ac.ApplicationContext = appCtx;
-            ac.CalledAET = rq.CalledAET;
-            ac.CallingAET = rq.CallingAET;
+            ac.ApplicationEntityTitle = rq.ApplicationEntityTitle;
+            ac.Name = rq.Name;
             ac.MaxPduLength = maxLength;
             ac.ClassUID = ClassUID;
             ac.VersionName = Vers;

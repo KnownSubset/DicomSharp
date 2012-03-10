@@ -138,11 +138,11 @@ namespace DicomSharp.Net {
             return new ActiveAssociation(assoc, services);
         }
 
-        public virtual Dimse NewDimse(int pcid, DicomCommand cmd) {
+        public virtual IDimse NewDimse(int pcid, IDicomCommand cmd) {
             return new Dimse(pcid, cmd, null, null);
         }
 
-        public virtual Dimse NewDimse(int pcid, DicomCommand cmd, Dataset ds) {
+        public virtual IDimse NewDimse(int pcid, DicomCommand cmd, Dataset ds) {
             return new Dimse(pcid, cmd, ds, null);
         }
 

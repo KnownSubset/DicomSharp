@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using DicomSharp.Data;
-using DicomSharp.Net;
 
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IDimse : IDataSource {
         IDicomCommand DicomCommand { get; }
         String TransferSyntaxUID { get; set; }

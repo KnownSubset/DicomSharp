@@ -50,7 +50,7 @@ namespace DicomSharp.Net {
             b.Write(src, pdu);
         }
 
-        public virtual void Write(Association src, Dimse dimse) {
+        public virtual void Write(Association src, IDimse dimse) {
             a.Write(src, dimse);
             b.Write(src, dimse);
         }
@@ -60,7 +60,7 @@ namespace DicomSharp.Net {
             b.Received(src, pdu);
         }
 
-        public virtual void Received(Association src, Dimse dimse) {
+        public virtual void Received(Association src, IDimse dimse) {
             a.Received(src, dimse);
             b.Received(src, dimse);
         }

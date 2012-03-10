@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.IO;
-using DicomSharp.Net;
 
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IAAssociateRQAC {
         int ProtocolVersion { get; set; }
         String CalledAET { get; set; }

@@ -1,6 +1,4 @@
-using DicomSharp.Net;
-
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IActiveAssociation {
         /// <summary>
         /// Start a new pooled thread for handling this active association

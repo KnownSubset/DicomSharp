@@ -47,12 +47,12 @@ namespace DicomSharp.Net {
 
         private String appCtxUID = UIDs.DICOMApplicationContextName;
         private AsyncOpsWindow asyncOpsWindow;
-        private String calledAET = "ANONYMOUS";
-        private String callingAET = "ANONYMOUS";
+        private String _applicationEntityTitle = "ANONYMOUS";
+        private String _name = "ANONYMOUS";
         private String classUID = Implementation.ClassUID;
         protected Hashtable extNegs = new Hashtable();
         private int maxLength = PDataTF.DEF_MAX_PDU_LENGTH;
-        protected Hashtable presCtxs = new Hashtable();
+        protected Hashtable presentationContexts = new Hashtable();
         protected Hashtable roleSels = new Hashtable();
         private String verName = Implementation.VersionName;
         private int version = 1;
@@ -63,14 +63,14 @@ namespace DicomSharp.Net {
             set { version = value; }
         }
 
-        public virtual String CalledAET {
-            get { return calledAET; }
-            set { calledAET = StringUtils.CheckAET(value); }
+        public virtual String ApplicationEntityTitle {
+            get { return _applicationEntityTitle; }
+            set { _applicationEntityTitle = StringUtils.CheckAET(value); }
         }
 
-        public virtual String CallingAET {
-            get { return callingAET; }
-            set { callingAET = StringUtils.CheckAET(value); }
+        public virtual String Name {
+            get { return _name; }
+            set { _name = StringUtils.CheckAET(value); }
         }
 
         public virtual String ApplicationContext {
@@ -132,19 +132,19 @@ namespace DicomSharp.Net {
             bb.Write((Int16) version);
             bb.Write((Byte) 0);
             bb.Write((Byte) 0);
-            WriteAE(bb, calledAET);
-            WriteAE(bb, callingAET);
+            WriteAE(bb, _applicationEntityTitle);
+            WriteAE(bb, _name);
             bb.Write(ZERO32);
             bb.Write((Byte) 0x10);
             bb.Write((Byte) 0);
             bb.Write((Int16) appCtxUID.Length);
             bb.Write(appCtxUID);
 
-            for (IEnumerator enu = presCtxs.Values.GetEnumerator(); enu.MoveNext();) {
+            for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
                 ((PresContext) enu.Current).WriteTo(bb);
             }
             WriteUserInfo(bb);
-            bb.WriteTo(type(), outs);
+            bb.WriteTo(Type(), outs);
         }
 
         public virtual String ToString(bool verbose) {
@@ -162,8 +162,8 @@ namespace DicomSharp.Net {
             try {
                 version = bb.ReadInt16(); // Protocol version
                 bb.Skip(2); // Skip 2 bytes
-                calledAET = bb.ReadString(16); // Called AET
-                callingAET = bb.ReadString(16); // Calling AET
+                _applicationEntityTitle = bb.ReadString(16); // Called AET
+                _name = bb.ReadString(16); // Calling AET
                 if (bb.Skip(32) != 32) {
                     throw new EndOfStreamException();
                 }
@@ -180,7 +180,7 @@ namespace DicomSharp.Net {
 
                         case 0x20:
                         case 0x21:
-                            if (itemType != pctype()) {
+                            if (itemType != PcType()) {
                                 throw new PduException("unexpected item type " + Convert.ToString(itemType, 16) + 'H',
                                                        new AAbort(AAbort.SERVICE_PROVIDER,
                                                                   AAbort.UNEXPECTED_PDU_PARAMETER));
@@ -208,39 +208,39 @@ namespace DicomSharp.Net {
             return this;
         }
 
-        public int NextPCID() {
-            int c = presCtxs.Count;
+        public int NextPresentationContextId() {
+            int c = presentationContexts.Count;
             if (c == 128) {
                 return - 1;
             }
             int retval = ((c << 1) | 1);
-            while (presCtxs.ContainsKey(retval)) {
+            while (presentationContexts.ContainsKey(retval)) {
                 retval = (retval + 2)%256;
             }
             return retval;
         }
 
         public void AddPresContext(PresContext presCtx) {
-            if ((presCtx).type() != pctype()) {
+            if ((presCtx).type() != PcType()) {
                 throw new ArgumentException("wrong type of " + presCtx);
             }
-            presCtxs.Add(presCtx.pcid(), presCtx);
+            presentationContexts.Add(presCtx.pcid(), presCtx);
         }
 
-        public void RemovePresContext(int pcid) {
-            presCtxs.Remove(pcid);
+        public void RemovePresentationContext(int presentationContextId) {
+            presentationContexts.Remove(presentationContextId);
         }
 
-        public PresContext GetPresContext(int pcid) {
-            return (PresContext) presCtxs[pcid];
+        public PresContext GetPresentationContext(int pcid) {
+            return (PresContext) presentationContexts[pcid];
         }
 
         public ICollection ListPresContext() {
-            return presCtxs.Values;
+            return presentationContexts.Values;
         }
 
         public void ClearPresContext() {
-            presCtxs.Clear();
+            presentationContexts.Clear();
         }
 
         public void RemoveRoleSelection(String uid) {
@@ -341,9 +341,9 @@ namespace DicomSharp.Net {
             }
         }
 
-        protected abstract int type();
+        protected abstract int Type();
 
-        protected abstract int pctype();
+        protected abstract int PcType();
 
         private void WriteAE(ByteBuffer bb, String aet) {
             bb.Write(aet);
@@ -391,14 +391,14 @@ namespace DicomSharp.Net {
         internal StringBuilder ToStringBuffer(StringBuilder sb, bool verbose) {
             sb.Append(TypeAsString()).Append("\n\tappCtxName:\t").Append(UIDs.GetName(appCtxUID)).Append("\n\tClass:\t")
                 .Append(ClassUID).Append("\n\tVersion:\t").Append(VersionName).Append("\n\tcalledAET:\t").Append(
-                    calledAET).Append("\n\tcallingAET:\t").Append(callingAET).Append("\n\tmaxPduLen:\t").Append(
+                    _applicationEntityTitle).Append("\n\tcallingAET:\t").Append(_name).Append("\n\tmaxPduLen:\t").Append(
                         maxLength).Append("\n\tasyncOpsWindow:\t");
             if (asyncOpsWindow != null) {
                 sb.Append("maxOpsInvoked=").Append(asyncOpsWindow.MaxOpsInvoked).Append(", maxOpsPerformed=").Append(
                     asyncOpsWindow.MaxOpsPerformed);
             }
             if (verbose) {
-                for (IEnumerator enu = presCtxs.Values.GetEnumerator(); enu.MoveNext();) {
+                for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
                     Append((PresContext) enu.Current, sb);
                 }
                 for (IEnumerator enu = roleSels.Values.GetEnumerator(); enu.MoveNext();) {

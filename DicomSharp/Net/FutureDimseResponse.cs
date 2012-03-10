@@ -66,7 +66,7 @@ namespace DicomSharp.Net {
 
         public virtual void Write(Association src, IPdu Pdu) {}
 
-        public virtual void Received(Association src, Dimse dimse) {}
+        public virtual void Received(Association src, IDimse dimse) {}
 
         public virtual void Error(Association src, IOException ioe) {
             Exception = ioe;
@@ -79,7 +79,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        public virtual void Write(Association src, Dimse dimse) {}
+        public virtual void Write(Association src, IDimse dimse) {}
 
         public virtual void Received(Association src, IPdu Pdu) {}
 

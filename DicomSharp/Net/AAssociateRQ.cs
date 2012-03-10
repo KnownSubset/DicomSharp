@@ -43,11 +43,11 @@ namespace DicomSharp.Net {
             return (AAssociateRQ) new AAssociateRQ().Init(raw);
         }
 
-        protected override int type() {
+        protected override int Type() {
             return 1;
         }
 
-        protected override int pctype() {
+        protected override int PcType() {
             return 0x20;
         }
 
@@ -63,7 +63,7 @@ namespace DicomSharp.Net {
         }
 
         protected override void AppendPresCtxSummary(StringBuilder sb) {
-            sb.Append("\n\tpresCtx:\toffered=").Append(presCtxs.Count);
+            sb.Append("\n\tpresCtx:\toffered=").Append(presentationContexts.Count);
         }
     }
 }

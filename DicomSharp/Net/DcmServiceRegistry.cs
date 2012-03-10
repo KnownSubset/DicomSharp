@@ -43,7 +43,7 @@ namespace DicomSharp.Net {
             Add(UIDs.Verification, DcmServiceBase.VERIFICATION_SCP);
         }
 
-        public virtual bool Bind(String uid, DcmServiceI service) {
+        public virtual bool Bind(String uid, IDcmService service) {
             if (service == null) {
                 throw new NullReferenceException();
             }
@@ -60,8 +60,8 @@ namespace DicomSharp.Net {
             Remove(uid);
         }
 
-        public virtual DcmServiceI Lookup(String uid) {
-            var retval = (DcmServiceI) this[StringUtils.CheckUID(uid)];
+        public virtual IDcmService Lookup(String uid) {
+            var retval = (IDcmService) this[StringUtils.CheckUID(uid)];
             return retval != null ? retval : DcmServiceBase.NO_SUCH_SOP_CLASS_SCP;
         }
     }

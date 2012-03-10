@@ -75,19 +75,19 @@ namespace DicomSharp.Net {
         /// Creates a new instance of DcmULService 
         /// </summary>
         public Fsm(Association assoc, TcpClient s, bool requestor) {
-            STA1 = new State1(this, Association.IDLE);
-            STA2 = new State2(this, Association.AWAITING_READ_ASS_RQ);
-            STA3 = new State3(this, Association.AWAITING_WRITE_ASS_RP);
-            STA4 = new State4(this, Association.AWAITING_WRITE_ASS_RQ);
-            STA5 = new State5(this, Association.AWAITING_READ_ASS_RP);
-            STA6 = new State6(this, Association.ASSOCIATION_ESTABLISHED);
-            STA7 = new State7(this, Association.AWAITING_READ_REL_RP);
-            STA8 = new State8(this, Association.AWAITING_WRITE_REL_RP);
-            STA9 = new State9(this, Association.RCRS_AWAITING_WRITE_REL_RP);
-            STA10 = new State10(this, Association.RCAS_AWAITING_READ_REL_RP);
-            STA11 = new State11(this, Association.RCRS_AWAITING_READ_REL_RP);
-            STA12 = new State12(this, Association.RCAS_AWAITING_WRITE_REL_RP);
-            STA13 = new State13(this, Association.ASSOCIATION_TERMINATING);
+            STA1 = new State1(this, AssociationState.IDLE);
+            STA2 = new State2(this, AssociationState.AWAITING_READ_ASS_RQ);
+            STA3 = new State3(this, AssociationState.AWAITING_WRITE_ASS_RP);
+            STA4 = new State4(this, AssociationState.AWAITING_WRITE_ASS_RQ);
+            STA5 = new State5(this, AssociationState.AWAITING_READ_ASS_RP);
+            STA6 = new State6(this, AssociationState.ASSOCIATION_ESTABLISHED);
+            STA7 = new State7(this, AssociationState.AWAITING_READ_REL_RP);
+            STA8 = new State8(this, AssociationState.AWAITING_WRITE_REL_RP);
+            STA9 = new State9(this, AssociationState.RCRS_AWAITING_WRITE_REL_RP);
+            STA10 = new State10(this, AssociationState.RCAS_AWAITING_READ_REL_RP);
+            STA11 = new State11(this, AssociationState.RCRS_AWAITING_READ_REL_RP);
+            STA12 = new State12(this, AssociationState.RCAS_AWAITING_WRITE_REL_RP);
+            STA13 = new State13(this, AssociationState.ASSOCIATION_TERMINATING);
             state = STA1;
 
             this.assoc = assoc;
@@ -125,7 +125,7 @@ namespace DicomSharp.Net {
                 if (rq == null) {
                     throw new SystemException(state.ToString());
                 }
-                return rq.CallingAET;
+                return rq.Name;
             }
         }
 
@@ -134,7 +134,7 @@ namespace DicomSharp.Net {
                 if (rq == null) {
                     throw new SystemException(state.ToString());
                 }
-                return rq.CalledAET;
+                return rq.ApplicationEntityTitle;
             }
         }
 
@@ -218,7 +218,7 @@ namespace DicomSharp.Net {
             if (ac == null) {
                 throw new SystemException(state.ToString());
             }
-            PresContext pc = ac.GetPresContext(pcid);
+            PresContext pc = ac.GetPresentationContext(pcid);
             if (pc == null || pc.result() != PresContext.ACCEPTANCE) {
                 return null;
             }
@@ -232,7 +232,7 @@ namespace DicomSharp.Net {
             for (IEnumerator enu = rq.ListPresContext().GetEnumerator(); enu.MoveNext();) {
                 var rqpc = (PresContext) enu.Current;
                 if (asuid.Equals(rqpc.AbstractSyntaxUID)) {
-                    PresContext acpc = ac.GetPresContext(rqpc.pcid());
+                    PresContext acpc = ac.GetPresentationContext(rqpc.pcid());
                     if (acpc != null && acpc.result() == PresContext.ACCEPTANCE && tsuid.Equals(acpc.TransferSyntaxUID)) {
                         return acpc;
                     }
@@ -249,7 +249,7 @@ namespace DicomSharp.Net {
             for (IEnumerator enu = rq.ListPresContext().GetEnumerator(); enu.MoveNext();) {
                 var rqpc = (PresContext) enu.Current;
                 if (asuid.Equals(rqpc.AbstractSyntaxUID)) {
-                    PresContext acpc = ac.GetPresContext(rqpc.pcid());
+                    PresContext acpc = ac.GetPresentationContext(rqpc.pcid());
                     if (acpc != null && acpc.result() == PresContext.ACCEPTANCE) {
                         list.Add(acpc);
                     }
@@ -420,7 +420,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        internal void FireWrite(Dimse dimse) {
+        internal void FireWrite(IDimse dimse) {
             if (log.IsInfoEnabled) {
                 log.Info("sending " + dimse);
             }
@@ -474,6 +474,11 @@ namespace DicomSharp.Net {
         internal abstract class State {
             private readonly int type;
             protected Fsm m_fsm;
+
+            internal State(Fsm fsm, AssociationState type){
+                m_fsm = fsm;
+                this.type = (int) type;
+            }
 
             internal State(Fsm fsm, int type) {
                 m_fsm = fsm;
@@ -573,7 +578,7 @@ namespace DicomSharp.Net {
         /// Sta 1 - Idle
         /// </summary>
         internal class State1 : State {
-            internal State1(Fsm fsm, int type) : base(fsm, type) {}
+            internal State1(Fsm fsm, AssociationState type) : base(fsm, (int) type) {}
 
             public override String ToString() {
                 return "Sta 1 - Idle";
@@ -609,7 +614,7 @@ namespace DicomSharp.Net {
         /// Sta 10 - Release collision acceptor side; awaiting A-RELEASE response
         /// </summary>
         internal class State10 : State {
-            internal State10(Fsm fsm, int state) : base(fsm, state) {}
+            internal State10(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 10 - Release collision acceptor side; awaiting A-RELEASE response";
@@ -659,7 +664,7 @@ namespace DicomSharp.Net {
         /// Sta 11 - Release collision requestor side; awaiting A-RELEASE-RP PDU
         /// </summary>
         internal class State11 : State {
-            internal State11(Fsm fsm, int state) : base(fsm, state) {}
+            internal State11(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 11 - Release collision requestor side; awaiting A-RELEASE-RP PDU";
@@ -709,7 +714,7 @@ namespace DicomSharp.Net {
         /// Sta 12 - Release collision acceptor side; awaiting A-RELEASE-RP PDU
         /// </summary>
         internal class State12 : State {
-            internal State12(Fsm fsm, int state) : base(fsm, state) {}
+            internal State12(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 12 - Release collision acceptor side; awaiting A-RELEASE-RP PDU";
@@ -735,7 +740,7 @@ namespace DicomSharp.Net {
         /// Sta 13 - Awaiting Transport Connection Close Indication
         /// </summary>
         internal class State13 : State {
-            internal State13(Fsm fsm, int state) : base(fsm, state) {}
+            internal State13(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             internal void TimeoutIt(Object state) {
                 NDC.Push(m_fsm.assoc.Name);
@@ -764,7 +769,7 @@ namespace DicomSharp.Net {
         /// Sta 2 - Transport connection open (Awaiting A-ASSOCIATE-RQ PDU)
         /// </summary>
         internal class State2 : State {
-            internal State2(Fsm fsm, int state) : base(fsm, state) {}
+            internal State2(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 2 - Transport connection open (Awaiting A-ASSOCIATE-RQ PDU)";
@@ -814,7 +819,7 @@ namespace DicomSharp.Net {
         /// Sta 3 - Awaiting local A-ASSOCIATE response primitive
         /// </summary>
         internal class State3 : State {
-            internal State3(Fsm fsm, int state) : base(fsm, state) {}
+            internal State3(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 3 - Awaiting local A-ASSOCIATE response primitive";
@@ -851,7 +856,7 @@ namespace DicomSharp.Net {
         /// Sta 4 - Awaiting transport connection opening to complete
         /// </summary>
         internal class State4 : State {
-            internal State4(Fsm fsm, int state) : base(fsm, state) {}
+            internal State4(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 4 - Awaiting transport connection opening to complete";
@@ -881,7 +886,7 @@ namespace DicomSharp.Net {
         /// Sta 5 - Awaiting A-ASSOCIATE-AC or A-ASSOCIATE-RJ PDU
         /// </summary>
         internal class State5 : State {
-            internal State5(Fsm fsm, int state) : base(fsm, state) {}
+            internal State5(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 5 - Awaiting A-ASSOCIATE-AC or A-ASSOCIATE-RJ PDU";
@@ -938,7 +943,7 @@ namespace DicomSharp.Net {
         /// Sta 6 - Association established and Ready for data transfer
         /// </summary>
         internal class State6 : State {
-            internal State6(Fsm fsm, int state) : base(fsm, state) {}
+            internal State6(Fsm fsm, AssociationState state) : base(fsm, state) {}
 
             public override String ToString() {
                 return "Sta 6 - Association established and Ready for data transfer";
@@ -1026,7 +1031,7 @@ namespace DicomSharp.Net {
         /// Sta 7 - Awaiting A-RELEASE-RP PDU
         /// </summary>
         internal class State7 : State {
-            internal State7(Fsm fsm, int state) : base(fsm, state) {}
+            internal State7(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 7 - Awaiting A-RELEASE-RP PDU";
@@ -1086,7 +1091,7 @@ namespace DicomSharp.Net {
         /// Sta 8 - Awaiting local A-RELEASE response primitive
         /// </summary>
         internal class State8 : State {
-            internal State8(Fsm fsm, int state) : base(fsm, state) {}
+            internal State8(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 8 - Awaiting local A-RELEASE response primitive";
@@ -1126,7 +1131,7 @@ namespace DicomSharp.Net {
         /// Sta 9 - Release collision requestor side; awaiting A-RELEASE response
         /// </summary>
         internal class State9 : State {
-            internal State9(Fsm fsm, int state) : base(fsm, state) {}
+            internal State9(Fsm fsm, AssociationState state) : base(fsm, state) { }
 
             public override String ToString() {
                 return "Sta 9 - Release collision requestor side; awaiting A-RELEASE response";

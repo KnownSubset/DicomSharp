@@ -58,20 +58,7 @@ namespace DicomSharp.Net {
     /// <summary>
     /// DICOM Association
     /// </summary>
-    public class Association {
-        public const int IDLE = 1;
-        public const int AWAITING_READ_ASS_RQ = 2;
-        public const int AWAITING_WRITE_ASS_RP = 3;
-        public const int AWAITING_WRITE_ASS_RQ = 4;
-        public const int AWAITING_READ_ASS_RP = 5;
-        public const int ASSOCIATION_ESTABLISHED = 6;
-        public const int AWAITING_READ_REL_RP = 7;
-        public const int AWAITING_WRITE_REL_RP = 8;
-        public const int RCRS_AWAITING_WRITE_REL_RP = 9;
-        public const int RCAS_AWAITING_READ_REL_RP = 10;
-        public const int RCRS_AWAITING_READ_REL_RP = 11;
-        public const int RCAS_AWAITING_WRITE_REL_RP = 12;
-        public const int ASSOCIATION_TERMINATING = 13;
+    public class Association : IAssociation {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static int assocCount;
         private readonly byte[] b10 = new byte[10];
@@ -104,8 +91,8 @@ namespace DicomSharp.Net {
             set { name = value; }
         }
 
-        public virtual int State {
-            get { return fsm.GetState(); }
+        public virtual AssociationState State {
+            get { return (AssociationState) fsm.GetState(); }
         }
 
         public virtual String StateAsString {
@@ -175,6 +162,11 @@ namespace DicomSharp.Net {
             }
         }
 
+        public int CurrentMessageId()
+        {
+            return msgID;
+        }
+
         public void SetThreadPool(LF_ThreadPool pool) {
             fsm.ReaderThreadPool = pool;
             reader.ReaderThreadPool = pool;
@@ -227,7 +219,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        public void Write(Dimse dimse) {
+        public void Write(IDimse dimse) {
             NDC.Push(name);
             try {
                 msgID = Math.Max(dimse.DicomCommand.MessageID, msgID);
@@ -249,7 +241,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        internal void WriteReleaseRQ() {
+        public void WriteReleaseRQ() {
             NDC.Push(name);
             try {
                 fsm.Write(AReleaseRQ.Instance);

@@ -36,9 +36,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Timers;
-using DicomCS.Net;
 using DicomSharp.Data;
 using DicomSharp.Dictionary;
+using Microsoft.Practices.Unity;
+using log4net;
 using Timer = System.Timers.Timer;
 
 namespace DicomSharp.Net
@@ -92,8 +93,8 @@ namespace DicomSharp.Net
 
         public string Title
         {
-            get { return aAssociateRequest.Title; }
-            set { aAssociateRequest.Title = value; }
+            get { return aAssociateRequest.ApplicationEntityTitle; }
+            set { aAssociateRequest.ApplicationEntityTitle = value; }
         }
 
         public uint Port
@@ -111,7 +112,7 @@ namespace DicomSharp.Net
         /// </summary>
         public void SetUpForOperation(string name, string title, string newHostName, int newPort)
         {
-            aAssociateRequest.Title = title;
+            aAssociateRequest.ApplicationEntityTitle = title;
             aAssociateRequest.Name = name;
             aAssociateRequest.AsyncOpsWindow = associationFactory.NewAsyncOpsWindow(0, 1);
             aAssociateRequest.MaxPduLength = 16352;
@@ -139,9 +140,9 @@ namespace DicomSharp.Net
                         LOGGER.Error("Verification SOP class is not supported");
                     } else
                     {
-                        DicomCommand cEchoDicomCommand = dcmObjectFactory.NewCommand().InitCEchoRQ(0);
+                        IDicomCommand cEchoDicomCommand = dcmObjectFactory.NewCommand().InitCEchoRQ(0);
                         Dimse dimse = associationFactory.NewDimse(pcid, cEchoDicomCommand);
-                        LOGGER.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.Title,
+                        LOGGER.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", aAssociateRequest.Name, aAssociateRequest.ApplicationEntityTitle,
                                                   hostName, port));
                         active.Invoke(dimse);
                         success = true;
@@ -150,7 +151,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
             return success;
         }
@@ -172,7 +173,7 @@ namespace DicomSharp.Net
                 success = true;
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
             return success;
         }
@@ -224,7 +225,7 @@ namespace DicomSharp.Net
         /// </summary>
         public IList<Dataset> CFindStudy(string patientId, string patientName)
         {
-            string queryKey = aAssociateRequest.Title + port + hostName + patientId + patientName;
+            string queryKey = aAssociateRequest.ApplicationEntityTitle + port + hostName + patientId + patientName;
             if (cacheManager.ContainsKey(queryKey))
             {
                 return cacheManager[queryKey];
@@ -373,7 +374,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
 
             return foundDatasets;
@@ -422,11 +423,11 @@ namespace DicomSharp.Net
                         Thread.Sleep(0);
                     }
                     datasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.Dataset));
-                    aAssociateRequest.RemovePresContext(pcid);
+                    aAssociateRequest.RemovePresentationContext(pcid);
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
             return datasets;
         }
@@ -500,7 +501,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
                 if (ins != null)
                 {
                     try
@@ -556,7 +557,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
 
             return false;
@@ -614,7 +615,7 @@ namespace DicomSharp.Net
                 }
             } finally
             {
-                aAssociateRequest.RemovePresContext(pcid);
+                aAssociateRequest.RemovePresentationContext(pcid);
             }
             return datasets;
         }
@@ -711,7 +712,7 @@ namespace DicomSharp.Net
             fileMetaInfo.PutOB(Tags.FileMetaInformationVersion, new byte[] {0, 1});
             fileMetaInfo.PutUI(Tags.MediaStorageSOPClassUID, sopClassUID);
             fileMetaInfo.PutUI(Tags.TransferSyntaxUID, TRANSFER_SYNTAX_UID);
-            fileMetaInfo.PutSH(Tags.ImplementationVersionName, "dicomcs-SCU");
+            fileMetaInfo.PutSH(Tags.ImplementationVersionName, "dicomSharp-SCU");
             return fileMetaInfo;
         }
 

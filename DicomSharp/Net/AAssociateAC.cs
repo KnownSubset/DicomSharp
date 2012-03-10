@@ -47,7 +47,7 @@ namespace DicomSharp.Net {
 
         public int countAcceptedPresContext() {
             int accepted = 0;
-            for (IEnumerator enu = presCtxs.Values.GetEnumerator(); enu.MoveNext();) {
+            for (IEnumerator enu = presentationContexts.Values.GetEnumerator(); enu.MoveNext();) {
                 if (((PresContext) enu.Current).result() == 0) {
                     ++accepted;
                 }
@@ -56,11 +56,11 @@ namespace DicomSharp.Net {
         }
 
 
-        protected override int type() {
+        protected override int Type() {
             return 2;
         }
 
-        protected override int pctype() {
+        protected override int PcType() {
             return 0x21;
         }
 
@@ -75,7 +75,7 @@ namespace DicomSharp.Net {
 
         protected override void AppendPresCtxSummary(StringBuilder sb) {
             int accepted = countAcceptedPresContext();
-            sb.Append("\n\tpresCtx:\taccepted=").Append(accepted).Append(", rejected=").Append(presCtxs.Count - accepted);
+            sb.Append("\n\tpresCtx:\taccepted=").Append(accepted).Append(", rejected=").Append(presentationContexts.Count - accepted);
         }
     }
 }

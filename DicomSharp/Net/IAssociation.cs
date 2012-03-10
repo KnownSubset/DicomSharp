@@ -1,8 +1,7 @@
 using System;
-using DicomSharp.Net;
 using DicomSharp.Utility;
 
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IAssociation {
         AssociationState State { get; }
         int MaxOpsInvoked { get; }

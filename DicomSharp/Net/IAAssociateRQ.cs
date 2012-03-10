@@ -1,4 +1,4 @@
-namespace DicomCS.Net {
+namespace DicomSharp.Net {
     public interface IAAssociateRQ : IAAssociateRQAC {
     }
 }

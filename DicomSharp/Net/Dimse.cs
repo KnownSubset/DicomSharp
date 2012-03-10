@@ -37,7 +37,7 @@ using DicomSharp.Dictionary;
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public class Dimse : IDataSource {
+    public class Dimse : IDimse {
         private readonly DicomCommand cmd;
         private readonly int m_pcid;
         private readonly IDataSource src;
@@ -61,10 +61,10 @@ namespace DicomSharp.Net {
             this.src = src;
             m_ins = null;
             tsUID = null;
-            this.cmd.PutUS(Tags.DataSetType, ds == null && src == null ? DicomCommand.NO_DATASET : 0);
+            this.cmd.PutUS(Tags.DataSetType, ds == null && src == null ? (int)DicomCommandMessage.NO_DATASET : 0);
         }
 
-        public virtual DicomCommand DicomCommand {
+        public virtual IDicomCommand DicomCommand {
             get { return cmd; }
         }
 

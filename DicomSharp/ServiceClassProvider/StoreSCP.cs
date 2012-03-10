@@ -74,8 +74,8 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        protected override void DoCStore(ActiveAssociation assoc, Dimse rq, DicomCommand rspCmd) {
-            DicomCommand rqCmd = rq.DicomCommand;
+        protected override void DoCStore(ActiveAssociation assoc, IDimse rq, DicomCommand rspCmd) {
+            IDicomCommand rqCmd = rq.DicomCommand;
             Stream ins = rq.DataAsStream;
             try {
                 String instUID = rqCmd.AffectedSOPInstanceUID;

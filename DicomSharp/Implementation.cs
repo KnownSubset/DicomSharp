@@ -38,15 +38,15 @@ namespace DicomSharp {
 
         static Implementation() {
             rb.Add("dicomSharp.ImplementationClassUID", "1.0.0.0.168");
-            rb.Add("dicomSharp.ImplementationVersionName", "dicomcs20120310");
+            rb.Add("dicomSharp.ImplementationVersionName", "dicomSharp20120310");
         }
 
         public static String ClassUID {
-            get { return (String) rb["dicomcs.ImplementationClassUID"]; }
+            get { return (String)rb["dicomSharp.ImplementationClassUID"]; }
         }
 
         public static String VersionName {
-            get { return (String) rb["dicomcs.ImplementationVersionName"]; }
+            get { return (String)rb["dicomSharpf.ImplementationVersionName"]; }
         }
     }
 }
