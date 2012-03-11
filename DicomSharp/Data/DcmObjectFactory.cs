@@ -44,7 +44,7 @@ namespace DicomSharp.Data {
             get { return s_instance; }
         }
 
-        public virtual DicomCommand NewCommand() {
+        public virtual IDicomCommand NewCommand() {
             return new DicomCommand();
         }
 

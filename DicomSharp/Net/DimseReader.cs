@@ -47,7 +47,7 @@ namespace DicomSharp.Net {
         private readonly DcmObjectFactory dcmObjFact = DcmObjectFactory.Instance;
         private readonly Fsm fsm;
         private byte[] buf;
-        private DicomCommand cmd;
+        private IDicomCommand cmd;
         private LF_ThreadPool m_threadPool;
         private PDataTF pDataTF;
         private PDataTF.PDV pdv;
