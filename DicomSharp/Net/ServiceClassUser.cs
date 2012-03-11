@@ -41,6 +41,7 @@ using DicomSharp.Dictionary;
 using Microsoft.Practices.Unity;
 using log4net;
 using Timer = System.Timers.Timer;
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace DicomSharp.Net
 {
