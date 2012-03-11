@@ -220,7 +220,7 @@ namespace DicomSharp.Net {
             return retval;
         }
 
-        public void AddPresContext(PresentationContext presentationCtx) {
+        public virtual void AddPresContext(PresentationContext presentationCtx) {
             if ((presentationCtx).type() != PcType()) {
                 throw new ArgumentException("wrong type of " + presentationCtx);
             }

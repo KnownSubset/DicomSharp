@@ -77,10 +77,10 @@ namespace DicomSharp.Net {
             set { actionTypeID = value; }
         }
 
-        public virtual void WriteTo(DicomCommand cmd) {
+        public virtual void WriteTo(IDicomCommand cmd) {
             cmd.PutUS(Tags.Status, status);
-            String msg = Message;
-            if (msg != null && msg.Length > 0) {
+            string msg = Message;
+            if (!string.IsNullOrEmpty(msg)) {
                 cmd.PutLO(Tags.ErrorComment, msg.Length > 64 ? msg.Substring(0, (64) - (0)) : msg);
             }
             if (errorID >= 0) {

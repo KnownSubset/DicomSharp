@@ -74,7 +74,7 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        protected override void DoCStore(ActiveAssociation activeAssociation, IDimse request, DicomCommand responseCommand) {
+        protected override void DoCStore(ActiveAssociation activeAssociation, IDimse request, IDicomCommand responseCommand) {
             IDicomCommand rqCmd = request.DicomCommand;
             Stream ins = request.DataAsStream;
             try {
