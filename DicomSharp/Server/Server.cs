@@ -36,9 +36,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using log4net;
-using log4net.Config;
-
-[assembly: DOMConfigurator(ConfigFileExtension = "config")]
 
 namespace DicomSharp.Server {
     /// <summary>

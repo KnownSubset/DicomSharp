@@ -595,7 +595,7 @@ namespace DicomSharp.Data {
                                              Encoding encoding)
                 : base(tag, values, 10240, true, TRAIL_TRIM, chk, encoding) {}
 
-            public String GetString(int index, Encoding encoding) {
+            public override String GetString(int index, Encoding encoding) {
                 return base.GetString(index, null);
             }
         }
@@ -722,19 +722,6 @@ namespace DicomSharp.Data {
 
             public override float GetFloat(int index) {
                 return Single.Parse(GetString(index, null));
-            }
-
-            public String Check(String s) {
-                try {
-                    Single.Parse(s);
-                    if (s.Length > 16) {
-                        log.Warn("DS Value: " + s + " exeeds DS Length limit: 16");
-                    }
-                }
-                catch (FormatException e) {
-                    log.Warn("Illegal DS Value: " + s, e);
-                }
-                return s;
             }
         }
 
@@ -961,7 +948,7 @@ namespace DicomSharp.Data {
                 return vm;
             }
 
-            public virtual ByteBuffer GetByteBuffer(int index) {
+            public override ByteBuffer GetByteBuffer(int index) {
                 if (index >= VM()) {
                     return null;
                 }

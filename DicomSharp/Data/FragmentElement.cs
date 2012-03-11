@@ -147,7 +147,7 @@ namespace DicomSharp.Data {
             return StringUtils.PromptValue(ValueRepresentation(), GetDataFragment(index), maxLen);
         }
 
-        public virtual String[] GetStrings(Encoding encoding) {
+        public override String[] GetStrings(Encoding encoding) {
             return GetBoundedStrings(Int32.MaxValue, encoding);
         }
 
@@ -268,7 +268,7 @@ namespace DicomSharp.Data {
                 base.AddDataFragment(data);
             }
 
-            protected internal void SwapOrder(ByteBuffer data) {
+            protected internal override void SwapOrder(ByteBuffer data) {
                 SwapWords(data);
             }
         }
