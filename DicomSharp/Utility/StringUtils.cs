@@ -402,29 +402,6 @@ namespace DicomSharp.Utility {
             return false;
         }
 
-        public static void dumpBytes(String name, byte[] req, int offset, int len) {
-            return;
-
-            var buf = new StringBuilder("------------" + name + " - Bytes: " + len + " ------------");
-            int all = offset + len;
-            for (int i = 0; i < all; i++) {
-                if (i%16 == 0) {
-                    buf.Append("\n");
-                }
-
-                if (i < offset) {
-                    buf.Append("  ");
-                }
-                else {
-                    String s = Convert.ToString(req[i] & 0xFF, 16);
-                    if (s.Length == 1) {
-                        buf.Append("0");
-                    }
-                    buf.Append(s);
-                }
-                buf.Append(" ");
-            }
-            log.Debug("\n" + buf.ToString() + "\n");
-        }
+        public static void dumpBytes(String name, byte[] req, int offset, int len) {}
     }
 }

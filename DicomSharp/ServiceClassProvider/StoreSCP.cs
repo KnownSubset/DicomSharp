@@ -43,7 +43,7 @@ namespace DicomSharp.ServiceClassProvider {
     /// </summary>
     public class StoreSCP : DcmServiceBase {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StoreSCP));
-        private new const int SUCCESS = 0x0000;
+        private const int SUCCESS = 0x0000;
         private const int PROCESSING_FAILURE = 0x0101;
         private const int MISSING_UID = 0xA900;
         private const int MISMATCH_UID = 0xA901;

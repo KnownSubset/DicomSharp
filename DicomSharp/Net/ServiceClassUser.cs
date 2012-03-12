@@ -41,6 +41,7 @@ using DicomSharp.Dictionary;
 using Microsoft.Practices.Unity;
 using log4net;
 using Timer = System.Timers.Timer;
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace DicomSharp.Net
 {
@@ -131,8 +132,7 @@ namespace DicomSharp.Net
             bool success = false;
             try
             {
-                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, UIDs.Verification,
-                                                                                     DefinedTransferSyntaxes));
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, UIDs.Verification, DefinedTransferSyntaxes));
                 IActiveAssociation active = OpenAssociation();
                 if (active != null)
                 {
@@ -143,8 +143,8 @@ namespace DicomSharp.Net
                     {
                         IDicomCommand cEchoDicomCommand = _dcmObjectFactory.NewCommand().InitCEchoRQ(0);
                         IDimse dimse = _associationFactory.NewDimse(pcid, cEchoDicomCommand);
-                        Logger.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", _aAssociateRequest.Name,
-                                                  _aAssociateRequest.ApplicationEntityTitle, _hostName, _port));
+                        Console.Out.WriteLine("{0} {1}", Logger.Logger.Name, Logger.Logger.Repository);    
+                        Logger.Info(String.Format("Echoing as {0} @ {1} {2}:{3}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle, _hostName, _port));
                         active.Invoke(dimse);
                         success = true;
                     }
