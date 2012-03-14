@@ -48,7 +48,7 @@ namespace DicomSharp.Net {
         private readonly Fsm fsm;
         private byte[] buf;
         private IDicomCommand cmd;
-        private LF_ThreadPool m_threadPool;
+        private LeadFollowerThreadPool m_threadPool;
         private PDataTF pDataTF;
         private PDataTF.PDV pdv;
         private int timeout;
@@ -62,7 +62,7 @@ namespace DicomSharp.Net {
 
         public virtual ActiveAssociation ActiveAssociation { get; set; }
 
-        public virtual LF_ThreadPool ReaderThreadPool {
+        public virtual LeadFollowerThreadPool ReaderThreadPool {
             get { return m_threadPool; }
             set { m_threadPool = value; }
         }

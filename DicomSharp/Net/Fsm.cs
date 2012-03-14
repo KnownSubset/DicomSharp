@@ -98,7 +98,7 @@ namespace DicomSharp.Net {
             ChangeState(requestor ? STA4 : STA2);
         }
 
-        public virtual LF_ThreadPool ReaderThreadPool { get; set; }
+        public virtual LeadFollowerThreadPool ReaderThreadPool { get; set; }
 
         /// Properties
         ///////////////////////////////////////////////////////////////////////

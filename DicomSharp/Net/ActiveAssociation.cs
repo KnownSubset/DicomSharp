@@ -42,11 +42,11 @@ namespace DicomSharp.Net {
     /// <summary>
     /// 
     /// </summary>
-    public class ActiveAssociation : LF_ThreadPool.ThreadHandlerI, IActiveAssociation {
+    public class ActiveAssociation : LeadFollowerThreadPool.IThreadHandler, IActiveAssociation {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssociation _association;
         private readonly Hashtable _cancelDispatcher = new Hashtable();
-        private readonly LF_ThreadPool _threadPool;
+        private readonly LeadFollowerThreadPool _threadPool;
         private readonly Hashtable _responseDispatcher = new Hashtable();
         private readonly DcmServiceRegistry _dcmServiceRegistry;
         private bool _released;
@@ -59,10 +59,10 @@ namespace DicomSharp.Net {
         /// <param name="dcmServiceRegistry"></param>
         public ActiveAssociation(IAssociation association, DcmServiceRegistry dcmServiceRegistry) {
             if (association.State != AssociationState.ASSOCIATION_ESTABLISHED) {
-                throw new SystemException("Association not esrablished - " + association.State);
+                throw new SystemException("Association not established - " + association.State);
             }
 
-            _threadPool = new LF_ThreadPool(this);
+            _threadPool = new LeadFollowerThreadPool(this);
 
             this._association = association;
             this._dcmServiceRegistry = dcmServiceRegistry;
@@ -79,12 +79,12 @@ namespace DicomSharp.Net {
             get { return _association; }
         }
 
-        #region ThreadHandlerI Members
+        #region IThreadHandler Members
 
         /// <summary>
         /// Run this active association
         /// </summary>
-        public void Run(LF_ThreadPool pool) {
+        public void Run(LeadFollowerThreadPool pool) {
             try {
                 lock (this) {
                     Dimse dimse = _association.Read(_timeout);
@@ -185,10 +185,10 @@ namespace DicomSharp.Net {
         /// <summary>
         /// Add DIMSE message listener
         /// </summary>
-        /// <param name="msgID"></param>
-        /// <param name="l"></param>
-        public void AddCancelListener(int msgID, IDimseListener l) {
-            _cancelDispatcher.Add(msgID, l);
+        /// <param name="messageId"></param>
+        /// <param name="dimseListener"></param>
+        public void AddCancelListener(int messageId, IDimseListener dimseListener) {
+            _cancelDispatcher.Add(messageId, dimseListener);
         }
 
         /// <summary>
@@ -201,10 +201,10 @@ namespace DicomSharp.Net {
         /// <summary>
         /// Send a DIMSE message
         /// </summary>
-        /// <param name="rq"></param>
+        /// <param name="request"></param>
         /// <param name="dimseListener"></param>
-        public void Invoke(IDimse rq, IDimseListener dimseListener) {
-            int msgID = rq.DicomCommand.MessageID;
+        public void Invoke(IDimse request, IDimseListener dimseListener) {
+            int msgID = request.DicomCommand.MessageID;
             int maxOps = _association.MaxOpsInvoked;
             if (maxOps == 0) {
                 _responseDispatcher.Add(msgID, dimseListener);
@@ -217,25 +217,25 @@ namespace DicomSharp.Net {
                     _responseDispatcher.Add(msgID, dimseListener);
                 }
             }
-            _association.Write(rq);
+            _association.Write(request);
         }
 
         /// <summary>
         /// Send a DIMSE message
         /// </summary>
-        /// <param name="rq"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public FutureDimseResponse Invoke(IDimse rq) {
+        public FutureDimseResponse Invoke(IDimse request) {
             var retval = new FutureDimseResponse();
             _association.AddAssociationListener(retval);
-            Invoke(rq, retval);
+            Invoke(request, retval);
             return retval;
         }
 
         /// <summary>
         /// Wait on all responses)
         /// </summary>
-        public void WaitOnRSP() {
+        public void WaitOnResponse() {
             lock (_responseDispatcher) {
                 while (_responseDispatcher.Count != 0) {
                     Monitor.Wait(_responseDispatcher);
@@ -246,10 +246,10 @@ namespace DicomSharp.Net {
         /// <summary>
         /// Send association release request and release this association
         /// </summary>
-        /// <param name="waitOnRSP"></param>
-        public void Release(bool waitOnRSP) {
-            if (waitOnRSP) {
-                WaitOnRSP();
+        /// <param name="waitOnResponse"></param>
+        public void Release(bool waitOnResponse) {
+            if (waitOnResponse) {
+                WaitOnResponse();
             }
             if (!_released) {
                 (_association).WriteReleaseRQ();

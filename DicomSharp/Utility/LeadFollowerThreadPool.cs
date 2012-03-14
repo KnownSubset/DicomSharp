@@ -38,12 +38,12 @@ namespace DicomSharp.Utility {
     /// <summary>
     ///  Leader/Follower Thread Pool
     /// </summary>
-    public class LF_ThreadPool {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    public class LeadFollowerThreadPool {
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private static int s_instCount;
 
-        private readonly ThreadHandlerI m_handler;
+        private readonly IThreadHandler m_handler;
         private readonly int m_instNo = ++s_instCount;
         private readonly Object m_mutex = new Object();
         private bool m_isShutdown;
@@ -62,7 +62,7 @@ namespace DicomSharp.Utility {
         /// Constructor
         /// </summary>
         /// <param name="m_handler"></param>
-        public LF_ThreadPool(ThreadHandlerI m_handler) {
+        public LeadFollowerThreadPool(IThreadHandler m_handler) {
             if (m_handler == null) {
                 throw new NullReferenceException();
             }
@@ -99,7 +99,7 @@ namespace DicomSharp.Utility {
         }
 
         public override String ToString() {
-            return "LF_ThreadPool-" + m_instNo + " [m_leader: " +
+            return "LeadFollowerThreadPool-" + m_instNo + " [m_leader: " +
                    (m_leader == null ? "null" : "#" + m_leader.GetHashCode().ToString()) + ", waiting: " + m_waiting +
                    ", running: " + m_running + "]";
         }
@@ -119,28 +119,28 @@ namespace DicomSharp.Utility {
             while (!m_isShutdown && (m_waiting + m_running) < m_maxRunning) {
                 lock (m_mutex) {
                     while (m_leader != null) {
-                        log.Debug(this + " - #" + Thread.CurrentThread.GetHashCode().ToString() + " Enter Wait()");
+                        Logger.Debug(this + " - #" + Thread.CurrentThread.GetHashCode().ToString() + " Enter Wait()");
                         ++m_waiting;
                         try {
                             if (!Monitor.Wait(m_mutex, m_timeout)) {
-                                log.Debug(this + " - #" + Thread.CurrentThread.GetHashCode() + " Terminated");
+                                Logger.Debug(this + " - #" + Thread.CurrentThread.GetHashCode() + " Terminated");
                                 return;
                             }
                         }
                         catch (ThreadInterruptedException ie) {
-                            log.Error(ie.StackTrace);
+                            Logger.Error(ie.StackTrace);
                         }
                         finally {
                             --m_waiting;
                         }
-                        log.Debug(this + " - " + Thread.CurrentThread.Name + " awaked");
+                        Logger.Debug(this + " - " + Thread.CurrentThread.Name + " awaked");
                     }
                     if (m_isShutdown) {
                         return;
                     }
 
                     m_leader = Thread.CurrentThread;
-                    log.Debug(this + " - #" + Thread.CurrentThread.GetHashCode() + " New Leader");
+                    Logger.Debug(this + " - #" + Thread.CurrentThread.GetHashCode() + " New Leader");
                 }
 
                 ++m_running;
@@ -174,7 +174,7 @@ namespace DicomSharp.Utility {
             // notify (one) waiting thread in Join()
             lock (m_mutex) {
                 if (m_waiting > 0) {
-                    log.Debug(this + " - promote new m_leader by notify");
+                    Logger.Debug(this + " - promote new m_leader by notify");
                     Monitor.Pulse(m_mutex);
                     return true;
                 }
@@ -183,12 +183,12 @@ namespace DicomSharp.Utility {
             // if there is no waiting thread,
             // and the maximum number of running threads is not yet reached,
             if (m_running >= m_maxRunning) {
-                log.Debug(this + " - Max number of threads reached");
+                Logger.Debug(this + " - Max number of threads reached");
                 return false;
             }
 
             // start a new one
-            log.Debug(this + " - promote new m_leader by add new Thread");
+            Logger.Debug(this + " - promote new m_leader by add new Thread");
 
             AddThread();
 
@@ -199,7 +199,7 @@ namespace DicomSharp.Utility {
         /// Shutdown this thread pool
         /// </summary>
         public virtual void Shutdown() {
-            log.Debug(this + " - shutdown");
+            Logger.Debug(this + " - shutdown");
             m_isShutdown = true;
             m_leader = null;
             lock (m_mutex) {
@@ -208,9 +208,8 @@ namespace DicomSharp.Utility {
         }
 
         /// <summary>
-        /// Add this thread to the waiting list. This may be overloaded to take new thread from convential thread pool
+        /// Add this thread to the waiting list. This may be overloaded to take new thread from conventional thread pool
         /// </summary>
-        /// <param name="t"></param>
         protected virtual void AddThread() {
             //
             // Normal thread
@@ -223,13 +222,13 @@ namespace DicomSharp.Utility {
             ThreadPool.QueueUserWorkItem(Run);
         }
 
-        #region Nested type: ThreadHandlerI
+        #region Nested type: IThreadHandler
 
         /// <summary>
         /// Thread handling job
         /// </summary>
-        public interface ThreadHandlerI {
-            void Run(LF_ThreadPool pool);
+        public interface IThreadHandler {
+            void Run(LeadFollowerThreadPool pool);
         }
 
         #endregion

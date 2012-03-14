@@ -211,7 +211,7 @@
     <Compile Include="DicomSharp\Utility\BEBinaryReader.cs" />
     <Compile Include="DicomSharp\Utility\BEBinaryWriter.cs" />
     <Compile Include="DicomSharp\Utility\ByteBuffer.cs" />
-    <Compile Include="DicomSharp\Utility\LF_ThreadPool.cs" />
+    <Compile Include="DicomSharp\Utility\LeadFollowerThreadPool.cs" />
     <Compile Include="DicomSharp\Utility\StringUtils.cs" />
     <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
     <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />

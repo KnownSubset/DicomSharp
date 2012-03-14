@@ -498,7 +498,7 @@ namespace DicomSharp.Net
                     FutureDimseResponse frsp = SendDataset(active, dcmParser, dataSet);
                     if (frsp != null)
                     {
-                        active.WaitOnRSP();
+                        active.WaitOnResponse();
                         bResponse = true;
                     }
                     active.Release(true);
@@ -554,7 +554,7 @@ namespace DicomSharp.Net
                     FutureDimseResponse frsp = SendDataset(active, null, dataSet);
                     if (frsp != null)
                     {
-                        active.WaitOnRSP();
+                        active.WaitOnResponse();
                         bResponse = true;
                     }
                     active.Release(true);
