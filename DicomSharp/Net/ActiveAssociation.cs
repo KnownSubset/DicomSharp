@@ -43,37 +43,36 @@ namespace DicomSharp.Net {
     /// 
     /// </summary>
     public class ActiveAssociation : LF_ThreadPool.ThreadHandlerI, IActiveAssociation {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssociation _association;
-        private readonly Hashtable cancelDispatcher = new Hashtable();
-        private readonly LF_ThreadPool m_threadPool;
-        private readonly Hashtable rspDispatcher = new Hashtable();
-        private readonly DcmServiceRegistry services;
-        private bool m_released;
-        private int timeout;
+        private readonly Hashtable _cancelDispatcher = new Hashtable();
+        private readonly LF_ThreadPool _threadPool;
+        private readonly Hashtable _responseDispatcher = new Hashtable();
+        private readonly DcmServiceRegistry _dcmServiceRegistry;
+        private bool _released;
+        private int _timeout;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="association"> </param>
-        /// <param name="services"></param>
-        public ActiveAssociation(IAssociation association, DcmServiceRegistry services) {
+        /// <param name="dcmServiceRegistry"></param>
+        public ActiveAssociation(IAssociation association, DcmServiceRegistry dcmServiceRegistry) {
             if (association.State != AssociationState.ASSOCIATION_ESTABLISHED) {
                 throw new SystemException("Association not esrablished - " + association.State);
             }
 
-            m_threadPool = new LF_ThreadPool(this);
+            _threadPool = new LF_ThreadPool(this);
 
             this._association = association;
-            this.services = services;
+            this._dcmServiceRegistry = dcmServiceRegistry;
             this._association.ActiveAssociation = this;
-            this._association.SetThreadPool(m_threadPool);
+            this._association.SetThreadPool(_threadPool);
         }
 
         public virtual int Timeout {
-            get { return timeout; }
-            set { timeout = value; }
+            get { return _timeout; }
+            set { _timeout = value; }
         }
 
         public virtual IAssociation Association {
@@ -88,17 +87,17 @@ namespace DicomSharp.Net {
         public void Run(LF_ThreadPool pool) {
             try {
                 lock (this) {
-                    Dimse dimse = _association.Read(timeout);
+                    Dimse dimse = _association.Read(_timeout);
 
                     // if Association was released
                     if (dimse == null) {
-                        lock (rspDispatcher) {
-                            if (rspDispatcher.Count != 0) {
-                                rspDispatcher.Clear();
-                                m_released = true;
+                        lock (_responseDispatcher) {
+                            if (_responseDispatcher.Count != 0) {
+                                _responseDispatcher.Clear();
+                                _released = true;
                             }
 
-                            Monitor.Pulse(rspDispatcher);
+                            Monitor.Pulse(_responseDispatcher);
                         }
 
                         pool.Shutdown();
@@ -109,47 +108,47 @@ namespace DicomSharp.Net {
                     switch ((DicomCommandMessage)cmd.CommandField)
                     {
                         case DicomCommandMessage.C_STORE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_store(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).CStore(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_GET_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_get(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).CGet(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_FIND_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_find(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).CFind(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_MOVE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_move(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).CMove(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_ECHO_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).c_echo(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).CEcho(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_EVENT_REPORT_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).n_event_report(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).NEventReport(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_GET_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_get(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.RequestedSOPClassUniqueId).NGet(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_SET_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_set(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.RequestedSOPClassUniqueId).NSet(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_ACTION_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_action(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.RequestedSOPClassUniqueId).NAction(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_CREATE_RQ:
-                            services.Lookup(cmd.AffectedSOPClassUniqueId).n_action(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.AffectedSOPClassUniqueId).NAction(this, dimse);
                             break;
 
                         case DicomCommandMessage.N_DELETE_RQ:
-                            services.Lookup(cmd.RequestedSOPClassUniqueId).n_delete(this, dimse);
+                            _dcmServiceRegistry.Lookup(cmd.RequestedSOPClassUniqueId).NDelete(this, dimse);
                             break;
 
                         case DicomCommandMessage.C_STORE_RSP:
@@ -176,7 +175,7 @@ namespace DicomSharp.Net {
                 }
             }
             catch (Exception ioe) {
-                log.Error(ioe);
+                Logger.Error(ioe);
                 pool.Shutdown();
             }
         }
@@ -189,7 +188,7 @@ namespace DicomSharp.Net {
         /// <param name="msgID"></param>
         /// <param name="l"></param>
         public void AddCancelListener(int msgID, IDimseListener l) {
-            cancelDispatcher.Add(msgID, l);
+            _cancelDispatcher.Add(msgID, l);
         }
 
         /// <summary>
@@ -208,14 +207,14 @@ namespace DicomSharp.Net {
             int msgID = rq.DicomCommand.MessageID;
             int maxOps = _association.MaxOpsInvoked;
             if (maxOps == 0) {
-                rspDispatcher.Add(msgID, dimseListener);
+                _responseDispatcher.Add(msgID, dimseListener);
             }
             else {
-                lock (rspDispatcher) {
-                    while (rspDispatcher.Count >= maxOps) {
-                        Monitor.Wait(rspDispatcher);
+                lock (_responseDispatcher) {
+                    while (_responseDispatcher.Count >= maxOps) {
+                        Monitor.Wait(_responseDispatcher);
                     }
-                    rspDispatcher.Add(msgID, dimseListener);
+                    _responseDispatcher.Add(msgID, dimseListener);
                 }
             }
             _association.Write(rq);
@@ -237,9 +236,9 @@ namespace DicomSharp.Net {
         /// Wait on all responses)
         /// </summary>
         public void WaitOnRSP() {
-            lock (rspDispatcher) {
-                while (rspDispatcher.Count != 0) {
-                    Monitor.Wait(rspDispatcher);
+            lock (_responseDispatcher) {
+                while (_responseDispatcher.Count != 0) {
+                    Monitor.Wait(_responseDispatcher);
                 }
             }
         }
@@ -252,7 +251,7 @@ namespace DicomSharp.Net {
             if (waitOnRSP) {
                 WaitOnRSP();
             }
-            if (!m_released) {
+            if (!_released) {
                 (_association).WriteReleaseRQ();
             }
         }
@@ -262,7 +261,7 @@ namespace DicomSharp.Net {
         /// </summary>
         /// <param name="state"></param>
         public void Run(Object state) {
-            m_threadPool.Join();
+            _threadPool.Join();
         }
 
         /// <summary>
@@ -275,13 +274,13 @@ namespace DicomSharp.Net {
             int msgID = cmd.MessageIDToBeingRespondedTo;
             IDimseListener dimseListener = null;
             if (cmd.IsPending()) {
-                dimseListener = (IDimseListener) rspDispatcher[msgID];
+                dimseListener = (IDimseListener) _responseDispatcher[msgID];
             }
             else {
-                lock (rspDispatcher) {
-                    dimseListener = (IDimseListener) rspDispatcher[msgID];
-                    rspDispatcher.Remove(msgID);
-                    Monitor.Pulse(rspDispatcher);
+                lock (_responseDispatcher) {
+                    dimseListener = (IDimseListener) _responseDispatcher[msgID];
+                    _responseDispatcher.Remove(msgID);
+                    Monitor.Pulse(_responseDispatcher);
                 }
             }
 
@@ -298,8 +297,8 @@ namespace DicomSharp.Net {
             IDicomCommand cmd = dimse.DicomCommand;
             int msgID = cmd.MessageIDToBeingRespondedTo;
 
-            var l = (IDimseListener) cancelDispatcher[msgID];
-            cancelDispatcher.Remove(msgID);
+            var l = (IDimseListener) _cancelDispatcher[msgID];
+            _cancelDispatcher.Remove(msgID);
 
             if (l != null) {
                 l.DimseReceived(_association, dimse);

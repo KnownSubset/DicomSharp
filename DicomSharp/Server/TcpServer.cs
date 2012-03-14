@@ -41,8 +41,8 @@ namespace DicomSharp.Server {
     /// <summary>
     /// SCP Server
     /// </summary>
-    public class Server {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Server));
+    public class TcpServer {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TcpServer));
 
         private readonly IHandler _handler;
         private bool _stop;
@@ -52,7 +52,7 @@ namespace DicomSharp.Server {
         /// Constructor
         /// </summary>
         /// <param name="handler"></param>
-        public Server(IHandler handler) {
+        public TcpServer(IHandler handler) {
             if (handler == null) {
                 throw new NullReferenceException();
             }

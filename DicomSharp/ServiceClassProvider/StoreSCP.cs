@@ -31,7 +31,6 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using DicomSharp.Data;
 using DicomSharp.Dictionary;
 using DicomSharp.Net;
@@ -41,21 +40,20 @@ namespace DicomSharp.ServiceClassProvider {
     /// <summary>
     /// SCP for C-STORE
     /// </summary>
-    public class StoreSCP : DcmServiceBase {
+    public class StoreSCP : DicomServiceBase {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StoreSCP));
         private const int SUCCESS = 0x0000;
         private const int PROCESSING_FAILURE = 0x0101;
         private const int MISSING_UID = 0xA900;
         private const int MISMATCH_UID = 0xA901;
         private const int CANNOT_UNDERSTAND = 0xC000;
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private FileInfo archiveDir = new FileInfo("_archive");
+        private FileInfo _archiveDirectory = new FileInfo("_archive");
         private int dirSplitLevel = 1;
-        protected DcmParserFactory parserFact = DcmParserFactory.Instance;
+        protected DcmParserFactory parserFactory = DcmParserFactory.Instance;
 
-        public virtual FileInfo ArchiveDir {
-            get { return archiveDir; }
+        public virtual FileInfo ArchiveDirectory {
+            get { return _archiveDirectory; }
             set {
                 bool tmpBool;
                 if (File.Exists(value.FullName)) {
@@ -70,73 +68,77 @@ namespace DicomSharp.ServiceClassProvider {
                 if (!Directory.Exists(value.FullName)) {
                     throw new ArgumentException("cannot access directory " + value);
                 }
-                archiveDir = value;
+                _archiveDirectory = value;
             }
         }
 
+        public override void CFind(ActiveAssociation assoc, IDimse request)
+        {
+            base.CFind(assoc, request);
+        }
+
         protected override void DoCStore(ActiveAssociation activeAssociation, IDimse request, IDicomCommand responseCommand) {
-            IDicomCommand rqCmd = request.DicomCommand;
-            Stream ins = request.DataAsStream;
+            IDicomCommand requestCommand = request.DicomCommand;
+            Stream inputStream = request.DataAsStream;
             try {
-                String instanceUniqueId = rqCmd.AffectedSOPInstanceUniqueId;
-                String classUniqueId = rqCmd.AffectedSOPClassUniqueId;
+                String instanceUniqueId = requestCommand.AffectedSOPInstanceUniqueId;
+                String classUniqueId = requestCommand.AffectedSOPClassUniqueId;
                 DcmDecodeParam decParam = DcmDecodeParam.ValueOf(request.TransferSyntaxUniqueId);
-                DataSet dataSet = objFact.NewDataset();
-                DcmParser parser = parserFact.NewDcmParser(ins);
+                DataSet dataSet = _dcmObjectFactory.NewDataset();
+                DcmParser parser = parserFactory.NewDcmParser(inputStream);
                 parser.DcmHandler = dataSet.DcmHandler;
                 parser.ParseDataset(decParam, Tags.PixelData);
-                dataSet.FileMetaInfo = objFact.NewFileMetaInfo(classUniqueId, instanceUniqueId, request.TransferSyntaxUniqueId);
+                dataSet.FileMetaInfo = _dcmObjectFactory.NewFileMetaInfo(classUniqueId, instanceUniqueId, request.TransferSyntaxUniqueId);
                 FileInfo file = ToFile(dataSet);
                 StoreToFile(parser, dataSet, file, (DcmEncodeParam) decParam);
                 responseCommand.PutUS(Tags.Status, SUCCESS);
             }
             catch (Exception e) {
-                log.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 throw new DcmServiceException(PROCESSING_FAILURE, e);
             }
             finally {
-                ins.Close();
+                inputStream.Close();
             }
         }
 
-        private Stream openOutputStream(FileInfo file) {
+        private Stream OpenOutputStream(FileInfo file) {
             DirectoryInfo parent = file.Directory;
-            bool tmpBool = File.Exists(parent.FullName) || Directory.Exists(parent.FullName);
-            if (!tmpBool) {
+            bool directoryExists = File.Exists(parent.FullName) || Directory.Exists(parent.FullName);
+            if (!directoryExists) {
                 Directory.CreateDirectory(parent.FullName);
-                log.Info("M-WRITE " + parent);
+                Logger.Info("M-WRITE " + parent);
             }
 
-            log.Info("M-WRITE " + file);
+            Logger.Info("M-WRITE " + file);
             return new BufferedStream(new FileStream(file.FullName, FileMode.Create));
         }
 
         private void StoreToFile(DcmParser parser, DataSet ds, FileInfo file, DcmEncodeParam encParam) {
-            Stream outs = openOutputStream(file);
+            Stream outputStream = OpenOutputStream(file);
             try {
-                ds.WriteFile(outs, encParam);
+                ds.WriteFile(outputStream, encParam);
                 if (parser.ReadTag == Tags.PixelData) {
-                    ds.WriteHeader(outs, encParam, parser.ReadTag, parser.ReadVR, parser.ReadLength);
-                    Copy(parser.InputStream, outs);
+                    ds.WriteHeader(outputStream, encParam, parser.ReadTag, parser.ReadVR, parser.ReadLength);
+                    Copy(parser.InputStream, outputStream);
                 }
             }
             finally {
                 try {
-                    outs.Close();
+                    outputStream.Close();
                 }
                 catch (IOException ignore)
                 {
                     Logger.Error(ignore);
-                    
                 }
             }
         }
 
-        private void Copy(Stream ins, Stream outs) {
-            int c;
+        private void Copy(Stream inputStream, Stream outputStream) {
+            int bytesRead;
             var buffer = new byte[512];
-            while ((c = ins.Read(buffer, 0, buffer.Length)) != - 1) {
-                outs.Write(buffer, 0, c);
+            while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) != - 1) {
+                outputStream.Write(buffer, 0, bytesRead);
             }
         }
 
@@ -172,7 +174,7 @@ namespace DicomSharp.ServiceClassProvider {
             }
 
             String pn = ToFileID(ds, Tags.PatientName) + "____";
-            FileInfo dir = archiveDir;
+            FileInfo dir = _archiveDirectory;
             for (int i = 0; i < dirSplitLevel; ++i) {
                 dir = new FileInfo(dir.FullName + "\\" + pn.Substring(0, (i + 1) - (0)));
             }

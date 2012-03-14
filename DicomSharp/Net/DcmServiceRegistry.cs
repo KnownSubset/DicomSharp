@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using DicomSharp.Dictionary;
 using DicomSharp.Utility;
+using Microsoft.Practices.Unity.Utility;
 
 namespace DicomSharp.Net {
     /// <summary>
@@ -40,14 +41,11 @@ namespace DicomSharp.Net {
     /// </summary>
     public class DcmServiceRegistry : Hashtable {
         public DcmServiceRegistry() {
-            Add(UIDs.Verification, DcmServiceBase.VerificationScp);
+            Add(UIDs.Verification, DicomServiceBase.VerificationScp);
         }
 
-        public virtual bool Bind(String uid, IDcmService service) {
-            if (service == null) {
-                throw new NullReferenceException();
-            }
-
+        public virtual bool Bind(String uid, IDicomService service) {
+            Guard.ArgumentNotNull(service, "service");
             if (Contains(StringUtils.CheckUID(uid))) {
                 return false;
             }
@@ -60,9 +58,9 @@ namespace DicomSharp.Net {
             Remove(uid);
         }
 
-        public virtual IDcmService Lookup(String uid) {
-            var retval = (IDcmService) this[StringUtils.CheckUID(uid)];
-            return retval ?? DcmServiceBase.NoSuchSOPClassScp;
+        public virtual IDicomService Lookup(String uid) {
+            var retval = (IDicomService) this[StringUtils.CheckUID(uid)];
+            return retval ?? DicomServiceBase.NoSuchSOPClassScp;
         }
     }
 }

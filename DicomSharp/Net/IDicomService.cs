@@ -32,17 +32,17 @@
 namespace DicomSharp.Net {
     /// <summary> 
     /// </summary>
-    public interface IDcmService {
-        void c_store(ActiveAssociation assoc, IDimse rq);
-        void c_get(ActiveAssociation assoc, IDimse rq);
-        void c_find(ActiveAssociation assoc, IDimse rq);
-        void c_move(ActiveAssociation assoc, IDimse rq);
-        void c_echo(ActiveAssociation assoc, IDimse rq);
-        void n_create(ActiveAssociation assoc, IDimse rq);
-        void n_set(ActiveAssociation assoc, IDimse rq);
-        void n_get(ActiveAssociation assoc, IDimse rq);
-        void n_delete(ActiveAssociation assoc, IDimse rq);
-        void n_action(ActiveAssociation assoc, IDimse rq);
-        void n_event_report(ActiveAssociation assoc, IDimse rq);
+    public interface IDicomService {
+        void CStore(ActiveAssociation assoc, IDimse rq);
+        void CGet(ActiveAssociation assoc, IDimse rq);
+        void CFind(ActiveAssociation assoc, IDimse rq);
+        void CMove(ActiveAssociation assoc, IDimse rq);
+        void CEcho(ActiveAssociation assoc, IDimse rq);
+        void NCreate(ActiveAssociation assoc, IDimse rq);
+        void NSet(ActiveAssociation assoc, IDimse rq);
+        void NGet(ActiveAssociation assoc, IDimse rq);
+        void NDelete(ActiveAssociation assoc, IDimse rq);
+        void NAction(ActiveAssociation assoc, IDimse rq);
+        void NEventReport(ActiveAssociation assoc, IDimse rq);
     }
 }
