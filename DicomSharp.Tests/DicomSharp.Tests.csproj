@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomSharp\Server\DicomServerTest.cs" />
     <Compile Include="ServiceClassUserAcceptanceTests.cs" />
     <Compile Include="ServiceClassUserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

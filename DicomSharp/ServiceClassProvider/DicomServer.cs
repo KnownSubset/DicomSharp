@@ -224,7 +224,12 @@ namespace DicomSharp.ServiceClassProvider {
             if (_tcpServer == null) {
                 throw new SystemException();
             }
-            _tcpServer.Start(port);
+            Action startServer = () => _tcpServer.Start(port);
+            startServer.BeginInvoke(asyncCallback =>
+            {
+                var asyncState = asyncCallback.AsyncState as Action;
+                asyncState.EndInvoke(asyncCallback);
+            }, startServer);
         }
 
         public virtual void Stop() {
