@@ -117,7 +117,7 @@ namespace DicomSharp.Net {
 
         #endregion
 
-        public int pcid() {
+        public int PresentationContextId() {
             return _presentationContextId;
         }
 

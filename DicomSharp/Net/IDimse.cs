@@ -8,7 +8,7 @@ namespace DicomSharp.Net {
         String TransferSyntaxUniqueId { get; set; }
         DataSet DataSet { get; }
         Stream DataAsStream { get; }
-        int pcid();
+        int PresentationContextId();
         void ReadDataset();
     }
 }

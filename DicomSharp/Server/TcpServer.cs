@@ -59,7 +59,12 @@ namespace DicomSharp.Server {
             this._handler = handler;
         }
 
-        public virtual void Start(int port) {
+        public bool Stopped
+        {
+            get { return _tcpListener == null && _stop; }
+        }
+
+        public virtual void StartServer(int port) {
             CheckNotRunning();
             Logger.Info("Start Server listening at port " + port);
 
@@ -73,18 +78,11 @@ namespace DicomSharp.Server {
 
         private static IPAddress DetermineIpAddress()
         {
-            IPAddress ipAddress;
-            try
-            {
-                ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-            } catch (Exception)
-            {
-                ipAddress = IPAddress.Parse("127.0.0.1");
-            }
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             return ipAddress;
         }
 
-        public virtual void Stop() {
+        public virtual void StopServer() {
             if (_tcpListener == null) {
                 return;
             }

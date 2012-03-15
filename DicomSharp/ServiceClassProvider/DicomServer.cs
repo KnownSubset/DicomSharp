@@ -220,21 +220,25 @@ namespace DicomSharp.ServiceClassProvider {
             set { storeSCP.ArchiveDirectory = new FileInfo(value); }
         }
 
+        public bool IsStarted
+        {
+            get { return _tcpServer != null && !_tcpServer.Stopped; }
+        }
+
         public virtual void Start() {
             if (_tcpServer == null) {
                 throw new SystemException();
             }
-            Action startServer = () => _tcpServer.Start(port);
-            startServer.BeginInvoke(asyncCallback =>
-            {
-                var asyncState = asyncCallback.AsyncState as Action;
-                asyncState.EndInvoke(asyncCallback);
-            }, startServer);
+            Action startServer = () => _tcpServer.StartServer(port);
+            startServer.BeginInvoke(asyncCallback => {
+                                                        var asyncState = asyncCallback.AsyncState as Action;
+                                                        asyncState.EndInvoke(asyncCallback);
+                                                    }, startServer);
         }
 
         public virtual void Stop() {
             if (_tcpServer != null) {
-                _tcpServer.Stop();
+                _tcpServer.StopServer();
             }
         }
 

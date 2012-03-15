@@ -73,7 +73,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -87,7 +87,7 @@ namespace DicomSharp.Net {
             }
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
-                IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd);
+                IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd);
                 assoc.Association.Write(rsp);
                 DoAfterRsp(assoc, rsp);
             }
@@ -102,7 +102,7 @@ namespace DicomSharp.Net {
             }
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
-                IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd);
+                IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd);
                 assoc.Association.Write(rsp);
                 DoAfterRsp(assoc, rsp);
             }
@@ -117,7 +117,7 @@ namespace DicomSharp.Net {
             }
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
-                IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd);
+                IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd);
                 assoc.Association.Write(rsp);
                 DoAfterRsp(assoc, rsp);
             }
@@ -134,7 +134,7 @@ namespace DicomSharp.Net {
                 Logger.Error(e);
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -150,7 +150,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -166,7 +166,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -182,7 +182,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -198,7 +198,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -215,7 +215,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -231,7 +231,7 @@ namespace DicomSharp.Net {
             catch (DcmServiceException e) {
                 e.WriteTo(rspCmd);
             }
-            IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+            IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
             assoc.Association.Write(rsp);
             DoAfterRsp(assoc, rsp);
         }
@@ -301,7 +301,7 @@ namespace DicomSharp.Net {
                 assoc.AddCancelListener(rspCmd.MessageIDToBeingRespondedTo, mdr.CancelListener);
                 do {
                     DataSet rspData = mdr.Next(assoc, request, rspCmd);
-                    IDimse rsp = _associationFactory.NewDimse(request.pcid(), rspCmd, rspData);
+                    IDimse rsp = _associationFactory.NewDimse(request.PresentationContextId(), rspCmd, rspData);
                     assoc.Association.Write(rsp);
                     DoAfterRsp(assoc, rsp);
                 } while (rspCmd.IsPending());

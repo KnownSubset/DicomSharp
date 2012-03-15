@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using DicomSharp.Data;
 using DicomSharp.Net;
 using DicomSharp.ServiceClassProvider;
@@ -24,13 +25,12 @@ namespace DicomCS.Tests
             dicomServer.Policy = new AcceptorPolicyService().AcceptorPolicy;
             
             dicomServer.Start();
+            while(!dicomServer.IsStarted)
+            {
+                Thread.Sleep(0);
+            }
             dicomServer.Stop();
         }
-
-        private void CallBackMethod(IAsyncResult asyncResult)
-        {
-        }
-
-
+        
     }
 }
