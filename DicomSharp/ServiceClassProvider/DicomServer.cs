@@ -36,7 +36,7 @@ using DicomSharp.Net;
 using DicomSharp.Server;
 
 namespace DicomSharp.ServiceClassProvider {
-    public class DcmSrv {
+    public class DicomServer {
         private static readonly ServerFactory ServerFactory = ServerFactory.Instance;
         private static readonly AssociationFactory AssociationFactory = AssociationFactory.Instance;
         private readonly String[] STORAGE_AS;
@@ -44,9 +44,9 @@ namespace DicomSharp.ServiceClassProvider {
         private readonly StoreSCP storeSCP;
         private IDcmAssociationHandler _associationHandler;
         private int port = 104;
-        private Server.Server server;
+        private TcpServer _tcpServer;
 
-        public DcmSrv() {
+        public DicomServer() {
             services = AssociationFactory.NewDcmServiceRegistry();
             storeSCP = new StoreSCP();
             STORAGE_AS = new[] {
@@ -205,8 +205,8 @@ namespace DicomSharp.ServiceClassProvider {
 
         public virtual AcceptorPolicy Policy {
             set {
-                _associationHandler = ServerFactory.newDcmHandler(value, services);
-                server = ServerFactory.newServer(_associationHandler);
+                _associationHandler = ServerFactory.NewDcmHandler(value, services);
+                _tcpServer = ServerFactory.NewServer(_associationHandler);
             }
         }
 
@@ -216,27 +216,36 @@ namespace DicomSharp.ServiceClassProvider {
         }
 
         public virtual String ArchiveDir {
-            get { return storeSCP.ArchiveDir.FullName; }
-            set { storeSCP.ArchiveDir = new FileInfo(value); }
+            get { return storeSCP.ArchiveDirectory.FullName; }
+            set { storeSCP.ArchiveDirectory = new FileInfo(value); }
+        }
+
+        public bool IsStarted
+        {
+            get { return _tcpServer != null && !_tcpServer.Stopped; }
         }
 
         public virtual void Start() {
-            if (server == null) {
+            if (_tcpServer == null) {
                 throw new SystemException();
             }
-            server.Start(port);
+            Action startServer = () => _tcpServer.StartServer(port);
+            startServer.BeginInvoke(asyncCallback => {
+                                                        var asyncState = asyncCallback.AsyncState as Action;
+                                                        asyncState.EndInvoke(asyncCallback);
+                                                    }, startServer);
         }
 
         public virtual void Stop() {
-            if (server != null) {
-                server.Stop();
+            if (_tcpServer != null) {
+                _tcpServer.StopServer();
             }
         }
 
 
-        private void InitServices() {
-            for (int i = 0; i < STORAGE_AS.Length; ++i) {
-                services.Bind(STORAGE_AS[i], storeSCP);
+        private void InitServices(){
+            foreach (string storageAssocationSyntax in STORAGE_AS) {
+                services.Bind(storageAssocationSyntax, storeSCP);
             }
         }
 
@@ -246,9 +255,8 @@ namespace DicomSharp.ServiceClassProvider {
 
         [STAThread]
         public static void Main() {
-            var srv = new DcmSrv();
+            var srv = new DicomServer();
             var policy = new AcceptorPolicyService();
-            //policy.CalledAETs = "STORAGE_SCP";
             srv.Policy = policy.AcceptorPolicy;
             srv.Start();
         }

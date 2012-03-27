@@ -170,16 +170,17 @@
     <Compile Include="DicomSharp\Net\Association.cs" />
     <Compile Include="DicomSharp\Net\AssociationFactory.cs" />
     <Compile Include="DicomSharp\Net\AsyncOpsWindow.cs" />
+    <Compile Include="DicomSharp\Net\DicomServiceBase.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateAC.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateRQ.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateRQAC.cs" />
     <Compile Include="DicomSharp\Net\IActiveAssociation.cs" />
     <Compile Include="DicomSharp\Net\IAssociation.cs" />
+    <Compile Include="DicomSharp\Net\IDicomService.cs" />
     <Compile Include="DicomSharp\Net\IDimse.cs" />
     <Compile Include="DicomSharp\Net\IServiceClassUser.cs" />
     <Compile Include="DicomSharp\Net\PresentationContext.cs" />
     <Compile Include="DicomSharp\Net\ServiceClassUser.cs" />
-    <Compile Include="DicomSharp\Net\DcmServiceBase.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceException.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceRegistry.cs" />
     <Compile Include="DicomSharp\Net\Dimse.cs" />
@@ -190,7 +191,6 @@
     <Compile Include="DicomSharp\Net\FutureDimseResponse.cs" />
     <Compile Include="DicomSharp\Net\IAssociationListener.cs" />
     <Compile Include="DicomSharp\Net\IDataSource.cs" />
-    <Compile Include="DicomSharp\Net\IDcmService.cs" />
     <Compile Include="DicomSharp\Net\IDimseListener.cs" />
     <Compile Include="DicomSharp\Net\IExtNegotiator.cs" />
     <Compile Include="DicomSharp\Net\IPdu.cs" />
@@ -201,15 +201,17 @@
     <Compile Include="DicomSharp\Net\UnparsedPdu.cs" />
     <Compile Include="DicomSharp\Server\DcmAssociationHandler.cs" />
     <Compile Include="DicomSharp\Server\IDcmAssociationHandler.cs" />
-    <Compile Include="DicomSharp\Server\Server.cs" />
+    <Compile Include="DicomSharp\Server\TcpServer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DicomSharp\Server\ServerFactory.cs" />
     <Compile Include="DicomSharp\ServiceClassProvider\AcceptorPolicyService.cs" />
-    <Compile Include="DicomSharp\ServiceClassProvider\DcmSrv.cs" />
+    <Compile Include="DicomSharp\ServiceClassProvider\DicomServer.cs" />
     <Compile Include="DicomSharp\ServiceClassProvider\StoreSCP.cs" />
     <Compile Include="DicomSharp\Utility\BEBinaryReader.cs" />
     <Compile Include="DicomSharp\Utility\BEBinaryWriter.cs" />
     <Compile Include="DicomSharp\Utility\ByteBuffer.cs" />
-    <Compile Include="DicomSharp\Utility\LF_ThreadPool.cs" />
+    <Compile Include="DicomSharp\Utility\LeadFollowerThreadPool.cs" />
     <Compile Include="DicomSharp\Utility\StringUtils.cs" />
     <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
     <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />

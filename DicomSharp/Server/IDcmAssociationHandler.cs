@@ -32,7 +32,7 @@
 using DicomSharp.Net;
 
 namespace DicomSharp.Server {
-    public interface IDcmAssociationHandler : Server.IHandler {
+    public interface IDcmAssociationHandler : TcpServer.IHandler {
         void AddAssociationListener(IAssociationListener associationListener);
         void RemoveAssociationListener(IAssociationListener associationListener);
     }

@@ -45,7 +45,7 @@ namespace DicomSharp.Data {
     /// </summary>
     public abstract class DcmObject {
         private const int MIN_TRUNCATE_STRING_LEN = 16;
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DcmObject));
 
         protected List<DcmElement> _dcmElements = new List<DcmElement>();
 
@@ -80,7 +80,7 @@ namespace DicomSharp.Data {
                     tag = AdjustPrivateTag(tag, false);
                 }
                 catch (DcmValueException e) {
-                    log.Warn("Could not access Creator ID", e);
+                    Logger.Warn("Could not access Creator ID", e);
                     return false;
                 }
                 if (tag == 0) {
@@ -101,7 +101,7 @@ namespace DicomSharp.Data {
                     tag = AdjustPrivateTag(tag, false);
                 }
                 catch (DcmValueException e) {
-                    log.Warn("Could not access Creator ID", e);
+                    Logger.Warn("Could not access Creator ID", e);
                     return - 1;
                 }
                 if (tag == 0) {
@@ -146,7 +146,7 @@ namespace DicomSharp.Data {
                     tag = AdjustPrivateTag(tag, false);
                 }
                 catch (DcmValueException e) {
-                    log.Warn("Could not access Creator ID", e);
+                    Logger.Warn("Could not access Creator ID", e);
                     return null;
                 }
                 if (tag == 0) {
@@ -400,8 +400,8 @@ namespace DicomSharp.Data {
         }
 
         public virtual DcmElement Put(DcmElement newElem) {
-            if (log.IsDebugEnabled) {
-                log.Debug("Put " + newElem);
+            if (Logger.IsDebugEnabled) {
+                Logger.Debug("Put " + newElem);
             }
             if ((newElem.tag() & 0xffff) == 0) {
                 return newElem;
@@ -412,7 +412,7 @@ namespace DicomSharp.Data {
                     (newElem).SetTag(AdjustPrivateTag(newElem.tag(), true));
                 }
                 catch (DcmValueException e) {
-                    log.Warn("Could not access creator ID - ignore " + newElem, e);
+                    Logger.Warn("Could not access creator ID - ignore " + newElem, e);
                     return newElem;
                 }
             }

@@ -38,7 +38,7 @@ using log4net;
 
 namespace DicomSharp.Data {
     public class DcmElement : IComparable {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DcmElement));
 
         public static ByteBuffer EMPTY_VALUE = new ByteBuffer();
         public static byte[] EMPTY_BYTE_ARRAY = new byte[] {};

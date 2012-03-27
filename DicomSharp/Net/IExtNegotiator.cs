@@ -32,7 +32,7 @@
 namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
-    public interface ExtNegotiatorI {
+    public interface IExtNegotiator {
         byte[] Negotiate(byte[] offered);
     }
 }
