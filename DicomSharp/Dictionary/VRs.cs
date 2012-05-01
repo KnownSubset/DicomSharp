@@ -436,6 +436,21 @@ namespace DicomSharp.Dictionary {
                 case Tags.SpatialPreSaturation:
                 case Tags.Tagging:
                 case Tags.OversamplingPhase:
+                case Tags.CTExposureSequence:
+                case Tags.ClinicalTrialCoordinatingCenterName:
+                case Tags.ClinicalTrialProtocolID:
+                case Tags.ClinicalTrialProtocolName:
+                case Tags.ClinicalTrialSiteID:
+                case Tags.ClinicalTrialSiteName:
+                case Tags.ClinicalTrialSponsorName:
+                case Tags.ClinicalTrialSubjectID:
+                case Tags.ClinicalTrialTimePointID:
+                case Tags.ExposureModulationType:
+                case Tags.EstimatedDoseSavings:
+                case Tags.ExposureTimeInMS:
+                case Tags.CTDIVol:
+                case Tags.ExposureInMAS:
+                case Tags.XRayTubeCurrentInMA:
                 case Tags.GeometryOfKSpaceTraversal:
                 case Tags.SegmentedKSpaceTraversal:
                 case Tags.RectilinearPhaseEncodeReordering:

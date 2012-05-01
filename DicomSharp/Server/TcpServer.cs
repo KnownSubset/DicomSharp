@@ -78,7 +78,7 @@ namespace DicomSharp.Server {
 
         private static IPAddress DetermineIpAddress()
         {
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            IPAddress ipAddress = IPAddress.Parse("10.39.68.152");
             return ipAddress;
         }
 
