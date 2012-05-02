@@ -210,7 +210,7 @@ namespace DicomSharp.ServiceClassProvider {
             }
         }
 
-        public virtual int Port {
+        public int Port {
             get { return port; }
             set { port = value; }
         }

@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -69,24 +70,17 @@ namespace DicomSharp.Server {
             Logger.Info("Start Server listening at port " + port);
 
             // Create the TCP listener
-            _tcpListener = new TcpListener(DetermineIpAddress(), port);
+            _tcpListener = new TcpListener(LocalIpAddress(), port);
             _tcpListener.Start();
 
             // Fire the thread to listen for incoming associations
             Run();
         }
 
-        private static IPAddress DetermineIpAddress()
-        {
-            IPAddress ipAddress = IPAddress.Parse("10.39.68.152");
-            return ipAddress;
-        }
-
         public virtual void StopServer() {
             if (_tcpListener == null) {
                 return;
             }
-
             IPAddress ipAddress = ((IPEndPoint) _tcpListener.LocalEndpoint).Address;
             int port = ((IPEndPoint) _tcpListener.LocalEndpoint).Port;
             Logger.Info("Stop Server listening at port " + port);
@@ -114,7 +108,7 @@ namespace DicomSharp.Server {
         /// <summary>
         /// Run the server
         /// </summary>
-        public virtual void Run() {
+        public void Run() {
             if (_tcpListener == null) {
                 return;
             }
@@ -153,6 +147,17 @@ namespace DicomSharp.Server {
                 throw new SystemException("Already Running");
             }
         }
+
+        private IPAddress LocalIpAddress()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress localIP = null;
+            foreach (IPAddress ip in host.AddressList.Where(ip => ip.AddressFamily.ToString() == "InterNetwork")) {
+                localIP = ip;
+            }
+            return localIP;
+        }
+
 
         #region Nested type: IHandler
 
