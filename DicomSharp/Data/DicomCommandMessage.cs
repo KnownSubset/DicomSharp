@@ -1,3 +1,5 @@
+using System;
+
 namespace DicomSharp.Data {
     public enum DicomCommandMessage {
         C_STORE_RQ = 0x0001,
@@ -23,8 +25,11 @@ namespace DicomSharp.Data {
         N_DELETE_RQ = 0x0150,
         N_DELETE_RSP = 0x8150,
         C_CANCEL_RQ = 0x0FFF,
+        NO_DATASET = 0x0101}
+
+    public enum Priority : int {
         MEDIUM = 0x0000,
         HIGH = 0x0001,
-        LOW = 0x0002,
-        NO_DATASET = 0x0101}
+        LOW = 0x0002
+    }
 }

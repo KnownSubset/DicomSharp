@@ -1,5 +1,6 @@
 ﻿#region imports
 
+using System;
 using System.Collections.Generic;
 using DicomSharp.Data;
 using DicomSharp.Net;
@@ -50,7 +51,7 @@ namespace DicomCS.Tests {
         public void CFindSeries() {
             var scu = new ServiceClassUser(container, "NEWTON", "DCM4CHEE", "localhost", 11112);
             
-            IList<DataSet> cFindSeries = scu.CFindSeries("1.2.840.114165.8192.3.1.10.8047921150017449681.1");
+            IList<DataSet> cFindSeries = scu.CFindSeriesForStudy("1.2.840.114165.8192.3.1.10.8047921150017449681.1");
             
             Assert.IsNotNull(cFindSeries);
         }
@@ -95,6 +96,17 @@ namespace DicomCS.Tests {
         [TestMethod]
         public void AttemptCMoveForMultipleStudiesAndMultipleSeries() {
             var scu = new ServiceClassUser(container, "NEWTON", "DCM4CHEE", "localhost", 11112);
+            var studyInstanceUIDs = new List<string> { "1.3.6.1.4.1.22213.2.6289.2.1", "1.2.124.113532.10.45.57.43.20060404.125800.2907095", "2.16.840.1.113662.2.12.0.3173.1260902821.1270" };
+            var seriesInstanceUIDs = new List<string> {};
+
+            IList<DataSet> movedDatasets = scu.CMove(studyInstanceUIDs, seriesInstanceUIDs, "FULLSTORAGE_SCP");
+            
+            Assert.IsNotNull(movedDatasets);
+        }
+
+        [TestMethod]
+        public void CancelOccursQuickly() {
+            var scu = new ServiceClassUser(container, "FullAccess2", "DCM4CHEE", "localhost", 11112);
             var studyInstanceUIDs = new List<string> {
                                                          "1.3.12.2.1107.5.1.4.1031.30000009082111200307800000018",
                                                          "1.3.46.670589.11.5019.5.0.5844.2009082111084362050",
@@ -106,9 +118,8 @@ namespace DicomCS.Tests {
                                                           "1.3.12.2.1107.5.1.4.1031.30000009082111223996800005593"
                                                       };
 
-            IList<DataSet> movedDatasets = scu.CMove(studyInstanceUIDs, seriesInstanceUIDs, "FULLSTORAGE_SCP");
-            
-            Assert.IsNotNull(movedDatasets);
+            var moveAction = new Action(() => scu.CMove(studyInstanceUIDs, seriesInstanceUIDs, "FULLSTORAGE_SCP"));
+            moveAction.BeginInvoke(delegate { scu.Cancel(); }, null);
         }    
         
         [TestMethod]

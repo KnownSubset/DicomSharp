@@ -75,6 +75,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomSharp\Server\DicomServerTest.cs" />
+    <Compile Include="DicomSharp\ServiceClassUserPerformanceTests.cs" />
     <Compile Include="ServiceClassUserAcceptanceTests.cs" />
     <Compile Include="ServiceClassUserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
