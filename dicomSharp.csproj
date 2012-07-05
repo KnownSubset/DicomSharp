@@ -22,7 +22,6 @@
     <RootNamespace>
     </RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>org.dicomcs.scp.DcmSrv</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
