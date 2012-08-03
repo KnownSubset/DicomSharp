@@ -342,15 +342,36 @@ namespace DicomSharp.Net {
         /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
         public IList<DataSet> CMove(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
+            var foundDatasets = new List<DataSet>();
+            if (seriesInstanceUniqueIds.Any()) {
+                foundDatasets.AddRange(MoveSeries(seriesInstanceUniqueIds, applicationEntityDestination));
+            }
+            if (studyInstanceUniqueIds.Any()) {
+                foundDatasets.AddRange(MoveStudies(studyInstanceUniqueIds, applicationEntityDestination));
+            }
+            return foundDatasets;
+        }
+
+        private IList<DataSet> MoveStudies(IEnumerable<string> studyInstanceUniqueIds, string applicationEntityDestination) {
+            DataSet studyCMoveDataset = new DataSet();
+            studyCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
+            studyCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "STUDY");
+            studyCMoveDataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUniqueIds.ToArray());
+            return CMoveDataSet(studyCMoveDataset, applicationEntityDestination);
+        }
+
+        private IList<DataSet> MoveSeries(IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
+            DataSet seriesCMoveDataset = new DataSet();
+            seriesCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
+            seriesCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
+            seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.ToArray());
+            return CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
+        }
+
+        private IList<DataSet> CMoveDataSet(DataSet dataset, string applicationEntityDestination) {
+            List<DataSet> foundDatasets = new List<DataSet>();
             int pcid = _presentationContextIdStart;
             _presentationContextIdStart += 2;
-
-            var foundDatasets = new List<DataSet>();
-            var dataSetsToMove = new List<DataSet>();
-            List<string> studies = RetrieveItemsFromTheCache(studyInstanceUniqueIds, dataSetsToMove);
-            List<string> series = RetrieveItemsFromTheCache(seriesInstanceUniqueIds, dataSetsToMove);
-            dataSetsToMove.AddRange(CFindSeries(series));
-            dataSetsToMove.AddRange(CFindStudies(studies));
             IActiveAssociation activeAssociation = null;
             try {
                 const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelMOVE;
@@ -363,27 +384,25 @@ namespace DicomSharp.Net {
                     } else {
                         string message = String.Format("CMove from {0} @ {1} {2}:{3} to {4}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle, _hostName, _port, applicationEntityDestination);
                         Logger.Info(message);
-                        foreach (DataSet dataset in dataSetsToMove)
-                        {
-                            IDicomCommand dicomCommand = _dcmObjectFactory.NewCommand();
-                            IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUniqueId, Priority.HIGH, applicationEntityDestination);
-                            IDimse dimseRequest = _associationFactory.NewDimse(pcid, cMoveRequest, dataset);
-                            FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
-                            while (!dimseResponse.IsReady()) {
-                                Thread.Sleep(0);
-                            }
-                            foundDatasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.DataSet));
+                        IDicomCommand dicomCommand = _dcmObjectFactory.NewCommand();
+                        IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUniqueId, Priority.HIGH, applicationEntityDestination);
+                        IDimse dimseRequest = _associationFactory.NewDimse(pcid, cMoveRequest, dataset);
+                        FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
+                        while (!dimseResponse.IsReady()) {
+                            Thread.Sleep(0);
                         }
+                        foundDatasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.DataSet));
                     }
                 }
             } finally {
-                if (activeAssociation != null) activeAssociation.Release(true);
+                if (activeAssociation != null) {
+                    activeAssociation.Release(true);
+                }
                 _aAssociateRequest.RemovePresentationContext(pcid);
             }
-
             return foundDatasets;
         }
-        
+
         /// <summary>
         /// Send C-GET
         /// <param name="studyInstanceUniqueId">A study instance UniqueId</param>

@@ -4,17 +4,27 @@ using System;
 using System.Collections.Generic;
 using DicomSharp.Data;
 using DicomSharp.Net;
+using DicomSharp.ServiceClassProvider;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #endregion
 
-namespace DicomCS.Tests {
+namespace DicomSharp.Tests {
     [TestClass]
     public class ServiceClassUserAcceptanceTests {
         private Microsoft.Practices.Unity.IUnityContainer container;
+        private readonly DicomServer dicomServer = new DicomServer();
         [TestInitialize]
         public void SetUp() {
             container = new Microsoft.Practices.Unity.UnityContainer();
+            dicomServer.ArchiveDir = "c:\\temp";
+            dicomServer.Port = 104;
+            dicomServer.Policy = new AcceptorPolicyService().AcceptorPolicy;
+        //    dicomServer.Start();
+        }
+        [TestCleanup]
+        public void TearDown() {
+        //    dicomServer.Stop();
         }
 
         [TestMethod]
@@ -86,9 +96,9 @@ namespace DicomCS.Tests {
         [TestMethod]
         public void CMove() {
             var scu = new ServiceClassUser(container, "NEWTON", "DCM4CHEE", "localhost", 11112);
-            var studyInstanceUIDs = new List<string> {"1.2.840.114165.8192.3.1.10.8047921150017449681.1"};
+            var studyInstanceUIDs = new List<string> { "1.2.246.352.71.2.988760059.292338.20110216080258", "1.2.246.352.71.2.988760059.289629.20110214075640" };
 
-            IList<DataSet> movedDatasets = scu.CMove(studyInstanceUIDs, new List<string>(), "FULLSTORAGE_SCP");
+            IList<DataSet> movedDatasets = scu.CMove(new List<string> { "1.2.840.114358.49.13.20100707164123.767653680600" }, studyInstanceUIDs, "FULLSTORAGE_SCP");
             
             Assert.IsNotNull(movedDatasets);
         }

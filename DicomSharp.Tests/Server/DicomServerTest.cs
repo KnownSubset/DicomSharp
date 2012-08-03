@@ -1,23 +1,19 @@
 ﻿#region imports
 
-using System;
-using System.Collections.Generic;
 using System.Threading;
-using DicomSharp.Data;
-using DicomSharp.Net;
 using DicomSharp.ServiceClassProvider;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #endregion
 
-namespace DicomCS.Tests
+namespace DicomSharp.Tests.Server
 {
     [TestClass]
     public class DicomServerTest
     {
 
         [TestMethod]
-        public void CEcho()
+        public void ServerStart()
         {
             var dicomServer = new DicomServer();
             dicomServer.ArchiveDir = "c:\\";

@@ -10,7 +10,7 @@ using Rhino.Mocks;
 
 #endregion
 
-namespace DicomCS.Tests {
+namespace DicomSharp.Tests {
     [TestClass]
     public class ServiceClassUserTests {
         private const string HOSTNAME = "localhost";
@@ -148,7 +148,6 @@ namespace DicomCS.Tests {
 
         [TestMethod]
         public void CMoveForStudies() {
-            SetUpCFind();
             SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
@@ -161,7 +160,6 @@ namespace DicomCS.Tests {
 
         [TestMethod]
         public void CMoveForSeries() {
-            SetUpCFind();
             SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
@@ -174,9 +172,8 @@ namespace DicomCS.Tests {
 
         [TestMethod]
         public void CMove() {
-            SetUpCFind();
-            SetUpCFind();
-            SetUpCMove(2);
+            SetUpCMove(1);
+            SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
             var studyInstanceUIDs = new List<string> { "1.2.840.114165.8192.3.1.10.8047921150017449681.1"};
@@ -190,9 +187,6 @@ namespace DicomCS.Tests {
         [TestMethod]
         public void WhenCMoveIsCalledWithNoStudiesOrSeriesInstanceUIDsPassedToItNoCallToTheSCP_IsMade()
         {
-            var association = CreateAssociation();
-            CreateActiveAssociation(association);
-            Expect.Call(association.GetAcceptedPresContext("1.2.840.10008.5.1.4.1.2.2.2", "1.2.840.10008.1.2")).Return(new PresentationContext(0, 0, 0, "", tranferSyntax)).Repeat.AtLeastOnce();
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
             
@@ -203,8 +197,7 @@ namespace DicomCS.Tests {
 
         [TestMethod]
         public void AttemptCMoveForMultipleStudiesAndMultipleSeries() {
-            SetUpCFind();
-            SetUpCFind();
+            SetUpCMove(2);
             SetUpCMove(2);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
@@ -268,20 +261,20 @@ namespace DicomCS.Tests {
 
         private void SetUpCMove(int numberOfTimes) {
             var association = CreateAssociation();
+            var activeAssociation = CreateActiveAssociation(association);
             var dicomCommand = mockRepository.DynamicMock<IDicomCommand>();
             var dimse = mockRepository.DynamicMock<IDimse>();
             var futureDimseResponse = mockRepository.DynamicMock<FutureDimseResponse>();
-            var cMoveActiveAssociation = SetUpAssociation(association);
             Expect.Call(association.GetAcceptedPresContext("1.2.840.10008.5.1.4.1.2.2.2", UIDs.ImplicitVRLittleEndian)).Return(new PresentationContext(0, 0, 0, "", tranferSyntax));
-            Expect.Call(association.NextMsgID()).Return(1).Repeat.Times(numberOfTimes);
-            Expect.Call(dicomCommand.InitCMoveRQ(1, UIDs.StudyRootQueryRetrieveInformationModelMOVE, Priority.HIGH, "FULLSTORAGE_SCP")).Return(dicomCommand).Repeat.Times(numberOfTimes);
-            Expect.Call(dcmObjectFactory.NewCommand()).Return(dicomCommand).Repeat.Times(numberOfTimes);
-            Expect.Call(associationFactory.NewDimse(1, dicomCommand, new DataSet())).IgnoreArguments().Return(dimse).Repeat.Times(numberOfTimes);
-            Expect.Call(cMoveActiveAssociation.Invoke(dimse)).Return(futureDimseResponse).Repeat.Times(numberOfTimes);
-            Expect.Call(futureDimseResponse.IsReady()).Return(true).Repeat.Times(numberOfTimes);
+            Expect.Call(association.NextMsgID()).Return(1);
+            Expect.Call(dicomCommand.InitCMoveRQ(1, UIDs.StudyRootQueryRetrieveInformationModelMOVE, Priority.HIGH, "FULLSTORAGE_SCP")).Return(dicomCommand);
+            Expect.Call(dcmObjectFactory.NewCommand()).Return(dicomCommand);
+            Expect.Call(associationFactory.NewDimse(1, dicomCommand, new DataSet())).IgnoreArguments().Return(dimse);
+            Expect.Call(activeAssociation.Invoke(dimse)).Return(futureDimseResponse);
+            Expect.Call(futureDimseResponse.IsReady()).Return(true);
             var dimses = new List<IDimse> { dimse };
-            Expect.Call(dimse.DataSet).Return(new DataSet()).Repeat.Times(numberOfTimes);
-            Expect.Call(futureDimseResponse.ListPending()).Return(dimses).Repeat.Times(numberOfTimes);
+            Expect.Call(dimse.DataSet).Return(new DataSet());
+            Expect.Call(futureDimseResponse.ListPending()).Return(dimses);
         }
 
         private IActiveAssociation SetUpAssociation(IAssociation association)
