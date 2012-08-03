@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Timers;
 using DicomSharp.Data;
@@ -342,34 +343,26 @@ namespace DicomSharp.Net {
         /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
         public IList<DataSet> CMove(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
-            var foundDatasets = new List<DataSet>();
-            if (seriesInstanceUniqueIds.Any()) {
-                foundDatasets.AddRange(MoveSeries(seriesInstanceUniqueIds, applicationEntityDestination));
+            IList<DataSet> seriesDataSets = CFindSeries(seriesInstanceUniqueIds);
+            IList<DataSet> studyDataSets = CFindSeriesForStudies(studyInstanceUniqueIds);
+            List<string> seriesInstanceIds = studyDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.SeriesInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList();
+            seriesInstanceIds.AddRange(seriesInstanceUniqueIds);
+            if (seriesInstanceIds.Any()) {
+                MoveSeries(seriesInstanceIds, applicationEntityDestination);
             }
-            if (studyInstanceUniqueIds.Any()) {
-                foundDatasets.AddRange(MoveStudies(studyInstanceUniqueIds, applicationEntityDestination));
-            }
-            return foundDatasets;
+            studyDataSets.AsParallel().ForAll(seriesDataSets.Add);
+            return seriesDataSets;
         }
 
-        private IList<DataSet> MoveStudies(IEnumerable<string> studyInstanceUniqueIds, string applicationEntityDestination) {
-            DataSet studyCMoveDataset = new DataSet();
-            studyCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
-            studyCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "STUDY");
-            studyCMoveDataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUniqueIds.ToArray());
-            return CMoveDataSet(studyCMoveDataset, applicationEntityDestination);
-        }
-
-        private IList<DataSet> MoveSeries(IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
+        private void MoveSeries(IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
             DataSet seriesCMoveDataset = new DataSet();
             seriesCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
             seriesCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
-            seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.ToArray());
-            return CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
+            seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.Distinct().ToArray());
+            CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
         }
 
-        private IList<DataSet> CMoveDataSet(DataSet dataset, string applicationEntityDestination) {
-            List<DataSet> foundDatasets = new List<DataSet>();
+        private void CMoveDataSet(DataSet dataset, string applicationEntityDestination) {
             int pcid = _presentationContextIdStart;
             _presentationContextIdStart += 2;
             IActiveAssociation activeAssociation = null;
@@ -391,7 +384,6 @@ namespace DicomSharp.Net {
                         while (!dimseResponse.IsReady()) {
                             Thread.Sleep(0);
                         }
-                        foundDatasets.AddRange(dimseResponse.ListPending().Select(dimse => dimse.DataSet));
                     }
                 }
             } finally {
@@ -400,7 +392,6 @@ namespace DicomSharp.Net {
                 }
                 _aAssociateRequest.RemovePresentationContext(pcid);
             }
-            return foundDatasets;
         }
 
         /// <summary>

@@ -96,9 +96,10 @@ namespace DicomSharp.Tests {
         [TestMethod]
         public void CMove() {
             var scu = new ServiceClassUser(container, "NEWTON", "DCM4CHEE", "localhost", 11112);
-            var studyInstanceUIDs = new List<string> { "1.2.246.352.71.2.988760059.292338.20110216080258", "1.2.246.352.71.2.988760059.289629.20110214075640" };
+            //var seriesInstanceUniqueIds = new List<string> ();
+            var seriesInstanceUniqueIds = new List<string> { "1.2.246.352.71.2.799258401.182168.20090917172452"};
 
-            IList<DataSet> movedDatasets = scu.CMove(new List<string> { "1.2.840.114358.49.13.20100707164123.767653680600" }, studyInstanceUIDs, "FULLSTORAGE_SCP");
+            IList<DataSet> movedDatasets = scu.CMove(new List<string> { "1.2.840.114358.49.13.20100707164123.767653680600" }, seriesInstanceUniqueIds, "FULLSTORAGE_SCP");
             
             Assert.IsNotNull(movedDatasets);
         }
