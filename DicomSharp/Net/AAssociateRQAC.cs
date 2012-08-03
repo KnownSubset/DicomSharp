@@ -111,7 +111,7 @@ namespace DicomSharp.Net {
                 }
                 for (IEnumerator enu = roleSels.Values.GetEnumerator(); enu.MoveNext();) {
                     var rs = (RoleSelection) enu.Current;
-                    retval += 4 + rs.length();
+                    retval += 4 + rs.Length();
                 }
                 if (VersionName != null) {
                     retval += 4 + VersionName.Length;

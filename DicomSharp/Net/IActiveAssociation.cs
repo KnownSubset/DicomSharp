@@ -8,27 +8,27 @@ namespace DicomSharp.Net {
         /// <summary>
         /// Send a DIMSE message
         /// </summary>
-        /// <param name="rq"></param>
+        /// <param name="request"></param>
         /// <param name="dimseListener"></param>
-        void Invoke(IDimse rq, IDimseListener dimseListener);
+        void Invoke(IDimse request, IDimseListener dimseListener);
 
         /// <summary>
         /// Send a DIMSE message
         /// </summary>
-        /// <param name="rq"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        FutureDimseResponse Invoke(IDimse rq);
+        FutureDimseResponse Invoke(IDimse request);
 
         /// <summary>
         /// Send association release request and release this association
         /// </summary>
-        /// <param name="waitOnRSP"></param>
-        void Release(bool waitOnRSP);
+        /// <param name="waitOnResponse"></param>
+        void Release(bool waitOnResponse);
 
         /// <summary>
         /// Wait on all responses)
         /// </summary>
-        void WaitOnRSP();
+        void WaitOnResponse();
 
         int Timeout { get; set; }
         IAssociation Association { get; }

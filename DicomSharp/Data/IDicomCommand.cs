@@ -15,14 +15,14 @@ namespace DicomSharp.Data {
         String AffectedSOPInstanceUniqueId { get; }
         String RequestedSOPInstanceUniqueId { get; }
         int Status { get; }
-        DicomCommand InitCStoreRQ(int messageId, String sopClassUID, String sopInstUID, int priority);
+        DicomCommand InitCStoreRQ(int messageId, String sopClassUID, String sopInstUID, Priority priority);
         DicomCommand InitCStoreRSP(int messageId, String sopClassUID, String sopInstUID, int status);
-        IDicomCommand InitCFindRQ(int messageId, String sopClassUID, int priority);
+        IDicomCommand InitCFindRQ(int messageId, String sopClassUID, Priority priority);
         DicomCommand InitCFindRSP(int messageId, String sopClassUID, int status);
         IDicomCommand InitCCancelRQ(int messageId);
-        DicomCommand InitCGetRQ(int messageId, String sopClassUID, int priority);
+        DicomCommand InitCGetRQ(int messageId, String sopClassUID, Priority priority);
         DicomCommand InitCGetRSP(int messageId, String sopClassUID, int status);
-        IDicomCommand InitCMoveRQ(int messageId, String sopClassUID, int priority, String moveDestintation);
+        IDicomCommand InitCMoveRQ(int messageId, String sopClassUID, Priority priority, String moveDestintation);
         DicomCommand InitCMoveRSP(int messageId, String sopClassUID, int status);
         DicomCommand InitCEchoRQ(int messageId, String sopClassUID);
         IDicomCommand InitCEchoRQ(int messageId);

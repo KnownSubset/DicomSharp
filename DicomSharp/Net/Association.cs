@@ -167,7 +167,7 @@ namespace DicomSharp.Net {
             return msgID;
         }
 
-        public void SetThreadPool(LF_ThreadPool pool) {
+        public void SetThreadPool(LeadFollowerThreadPool pool) {
             fsm.ReaderThreadPool = pool;
             reader.ReaderThreadPool = pool;
         }

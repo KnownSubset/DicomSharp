@@ -46,6 +46,21 @@ namespace DicomSharp.Dictionary {
 		}*/
 
 
+        public const uint ClinicalTrialSponsorName = 0x00120010;
+        public const uint ClinicalTrialProtocolID = 0x00120020;
+        public const uint ClinicalTrialProtocolName = 0x00120021;
+        public const uint ClinicalTrialSiteID = 0x00120030;
+        public const uint ClinicalTrialSiteName = 0x00120031;
+        public const uint ClinicalTrialSubjectID = 0x00120040;
+        public const uint ClinicalTrialTimePointID = 0x00120050;
+        public const uint ClinicalTrialCoordinatingCenterName = 0x00120060;
+        public const uint ExposureModulationType = 0x00189323;
+        public const uint EstimatedDoseSavings = 0x00189324;
+        public const uint ExposureTimeInMS = 0x00189328;
+        public const uint XRayTubeCurrentInMA = 0x00189330;
+        public const uint ExposureInMAS = 0x00189332;
+        public const uint CTDIVol = 0x00189345;
+
         /// <summary>(0000,0001) VR=UN (DicomCommand) Length to End (Retired) 
         /// </summary>
         public const uint CommandLengthToEndRetired = 0x00000001;
@@ -2342,6 +2357,10 @@ namespace DicomSharp.Dictionary {
         /// <summary>(0018,9029) VR=CS Oversampling Phase 
         /// </summary>
         public const uint OversamplingPhase = 0x00189029;
+
+        /// <summary>(0018,9029) VR=CS Oversampling Phase 
+        /// </summary>
+        public const uint CTExposureSequence = 0x00189321;
 
         /// <summary>(0018,9030) VR=FD Tag Spacing First Dimension 
         /// </summary>

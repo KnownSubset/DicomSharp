@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DicomSharp.Dictionary;
 using DicomSharp.Utility;
 
@@ -43,7 +44,7 @@ namespace DicomSharp.Net {
         private readonly Hashtable extNegotiaionMap = new Hashtable();
         private readonly Hashtable policyForCalledAET = new Hashtable();
         private readonly Hashtable policyForCallingAET = new Hashtable();
-        private readonly Hashtable presCtxMap = new Hashtable();
+        private readonly IDictionary<string, PresentationContext> presentationContexts = new Dictionary<string, PresentationContext>();
         private readonly Hashtable roleSelectionMap = new Hashtable();
         private String Vers = Implementation.VersionName;
         private AsyncOpsWindow aow;
@@ -56,7 +57,7 @@ namespace DicomSharp.Net {
         /// Constructor
         /// </summary>		
         public AcceptorPolicy() {
-            PutPresContext(UIDs.Verification, new[] {UIDs.ImplicitVRLittleEndian});
+            PutPresentationContext(UIDs.Verification, new[] {UIDs.ImplicitVRLittleEndian});
         }
 
         public virtual int MaxPduLength {
@@ -165,18 +166,18 @@ namespace DicomSharp.Net {
             }
         }
 
-        public void PutPresContext(String asuid, String[] tsuids) {
+        public void PutPresentationContext(String asuid, String[] tsuids) {
             if (tsuids != null) {
-                presCtxMap.Add(asuid,
-                               new PresentationContext(0x020, 1, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids)));
-            }
-            else {
-                presCtxMap.Remove(asuid);
+                if (!presentationContexts.ContainsKey(asuid)) {
+                    presentationContexts.Add(asuid, new PresentationContext(0x020, 1, 0, StringUtils.CheckUID(asuid), StringUtils.CheckUIDs(tsuids)));
+                }
+            } else {
+                presentationContexts.Remove(asuid);
             }
         }
 
         public virtual PresentationContext GetPresContext(String syntax) {
-            return (PresentationContext) presCtxMap[syntax];
+            return (PresentationContext) presentationContexts[syntax];
         }
 
         public virtual void PutRoleSelection(String uid, bool scu, bool scp) {
@@ -191,7 +192,7 @@ namespace DicomSharp.Net {
             roleSelectionMap.Remove(uid);
         }
 
-        public virtual void PutExtNegPolicy(String uid, ExtNegotiatorI en) {
+        public virtual void PutExtNegPolicy(String uid, IExtNegotiator en) {
             if (en != null) {
                 extNegotiaionMap.Add(uid, en);
             }
@@ -200,8 +201,8 @@ namespace DicomSharp.Net {
             }
         }
 
-        public virtual ExtNegotiatorI GetExtNegPolicy(String uid) {
-            return (ExtNegotiatorI) extNegotiaionMap[uid];
+        public virtual IExtNegotiator GetExtNegPolicy(String uid) {
+            return (IExtNegotiator) extNegotiaionMap[uid];
         }
 
         public virtual IPdu Negotiate(AAssociateRQ rq) {
@@ -296,13 +297,13 @@ namespace DicomSharp.Net {
         }
 
         private RoleSelection NegotiateRoleSelection(RoleSelection offered) {
-            bool scu = offered.scu();
+            bool scu = offered.IsServiceClassUser;
             bool scp = false;
 
             RoleSelection accept = GetRoleSelection(offered.SOPClassUID);
             if (accept != null) {
-                scu = offered.scu() && accept.scu();
-                scp = offered.scp() && accept.scp();
+                scu = offered.IsServiceClassUser && accept.IsServiceClassUser;
+                scp = offered.IsServiceClassProvider && accept.IsServiceClassProvider;
             }
             return new RoleSelection(offered.SOPClassUID, scu, scp);
         }
@@ -311,7 +312,7 @@ namespace DicomSharp.Net {
             for (IEnumerator enu = rq.ListExtNegotiations().GetEnumerator(); enu.MoveNext();) {
                 var offered = (ExtNegotiation) enu.Current;
                 String uid = offered.SOPClassUID;
-                ExtNegotiatorI enp = GetExtNegPolicy(uid);
+                IExtNegotiator enp = GetExtNegPolicy(uid);
                 if (enp != null) {
                     ac.AddExtNegotiation(new ExtNegotiation(uid, enp.Negotiate(offered.info())));
                 }
@@ -335,8 +336,8 @@ namespace DicomSharp.Net {
             return a == 0 ? b : b == 0 ? a : Math.Min(a, b);
         }
 
-        public virtual ArrayList ListPresContext() {
-            return new ArrayList(presCtxMap.Values);
+        public virtual ICollection<PresentationContext> ListPresContext() {
+            return new List<PresentationContext>(presentationContexts.Values);
         }
 
         // Inner classes -------------------------------------------------

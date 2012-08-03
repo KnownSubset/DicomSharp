@@ -38,57 +38,57 @@ namespace DicomSharp.Net {
     /// <summary>
     /// </summary>
     public class Dimse : IDimse {
-        private readonly IDicomCommand _dicomCommand;
-        private readonly int _presentationContextId;
-        private readonly IDataSource _dataSource;
-        private DataSet _dataSet;
-        private Stream m_ins;
-        private String _transferSyntaxUniqueId;
+        private readonly IDicomCommand dicomCommand;
+        private readonly int presentationContextId;
+        private readonly IDataSource dataSource;
+        private DataSet dataSet;
+        private Stream stream;
+        private String transferSyntaxUniqueId;
 
         public Dimse(int presentationContextId, string transferSyntaxUniqueId, IDicomCommand dicomCommand, Stream ins) {
-            _presentationContextId = presentationContextId;
-            _dicomCommand = dicomCommand;
-            _dataSet = null;
-            _dataSource = null;
-            m_ins = ins;
-            _transferSyntaxUniqueId = transferSyntaxUniqueId;
+            this.presentationContextId = presentationContextId;
+            this.dicomCommand = dicomCommand;
+            dataSet = null;
+            dataSource = null;
+            stream = ins;
+            this.transferSyntaxUniqueId = transferSyntaxUniqueId;
         }
 
         public Dimse(int presentationContextId, IDicomCommand dicomCommand, DataSet dataSet, IDataSource dataSource) {
-            _presentationContextId = presentationContextId;
-            _dicomCommand = dicomCommand;
-            _dataSet = dataSet;
-            _dataSource = dataSource;
-            m_ins = null;
-            _transferSyntaxUniqueId = null;
-            _dicomCommand.PutUS(Tags.DataSetType, dataSet == null && dataSource == null ? (int)DicomCommandMessage.NO_DATASET : 0);
+            this.presentationContextId = presentationContextId;
+            this.dicomCommand = dicomCommand;
+            this.dataSet = dataSet;
+            this.dataSource = dataSource;
+            stream = null;
+            transferSyntaxUniqueId = null;
+            this.dicomCommand.PutUS(Tags.DataSetType, dataSet == null && dataSource == null ? (int)DicomCommandMessage.NO_DATASET : 0);
         }
 
         public virtual IDicomCommand DicomCommand {
-            get { return _dicomCommand; }
+            get { return dicomCommand; }
         }
 
         public virtual String TransferSyntaxUniqueId {
-            get { return _transferSyntaxUniqueId; }
-            set { _transferSyntaxUniqueId = value; }
+            get { return transferSyntaxUniqueId; }
+            set { transferSyntaxUniqueId = value; }
         }
 
         public virtual DataSet DataSet {
             get {
-                if (_dataSet != null) {
-                    return _dataSet;
+                if (dataSet != null) {
+                    return dataSet;
                 }
-                if (m_ins == null) {
+                if (stream == null) {
                     return null;
                 }
-                if (_transferSyntaxUniqueId == null) {
+                if (transferSyntaxUniqueId == null) {
                     throw new SystemException();
                 }
-                _dataSet = new DataSet();
-                _dataSet.ReadDataset(m_ins, DcmDecodeParam.ValueOf(_transferSyntaxUniqueId), 0);
-                m_ins.Close();
-                m_ins = null;
-                return _dataSet;
+                dataSet = new DataSet();
+                dataSet.ReadDataset(stream, DcmDecodeParam.ValueOf(transferSyntaxUniqueId), 0);
+                stream.Close();
+                stream = null;
+                return dataSet;
             }
         }
 
@@ -99,31 +99,31 @@ namespace DicomSharp.Net {
         }
 
         public virtual Stream DataAsStream {
-            get { return m_ins; }
+            get { return stream; }
         }
 
-        #region DataSourceI Members
+        #region IDataSource Members
 
         public virtual void WriteTo(Stream outs, String transferSyntaxUniqueId) {
-            if (_dataSource != null) {
-                _dataSource.WriteTo(outs, transferSyntaxUniqueId);
+            if (dataSource != null) {
+                dataSource.WriteTo(outs, transferSyntaxUniqueId);
                 return;
             }
-            if (_dataSet == null) {
+            if (dataSet == null) {
                 throw new SystemException("Missing DataSet");
             }
-            _dataSet.WriteDataSet(outs, DcmDecodeParam.ValueOf(transferSyntaxUniqueId));
+            dataSet.WriteDataSet(outs, DcmDecodeParam.ValueOf(transferSyntaxUniqueId));
         }
 
         #endregion
 
-        public int pcid() {
-            return _presentationContextId;
+        public int PresentationContextId() {
+            return presentationContextId;
         }
 
 
         public override String ToString() {
-            return "[pc-" + _presentationContextId + "] " + _dicomCommand;
+            return "[pc-" + presentationContextId + "] " + dicomCommand;
         }
     }
 }

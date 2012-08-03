@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -41,9 +42,8 @@ namespace DicomSharp.Server {
     /// <summary>
     /// SCP Server
     /// </summary>
-    public class Server {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Server));
-
+    public class TcpServer {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TcpServer));
         private readonly IHandler _handler;
         private bool _stop;
         private TcpListener _tcpListener;
@@ -52,7 +52,7 @@ namespace DicomSharp.Server {
         /// Constructor
         /// </summary>
         /// <param name="handler"></param>
-        public Server(IHandler handler) {
+        public TcpServer(IHandler handler) {
             if (handler == null) {
                 throw new NullReferenceException();
             }
@@ -60,24 +60,27 @@ namespace DicomSharp.Server {
             this._handler = handler;
         }
 
-        public virtual void Start(int port) {
+        public bool Stopped
+        {
+            get { return _tcpListener == null && _stop; }
+        }
+
+        public virtual void StartServer(int port) {
             CheckNotRunning();
             Logger.Info("Start Server listening at port " + port);
 
             // Create the TCP listener
-            IPAddress ipAddress = ((IPEndPoint)_tcpListener.LocalEndpoint).Address;
-            _tcpListener = new TcpListener(ipAddress, port);
+            _tcpListener = new TcpListener(LocalIpAddress(), port);
             _tcpListener.Start();
 
             // Fire the thread to listen for incoming associations
             Run();
         }
 
-        public virtual void Stop() {
+        public virtual void StopServer() {
             if (_tcpListener == null) {
                 return;
             }
-
             IPAddress ipAddress = ((IPEndPoint) _tcpListener.LocalEndpoint).Address;
             int port = ((IPEndPoint) _tcpListener.LocalEndpoint).Port;
             Logger.Info("Stop Server listening at port " + port);
@@ -105,27 +108,27 @@ namespace DicomSharp.Server {
         /// <summary>
         /// Run the server
         /// </summary>
-        public virtual void Run() {
+        public void Run() {
             if (_tcpListener == null) {
                 return;
             }
 
-            TcpClient s = null;
+            TcpClient tcpClient = null;
             while (!_stop) {
                 try {
-                    s = _tcpListener.AcceptTcpClient();
+                    tcpClient = _tcpListener.AcceptTcpClient();
                     if (Logger.IsInfoEnabled) {
-                        Logger.Info("handle - " + s);
+                        Logger.Info("handle - " + tcpClient);
                     }
 
                     // Fire up a new pooled thread to handle this socket.
-                    ThreadPool.QueueUserWorkItem(_handler.Handle, s);
+                    ThreadPool.QueueUserWorkItem(_handler.Handle, tcpClient);
                 }
                 catch (Exception ioe) {
                     Logger.Error(ioe);
-                    if (s != null) {
+                    if (tcpClient != null) {
                         try {
-                            s.Close();
+                            tcpClient.Close();
                         }
                         catch (Exception ignore)
                         {
@@ -134,7 +137,7 @@ namespace DicomSharp.Server {
                     }
                 }
                 if (Logger.IsInfoEnabled) {
-                    Logger.Info("finished - " + s);
+                    Logger.Info("finished - " + tcpClient);
                 }
             }
         }
@@ -144,6 +147,17 @@ namespace DicomSharp.Server {
                 throw new SystemException("Already Running");
             }
         }
+
+        private IPAddress LocalIpAddress()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress localIP = null;
+            foreach (IPAddress ip in host.AddressList.Where(ip => ip.AddressFamily.ToString() == "InterNetwork")) {
+                localIP = ip;
+            }
+            return localIP;
+        }
+
 
         #region Nested type: IHandler
 

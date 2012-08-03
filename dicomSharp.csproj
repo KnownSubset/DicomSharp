@@ -11,7 +11,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>dicomSharp</AssemblyName>
+    <AssemblyName>DicomSharp</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -22,13 +22,12 @@
     <RootNamespace>
     </RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>org.dicomcs.scp.DcmSrv</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OldToolsVersion>2.0</OldToolsVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -47,53 +46,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug-2K5|AnyCPU' ">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>
-    </DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-2K5|AnyCPU' ">
-    <OutputPath>bin\Release-2K5\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>NET_2_0</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
-    <DebugType>none</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>bin\Debug\</OutputPath>
     <CodeAnalysisRuleSet>SecurityRules.ruleset</CodeAnalysisRuleSet>
@@ -101,7 +53,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
-    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -170,16 +124,17 @@
     <Compile Include="DicomSharp\Net\Association.cs" />
     <Compile Include="DicomSharp\Net\AssociationFactory.cs" />
     <Compile Include="DicomSharp\Net\AsyncOpsWindow.cs" />
+    <Compile Include="DicomSharp\Net\DicomServiceBase.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateAC.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateRQ.cs" />
     <Compile Include="DicomSharp\Net\IAAssociateRQAC.cs" />
     <Compile Include="DicomSharp\Net\IActiveAssociation.cs" />
     <Compile Include="DicomSharp\Net\IAssociation.cs" />
+    <Compile Include="DicomSharp\Net\IDicomService.cs" />
     <Compile Include="DicomSharp\Net\IDimse.cs" />
     <Compile Include="DicomSharp\Net\IServiceClassUser.cs" />
     <Compile Include="DicomSharp\Net\PresentationContext.cs" />
     <Compile Include="DicomSharp\Net\ServiceClassUser.cs" />
-    <Compile Include="DicomSharp\Net\DcmServiceBase.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceException.cs" />
     <Compile Include="DicomSharp\Net\DcmServiceRegistry.cs" />
     <Compile Include="DicomSharp\Net\Dimse.cs" />
@@ -190,7 +145,6 @@
     <Compile Include="DicomSharp\Net\FutureDimseResponse.cs" />
     <Compile Include="DicomSharp\Net\IAssociationListener.cs" />
     <Compile Include="DicomSharp\Net\IDataSource.cs" />
-    <Compile Include="DicomSharp\Net\IDcmService.cs" />
     <Compile Include="DicomSharp\Net\IDimseListener.cs" />
     <Compile Include="DicomSharp\Net\IExtNegotiator.cs" />
     <Compile Include="DicomSharp\Net\IPdu.cs" />
@@ -201,15 +155,17 @@
     <Compile Include="DicomSharp\Net\UnparsedPdu.cs" />
     <Compile Include="DicomSharp\Server\DcmAssociationHandler.cs" />
     <Compile Include="DicomSharp\Server\IDcmAssociationHandler.cs" />
-    <Compile Include="DicomSharp\Server\Server.cs" />
+    <Compile Include="DicomSharp\Server\TcpServer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DicomSharp\Server\ServerFactory.cs" />
     <Compile Include="DicomSharp\ServiceClassProvider\AcceptorPolicyService.cs" />
-    <Compile Include="DicomSharp\ServiceClassProvider\DcmSrv.cs" />
+    <Compile Include="DicomSharp\ServiceClassProvider\DicomServer.cs" />
     <Compile Include="DicomSharp\ServiceClassProvider\StoreSCP.cs" />
     <Compile Include="DicomSharp\Utility\BEBinaryReader.cs" />
     <Compile Include="DicomSharp\Utility\BEBinaryWriter.cs" />
     <Compile Include="DicomSharp\Utility\ByteBuffer.cs" />
-    <Compile Include="DicomSharp\Utility\LF_ThreadPool.cs" />
+    <Compile Include="DicomSharp\Utility\LeadFollowerThreadPool.cs" />
     <Compile Include="DicomSharp\Utility\StringUtils.cs" />
     <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
     <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />

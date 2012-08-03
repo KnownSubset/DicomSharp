@@ -37,15 +37,15 @@ namespace DicomSharp.Net {
     /// </summary>
     public class RoleSelection {
         private readonly String m_asuid;
-        private readonly bool m_isScp;
-        private readonly bool m_isScu;
+        private readonly bool isServiceClassProvider;
+        private readonly bool isServiceClassUser;
 
         /// <summary>Creates a new instance of RoleSelection 
         /// </summary>
-        internal RoleSelection(String asuid, bool scu, bool scp) {
+        internal RoleSelection(String asuid, bool serviceClassUser, bool serviceClassProvider) {
             m_asuid = asuid;
-            m_isScu = scu;
-            m_isScp = scp;
+            isServiceClassUser = serviceClassUser;
+            isServiceClassProvider = serviceClassProvider;
         }
 
         /*
@@ -58,7 +58,7 @@ namespace DicomSharp.Net {
 			}
 			this.m_asuid = AAssociateRQAC.ReadASCII(din, uidLen);
 			this.m_isScu = din.ReadBoolean();
-			this.m_isScp = din.ReadBoolean();
+			this.isServiceClassProvider = din.ReadBoolean();
 		}*/
 
         internal RoleSelection(ByteBuffer bb, int len) {
@@ -69,34 +69,34 @@ namespace DicomSharp.Net {
                     new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
             m_asuid = bb.ReadString(uidLen);
-            m_isScu = bb.ReadBoolean();
-            m_isScp = bb.ReadBoolean();
+            isServiceClassUser = bb.ReadBoolean();
+            isServiceClassProvider = bb.ReadBoolean();
         }
 
         public virtual String SOPClassUID {
             get { return m_asuid; }
         }
 
-        public bool scu() {
-            return m_isScu;
+        public bool IsServiceClassUser {
+            get { return isServiceClassUser; }
         }
 
-        public bool scp() {
-            return m_isScp;
+        public bool IsServiceClassProvider {
+            get { return isServiceClassProvider; } 
         }
 
-        internal int length() {
+        internal int Length() {
             return 4 + m_asuid.Length;
         }
 
         internal void WriteTo(ByteBuffer bb) {
             bb.Write((Byte) 0x54);
             bb.Write((Byte) 0);
-            bb.Write((Int16) length());
+            bb.Write((Int16) Length());
             bb.Write((Int16) m_asuid.Length);
             bb.Write(m_asuid);
-            bb.Write(m_isScu);
-            bb.Write(m_isScp);
+            bb.Write(isServiceClassUser);
+            bb.Write(isServiceClassProvider);
         }
     }
 }

@@ -31,13 +31,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DicomSharp.Dictionary;
 using DicomSharp.Net;
 using DicomSharp.Utility;
 
 namespace DicomSharp.ServiceClassProvider {
-    public class AcceptorPolicyService : ExtNegotiatorI {
+    public class AcceptorPolicyService : IExtNegotiator {
         // Constants -----------------------------------------------------
         private static readonly String[] TS_UIDS =
             {
@@ -206,8 +208,8 @@ namespace DicomSharp.ServiceClassProvider {
         /// </summary>
         public AcceptorPolicyService() {
             policy = assocFact.NewAcceptorPolicy();
-            for (int i = 1; i < AS_UIDS.Length; ++i) {
-                policy.PutPresContext(AS_UIDS[i], TS_UIDS);
+            foreach (var associationSyntax in AS_UIDS){
+                policy.PutPresentationContext(associationSyntax, TS_UIDS);                
             }
             PatientRootRelationalQuery = true;
             StudyRootRelationalQuery = true;
@@ -226,13 +228,13 @@ namespace DicomSharp.ServiceClassProvider {
         }
 
         public virtual String CalledAETs {
-            get { return aetsToString(policy.CalledAETs); }
-            set { policy.CalledAETs = "<any>".ToUpper().Equals(value.Trim().ToUpper()) ? null : toStringArray(value); }
+            get { return AetsToString(policy.CalledAETs); }
+            set { policy.CalledAETs = "<any>".ToUpper().Equals(value.Trim().ToUpper()) ? null : ToStringArray(value); }
         }
 
         public virtual String CallingAETs {
-            get { return aetsToString(policy.CallingAETs); }
-            set { policy.CallingAETs = "<any>".ToUpper().Equals(value.Trim().ToUpper()) ? null : toStringArray(value); }
+            get { return AetsToString(policy.CallingAETs); }
+            set { policy.CallingAETs = "<any>".ToUpper().Equals(value.Trim().ToUpper()) ? null : ToStringArray(value); }
         }
 
         public virtual int MaxNumOpsInvoked {
@@ -245,12 +247,10 @@ namespace DicomSharp.ServiceClassProvider {
 
         public virtual String[] PresContext {
             get {
-                ArrayList list = policy.ListPresContext();
-                var retval = new String[list.Count];
-                for (int i = 0; i < retval.Length; ++i) {
-                    retval[i] = toString((PresentationContext) list[i]);
-                }
-                return retval;
+                ICollection<PresentationContext> list = policy.ListPresContext();
+                var retval = new List<string>(list.Count);
+                retval.AddRange(list.Select(ToString));
+                return retval.ToArray();
             }
         }
 
@@ -274,7 +274,7 @@ namespace DicomSharp.ServiceClassProvider {
             get { return policy; }
         }
 
-        #region ExtNegotiatorI Members
+        #region IExtNegotiator Members
 
         public virtual byte[] Negotiate(byte[] offered) {
             return offered;
@@ -282,11 +282,11 @@ namespace DicomSharp.ServiceClassProvider {
 
         #endregion
 
-        private String aetsToString(String[] array) {
+        private String AetsToString(String[] array) {
             return array != null ? array.ToString() : "<any>";
         }
 
-        private String[] toStringArray(String s) {
+        private String[] ToStringArray(String s) {
             var stk = new Tokenizer(s, " ,;[]\t\r\n");
             if (!stk.HasMoreTokens()) {
                 return null;
@@ -299,15 +299,15 @@ namespace DicomSharp.ServiceClassProvider {
         }
 
 
-        private String toString(PresentationContext pc) {
+        private String ToString(PresentationContext presentationContext) {
             var sb = new StringBuilder(64);
-            sb.Append(UIDs.GetName(pc.AbstractSyntaxUID)).Append(pc.TransferSyntaxUIDs);
+            sb.Append(UIDs.GetName(presentationContext.AbstractSyntaxUID)).Append(presentationContext.TransferSyntaxUIDs);
             return sb.ToString();
         }
 
-        public virtual void addPresContext(String pc) {
+        public virtual void AddPresContext(String pc) {
             String[] tsuids = TS_UIDS;
-            String[] a = toStringArray(pc);
+            String[] a = ToStringArray(pc);
             if (a.Length == 0) {
                 throw new NullReferenceException();
             }
@@ -315,11 +315,11 @@ namespace DicomSharp.ServiceClassProvider {
                 tsuids = new String[a.Length - 1];
                 Array.Copy(a, 1, tsuids, 0, tsuids.Length);
             }
-            policy.PutPresContext(a[0], tsuids);
+            policy.PutPresentationContext(a[0], tsuids);
         }
 
-        public virtual void removePresContext(String asuid) {
-            policy.PutPresContext(asuid, null);
+        public virtual void RemovePresContext(String asuid) {
+            policy.PutPresentationContext(asuid, null);
         }
 
         private bool IsRelational(String uid) {

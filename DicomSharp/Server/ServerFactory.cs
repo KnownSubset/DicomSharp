@@ -36,17 +36,17 @@ namespace DicomSharp.Server {
     /// Create servers, i.e., active service/object
     /// </summary>
     public class ServerFactory {
-        private static readonly ServerFactory s_instance = new ServerFactory();
+        private static readonly ServerFactory instance = new ServerFactory();
 
         public static ServerFactory Instance {
-            get { return s_instance; }
+            get { return instance; }
         }
 
-        public virtual Server newServer(Server.IHandler handler) {
-            return new Server(handler);
+        public virtual TcpServer NewServer(TcpServer.IHandler handler) {
+            return new TcpServer(handler);
         }
 
-        public virtual IDcmAssociationHandler newDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
+        public virtual IDcmAssociationHandler NewDcmHandler(AcceptorPolicy policy, DcmServiceRegistry services) {
             return new DcmAssociationHandler(policy, services);
         }
     }

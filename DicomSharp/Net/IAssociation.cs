@@ -7,7 +7,7 @@ namespace DicomSharp.Net {
         int MaxOpsInvoked { get; }
         ActiveAssociation ActiveAssociation { get; set; }
         void AddAssociationListener(IAssociationListener l);
-        void SetThreadPool(LF_ThreadPool pool);
+        void SetThreadPool(LeadFollowerThreadPool pool);
         IPdu Connect(AAssociateRQ rq, int timeout);
         Dimse Read(int timeout);
         String GetAcceptedTransferSyntaxUID(int pcid);

@@ -51,7 +51,7 @@ namespace DicomSharp.Net {
 
         public void Write(IDimse dimse) {
             lock (this) {
-                pcid = dimse.pcid();
+                pcid = dimse.PresentationContextId();
                 String tsUID = fsm.GetAcceptedTransferSyntaxUID(pcid);
                 if (tsUID == null) {
                     throw new SystemException();

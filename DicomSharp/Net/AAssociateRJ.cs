@@ -76,8 +76,7 @@ namespace DicomSharp.Net {
 
         internal static AAssociateRJ Parse(UnparsedPdu raw) {
             if (raw.Length() != 4) {
-                throw new PduException("Illegal A-ASSOCIATE-RJ " + raw,
-                                       new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
+                throw new PduException("Illegal A-ASSOCIATE-RJ " + raw, new AAbort(AAbort.SERVICE_PROVIDER, AAbort.INVALID_PDU_PARAMETER_VALUE));
             }
             return new AAssociateRJ(raw.Buffer());
         }
@@ -113,16 +112,16 @@ namespace DicomSharp.Net {
         }
 
         public override String ToString() {
-            return toStringBuffer(new StringBuilder()).ToString();
+            return ToStringBuffer(new StringBuilder()).ToString();
         }
 
-        internal StringBuilder toStringBuffer(StringBuilder sb) {
+        internal StringBuilder ToStringBuffer(StringBuilder sb) {
             return
-                sb.Append("A-ASSOCIATE-RJ\n\tresult=").Append(resultAsString()).Append("\n\tsource=").Append(
-                    sourceAsString()).Append("\n\treason=").Append(ReasonAsString());
+                sb.Append("A-ASSOCIATE-RJ\n\tresult=").Append(ResultAsString()).Append("\n\tsource=").Append(
+                    SourceAsString()).Append("\n\treason=").Append(ReasonAsString());
         }
 
-        private String resultAsString() {
+        private String ResultAsString() {
             switch (Result()) {
                 case REJECTED_PERMANENT:
                     return "1 - rejected-permanent";
@@ -135,7 +134,7 @@ namespace DicomSharp.Net {
             }
         }
 
-        private String sourceAsString() {
+        private String SourceAsString() {
             switch (Source()) {
                 case SERVICE_USER:
                     return "1 - service-user";
@@ -165,7 +164,7 @@ namespace DicomSharp.Net {
                             return "3 - calling-AE-title-not-recognized";
 
                         case CALLED_AE_TITLE_NOT_RECOGNIZED:
-                            return "7 - called-AE-title-not-recognizedr";
+                            return "7 - called-AE-title-not-recognized";
                     }
                     goto case SERVICE_PROVIDER_ACSE;
 

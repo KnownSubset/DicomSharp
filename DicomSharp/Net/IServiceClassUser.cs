@@ -32,15 +32,27 @@ namespace DicomSharp.Net {
 
         /// <summary>
         /// Send C-FIND for series
-        /// <param name="seriesInstanceUID">A series instance UID</param>
+        /// <param name="studyInstanceUniqueId">A series instance UID</param>
         /// </summary>
-        IList<DataSet> CFindSeries(string seriesInstanceUID);
+        IList<DataSet> CFindSeriesForStudy(string studyInstanceUniqueId);
 
         /// <summary>
         /// Send C-FIND for series
-        /// <param name="seriesInstanceUIDs">The series' instance UIDs</param>
+        /// <param name="studiesInstanceUniqueIds">The series' instance UIDs</param>
         /// </summary>
-        IList<DataSet> CFindSeries(IEnumerable<string> seriesInstanceUIDs);
+        IList<DataSet> CFindSeriesForStudies(IEnumerable<string> studiesInstanceUniqueIds);
+        
+        /// <summary>
+        /// Send C-FIND for series
+        /// <param name="seriesInstanceUniqueId">A series instance UID</param>
+        /// </summary>
+        IList<DataSet> CFindSeries(string seriesInstanceUniqueId);
+
+        /// <summary>
+        /// Send C-FIND for series
+        /// <param name="seriesInstanceUniqueIds">The series' instance UIDs</param>
+        /// </summary>
+        IList<DataSet> CFindSeries(IEnumerable<string> seriesInstanceUniqueIds);
 
         /// <summary>
         /// Send C-FIND for instance

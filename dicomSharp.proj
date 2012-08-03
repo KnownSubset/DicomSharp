@@ -1,0 +1,11 @@
+<Project DefaultTargets = "Compile" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+	<ItemGroup>
+		<ProjectToBuild Include="dicomSharp.csproj"/>
+		<ProjectToBuild Include="DicomSharp.Tests\DicomSharp.Tests.csproj"/>
+	</ItemGroup>
+
+    <Target Name = "Compile">    
+        <MSBuild Projects="@(ProjectToBuild)"/>
+    </Target>
+</Project>

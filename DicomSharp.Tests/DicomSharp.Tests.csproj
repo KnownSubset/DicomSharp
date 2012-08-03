@@ -8,8 +8,8 @@
     <ProjectGuid>{2C2A4EB1-82EC-458B-A5A8-1F03CF202382}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DicomCS.Tests</RootNamespace>
-    <AssemblyName>DicomCS.Tests</AssemblyName>
+    <RootNamespace>DicomSharp.Tests</RootNamespace>
+    <AssemblyName>DicomSharp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -75,6 +75,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,6 +83,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomSharp\ServiceClassUserPerformanceTests.cs" />
+    <Compile Include="Server\DicomServerTest.cs" />
     <Compile Include="ServiceClassUserAcceptanceTests.cs" />
     <Compile Include="ServiceClassUserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
