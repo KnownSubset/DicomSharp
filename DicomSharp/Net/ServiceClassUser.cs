@@ -1,35 +1,3 @@
-#region Copyright
-
-// 
-// This library is based on Dicom# see http://sourceforge.net/projects/dicom-cs/
-// Copyright (C) 2002 Fang Yang. All rights reserved.
-// That library is based on dcm4che see http://www.sourceforge.net/projects/dcm4che
-// Copyright (c) 2002 by TIANI MEDGRAPH AG. All rights reserved.
-//
-// Modifications Copyright (C) 2012 Nathan Dauber. All rights reserved.
-// 
-// This file is part of dicomSharp, see https://github.com/KnownSubset/DicomSharp
-//
-// This library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU Lesser General Public License as published
-// by the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.                                 
-// 
-// This library is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-//
-// Nathan Dauber (nathan.dauber@gmail.com)
-//
-// 8/29/08: Added ServiceClassUser by Maarten JB van Ettinger based on TestSCU. Added a couple of SCU functions.
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -345,53 +313,15 @@ namespace DicomSharp.Net {
         public IList<DataSet> CMove(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
             IList<DataSet> seriesDataSets = CFindSeries(seriesInstanceUniqueIds);
             IList<DataSet> studyDataSets = CFindSeriesForStudies(studyInstanceUniqueIds);
+            List<string> studyInstanceIds = studyDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.StudyInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList();
+            studyInstanceIds.AddRange(seriesDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.StudyInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList());
             List<string> seriesInstanceIds = studyDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.SeriesInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList();
             seriesInstanceIds.AddRange(seriesInstanceUniqueIds);
             if (seriesInstanceIds.Any()) {
-                MoveSeries(seriesInstanceIds, applicationEntityDestination);
+                MoveSeries(studyInstanceIds, seriesInstanceIds, applicationEntityDestination);
             }
             studyDataSets.AsParallel().ForAll(seriesDataSets.Add);
             return seriesDataSets;
-        }
-
-        private void MoveSeries(IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
-            DataSet seriesCMoveDataset = new DataSet();
-            seriesCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
-            seriesCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
-            seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.Distinct().ToArray());
-            CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
-        }
-
-        private void CMoveDataSet(DataSet dataset, string applicationEntityDestination) {
-            int pcid = _presentationContextIdStart;
-            _presentationContextIdStart += 2;
-            IActiveAssociation activeAssociation = null;
-            try {
-                const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelMOVE;
-                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
-                activeAssociation = OpenAssociation();
-                if (activeAssociation != null) {
-                    IAssociation association = activeAssociation.Association;
-                    if (association.GetAcceptedPresContext(sopClassUniqueId, TransferSyntaxUniqueId) == null) {
-                        Logger.Error(SOP_CLASS_UNIQUEID_NOT_SUPPORTED);
-                    } else {
-                        string message = String.Format("CMove from {0} @ {1} {2}:{3} to {4}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle, _hostName, _port, applicationEntityDestination);
-                        Logger.Info(message);
-                        IDicomCommand dicomCommand = _dcmObjectFactory.NewCommand();
-                        IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUniqueId, Priority.HIGH, applicationEntityDestination);
-                        IDimse dimseRequest = _associationFactory.NewDimse(pcid, cMoveRequest, dataset);
-                        FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
-                        while (!dimseResponse.IsReady()) {
-                            Thread.Sleep(0);
-                        }
-                    }
-                }
-            } finally {
-                if (activeAssociation != null) {
-                    activeAssociation.Release(true);
-                }
-                _aAssociateRequest.RemovePresentationContext(pcid);
-            }
         }
 
         /// <summary>
@@ -408,8 +338,7 @@ namespace DicomSharp.Net {
             _presentationContextIdStart += 2;
             var datasets = new List<DataSet>();
             IActiveAssociation active = null;
-            try
-            {
+            try {
                 string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelGET;
                 _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
                 active = OpenAssociation();
@@ -443,6 +372,56 @@ namespace DicomSharp.Net {
         }
 
         #endregion
+
+        private static void LogDataSetValues(DataSet seriesDataSets) {
+            if (seriesDataSets == null) {
+                return;
+            }
+            Logger.Info(seriesDataSets.GetElementsAsString());
+        }
+
+        private void MoveSeries(IEnumerable<string> instanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
+            DataSet seriesCMoveDataset = new DataSet();
+            seriesCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
+            seriesCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
+            seriesCMoveDataset.PutUI(Tags.StudyInstanceUniqueId, instanceUniqueIds.Distinct().ToArray());
+            seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.Distinct().ToArray());
+            LogDataSetValues(seriesCMoveDataset);
+            CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
+        }
+
+        private void CMoveDataSet(DataSet dataset, string applicationEntityDestination) {
+            int pcid = _presentationContextIdStart;
+            _presentationContextIdStart += 2;
+            IActiveAssociation activeAssociation = null;
+            try {
+                const string sopClassUniqueId = UIDs.StudyRootQueryRetrieveInformationModelMOVE;
+                _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, sopClassUniqueId, DefinedTransferSyntaxes));
+                activeAssociation = OpenAssociation();
+                if (activeAssociation != null) {
+                    IAssociation association = activeAssociation.Association;
+                    if (association.GetAcceptedPresContext(sopClassUniqueId, TransferSyntaxUniqueId) == null) {
+                        Logger.Error(SOP_CLASS_UNIQUEID_NOT_SUPPORTED);
+                    } else {
+                        string message = String.Format("CMove from {0} @ {1} {2}:{3} to {4}", _aAssociateRequest.Name, _aAssociateRequest.ApplicationEntityTitle, _hostName, _port, applicationEntityDestination);
+                        Logger.Info(message);
+                        IDicomCommand dicomCommand = _dcmObjectFactory.NewCommand();
+                        IDicomCommand cMoveRequest = dicomCommand.InitCMoveRQ(association.NextMsgID(), sopClassUniqueId, Priority.HIGH, applicationEntityDestination);
+                        IDimse dimseRequest = _associationFactory.NewDimse(pcid, cMoveRequest, dataset);
+                        FutureDimseResponse dimseResponse = activeAssociation.Invoke(dimseRequest);
+                        while (!dimseResponse.IsReady()) {
+                            Thread.Sleep(0);
+                        }
+                        Logger.Info("Finished CMOVE");
+                    }
+                }
+            } finally {
+                if (activeAssociation != null) {
+                    activeAssociation.Release(false);
+                }
+                _aAssociateRequest.RemovePresentationContext(pcid);
+            }
+        }
 
         /// <summary>
         /// Send C-STORE
@@ -540,7 +519,7 @@ namespace DicomSharp.Net {
                 }
 
                 _aAssociateRequest.AddPresContext(_associationFactory.NewPresContext(pcid, classUniqueId, new[] {tsUniqueId}));
-                 active = OpenAssociation();
+                active = OpenAssociation();
                 if (active != null) {
                     bool bResponse = false;
                     FutureDimseResponse frsp = SendDataset(active, null, dataSet);

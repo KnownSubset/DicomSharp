@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DicomSharp.Dictionary;
 using log4net;
@@ -126,6 +127,10 @@ namespace DicomSharp.Data {
             var Parser = new DcmParser(ins);
             Parser.DcmHandler = DcmHandler;
             Parser.ParseDataset(param, stopTag);
+        }
+
+        public string GetElementsAsString() {
+            return string.Join(Environment.NewLine, GetElements().AsParallel().Select(element => element.ToString()));
         }
     }
 }

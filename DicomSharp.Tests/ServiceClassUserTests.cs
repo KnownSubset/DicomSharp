@@ -22,7 +22,7 @@ namespace DicomSharp.Tests
         private MockRepository mockRepository;
         private readonly string[] tranferSyntax = new[] { UIDs.ImplicitVRLittleEndian };
         private IUnityContainer unityContainer;
-        private AAssociateRQ _aAssociateRq;
+        private AAssociateRQ aAssociateRequest;
 
         [TestInitialize]
         public void SetUp()
@@ -34,7 +34,7 @@ namespace DicomSharp.Tests
             dcmObjectFactory = mockRepository.DynamicMock<DcmObjectFactory>();
             unityContainer.RegisterInstance(dcmObjectFactory);
             unityContainer.RegisterInstance(mockRepository.DynamicMock<DcmParserFactory>());
-            _aAssociateRq = CreateAAssociateRq();
+            aAssociateRequest = CreateAAssociateRq();
 
         }
 
@@ -51,7 +51,7 @@ namespace DicomSharp.Tests
             var association = mockRepository.StrictMock<IAssociation>();
             Expect.Call(associationFactory.NewRequestor(HOSTNAME, PORT)).Return(association);
             var aAssociateAc = mockRepository.DynamicMock<IAAssociateAC>();
-            Expect.Call(association.Connect(_aAssociateRq, 0)).Return(aAssociateAc);
+            Expect.Call(association.Connect(aAssociateRequest, 0)).Return(aAssociateAc);
             return association;
         }
 
