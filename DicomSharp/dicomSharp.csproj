@@ -14,6 +14,7 @@
     <AssemblyName>DicomSharp</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -60,12 +61,14 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Binaries\log4net.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\Binaries\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder2">
+      <HintPath>..\Binaries\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>Binaries\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\Binaries\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -81,96 +84,94 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
+    <Compile Include="Data\BaseDataSet.cs" />
+    <Compile Include="Data\DataSet.cs" />
+    <Compile Include="Data\DcmDecodeParameter.cs" />
+    <Compile Include="Data\DcmElement.cs" />
+    <Compile Include="Data\DcmEncodeParameter.cs" />
+    <Compile Include="Data\DcmObject.cs" />
+    <Compile Include="Data\DcmObjectFactory.cs" />
+    <Compile Include="Data\DcmObjectHandler.cs" />
+    <Compile Include="Data\DcmParseException.cs" />
+    <Compile Include="Data\DcmParser.cs" />
+    <Compile Include="Data\DcmParserFactory.cs" />
+    <Compile Include="Data\DcmStreamHandler.cs" />
+    <Compile Include="Data\DcmValueException.cs" />
+    <Compile Include="Data\DicomCommand.cs" />
+    <Compile Include="Data\DicomCommandMessage.cs" />
+    <Compile Include="Data\FileFormat.cs" />
+    <Compile Include="Data\FileMetaInfo.cs" />
+    <Compile Include="Data\FragmentElement.cs" />
+    <Compile Include="Data\IDcmHandler.cs" />
+    <Compile Include="Data\IDcmObject.cs" />
+    <Compile Include="Data\IDicomCommand.cs" />
+    <Compile Include="Data\PersonName.cs" />
+    <Compile Include="Data\SQElement.cs" />
+    <Compile Include="Data\StringElement.cs" />
+    <Compile Include="Data\ValueElement.cs" />
+    <Compile Include="Dictionary\Status.cs" />
+    <Compile Include="Dictionary\Tags.cs" />
+    <Compile Include="Dictionary\UIDs.cs" />
+    <Compile Include="Dictionary\VRs.cs" />
+    <Compile Include="Implementation.cs" />
+    <Compile Include="Net\AAbort.cs" />
+    <Compile Include="Net\AAssociateAC.cs" />
+    <Compile Include="Net\AAssociateRJ.cs" />
+    <Compile Include="Net\AAssociateRQ.cs" />
+    <Compile Include="Net\AAssociateRQAC.cs" />
+    <Compile Include="Net\AcceptorPolicy.cs" />
+    <Compile Include="Net\ActiveAssociation.cs" />
+    <Compile Include="Net\AReleaseRP.cs" />
+    <Compile Include="Net\AReleaseRQ.cs" />
+    <Compile Include="Net\Association.cs" />
+    <Compile Include="Net\AssociationFactory.cs" />
+    <Compile Include="Net\AsyncOpsWindow.cs" />
+    <Compile Include="Net\DicomServiceBase.cs" />
+    <Compile Include="Net\IAAssociateAC.cs" />
+    <Compile Include="Net\IAAssociateRQ.cs" />
+    <Compile Include="Net\IAAssociateRQAC.cs" />
+    <Compile Include="Net\IActiveAssociation.cs" />
+    <Compile Include="Net\IAssociation.cs" />
+    <Compile Include="Net\IDicomService.cs" />
+    <Compile Include="Net\IDimse.cs" />
+    <Compile Include="Net\IServiceClassUser.cs" />
+    <Compile Include="Net\PresentationContext.cs" />
+    <Compile Include="Net\ServiceClassUser.cs" />
+    <Compile Include="Net\DcmServiceException.cs" />
+    <Compile Include="Net\DcmServiceRegistry.cs" />
+    <Compile Include="Net\Dimse.cs" />
+    <Compile Include="Net\DimseReader.cs" />
+    <Compile Include="Net\DimseWriter.cs" />
+    <Compile Include="Net\ExtNegotiation.cs" />
+    <Compile Include="Net\Fsm.cs" />
+    <Compile Include="Net\FutureDimseResponse.cs" />
+    <Compile Include="Net\IAssociationListener.cs" />
+    <Compile Include="Net\IDataSource.cs" />
+    <Compile Include="Net\IDimseListener.cs" />
+    <Compile Include="Net\IExtNegotiator.cs" />
+    <Compile Include="Net\IPdu.cs" />
+    <Compile Include="Net\Multicaster.cs" />
+    <Compile Include="Net\PDataTF.cs" />
+    <Compile Include="Net\PduException.cs" />
+    <Compile Include="Net\RoleSelection.cs" />
+    <Compile Include="Net\UnparsedPdu.cs" />
+    <Compile Include="Server\DcmAssociationHandler.cs" />
+    <Compile Include="Server\IDcmAssociationHandler.cs" />
+    <Compile Include="Server\TcpServer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DicomSharp\Data\BaseDataSet.cs" />
-    <Compile Include="DicomSharp\Data\DataSet.cs" />
-    <Compile Include="DicomSharp\Data\DcmDecodeParameter.cs" />
-    <Compile Include="DicomSharp\Data\DcmElement.cs" />
-    <Compile Include="DicomSharp\Data\DcmEncodeParameter.cs" />
-    <Compile Include="DicomSharp\Data\DcmObject.cs" />
-    <Compile Include="DicomSharp\Data\DcmObjectFactory.cs" />
-    <Compile Include="DicomSharp\Data\DcmObjectHandler.cs" />
-    <Compile Include="DicomSharp\Data\DcmParseException.cs" />
-    <Compile Include="DicomSharp\Data\DcmParser.cs" />
-    <Compile Include="DicomSharp\Data\DcmParserFactory.cs" />
-    <Compile Include="DicomSharp\Data\DcmStreamHandler.cs" />
-    <Compile Include="DicomSharp\Data\DcmValueException.cs" />
-    <Compile Include="DicomSharp\Data\DicomCommand.cs" />
-    <Compile Include="DicomSharp\Data\DicomCommandMessage.cs" />
-    <Compile Include="DicomSharp\Data\FileFormat.cs" />
-    <Compile Include="DicomSharp\Data\FileMetaInfo.cs" />
-    <Compile Include="DicomSharp\Data\FragmentElement.cs" />
-    <Compile Include="DicomSharp\Data\IDcmHandler.cs" />
-    <Compile Include="DicomSharp\Data\IDcmObject.cs" />
-    <Compile Include="DicomSharp\Data\IDicomCommand.cs" />
-    <Compile Include="DicomSharp\Data\PersonName.cs" />
-    <Compile Include="DicomSharp\Data\SQElement.cs" />
-    <Compile Include="DicomSharp\Data\StringElement.cs" />
-    <Compile Include="DicomSharp\Data\ValueElement.cs" />
-    <Compile Include="DicomSharp\Dictionary\Status.cs" />
-    <Compile Include="DicomSharp\Dictionary\Tags.cs" />
-    <Compile Include="DicomSharp\Dictionary\UIDs.cs" />
-    <Compile Include="DicomSharp\Dictionary\VRs.cs" />
-    <Compile Include="DicomSharp\Implementation.cs" />
-    <Compile Include="DicomSharp\Net\AAbort.cs" />
-    <Compile Include="DicomSharp\Net\AAssociateAC.cs" />
-    <Compile Include="DicomSharp\Net\AAssociateRJ.cs" />
-    <Compile Include="DicomSharp\Net\AAssociateRQ.cs" />
-    <Compile Include="DicomSharp\Net\AAssociateRQAC.cs" />
-    <Compile Include="DicomSharp\Net\AcceptorPolicy.cs" />
-    <Compile Include="DicomSharp\Net\ActiveAssociation.cs" />
-    <Compile Include="DicomSharp\Net\AReleaseRP.cs" />
-    <Compile Include="DicomSharp\Net\AReleaseRQ.cs" />
-    <Compile Include="DicomSharp\Net\Association.cs" />
-    <Compile Include="DicomSharp\Net\AssociationFactory.cs" />
-    <Compile Include="DicomSharp\Net\AsyncOpsWindow.cs" />
-    <Compile Include="DicomSharp\Net\DicomServiceBase.cs" />
-    <Compile Include="DicomSharp\Net\IAAssociateAC.cs" />
-    <Compile Include="DicomSharp\Net\IAAssociateRQ.cs" />
-    <Compile Include="DicomSharp\Net\IAAssociateRQAC.cs" />
-    <Compile Include="DicomSharp\Net\IActiveAssociation.cs" />
-    <Compile Include="DicomSharp\Net\IAssociation.cs" />
-    <Compile Include="DicomSharp\Net\IDicomService.cs" />
-    <Compile Include="DicomSharp\Net\IDimse.cs" />
-    <Compile Include="DicomSharp\Net\IServiceClassUser.cs" />
-    <Compile Include="DicomSharp\Net\PresentationContext.cs" />
-    <Compile Include="DicomSharp\Net\ServiceClassUser.cs" />
-    <Compile Include="DicomSharp\Net\DcmServiceException.cs" />
-    <Compile Include="DicomSharp\Net\DcmServiceRegistry.cs" />
-    <Compile Include="DicomSharp\Net\Dimse.cs" />
-    <Compile Include="DicomSharp\Net\DimseReader.cs" />
-    <Compile Include="DicomSharp\Net\DimseWriter.cs" />
-    <Compile Include="DicomSharp\Net\ExtNegotiation.cs" />
-    <Compile Include="DicomSharp\Net\Fsm.cs" />
-    <Compile Include="DicomSharp\Net\FutureDimseResponse.cs" />
-    <Compile Include="DicomSharp\Net\IAssociationListener.cs" />
-    <Compile Include="DicomSharp\Net\IDataSource.cs" />
-    <Compile Include="DicomSharp\Net\IDimseListener.cs" />
-    <Compile Include="DicomSharp\Net\IExtNegotiator.cs" />
-    <Compile Include="DicomSharp\Net\IPdu.cs" />
-    <Compile Include="DicomSharp\Net\Multicaster.cs" />
-    <Compile Include="DicomSharp\Net\PDataTF.cs" />
-    <Compile Include="DicomSharp\Net\PduException.cs" />
-    <Compile Include="DicomSharp\Net\RoleSelection.cs" />
-    <Compile Include="DicomSharp\Net\UnparsedPdu.cs" />
-    <Compile Include="DicomSharp\Server\DcmAssociationHandler.cs" />
-    <Compile Include="DicomSharp\Server\IDcmAssociationHandler.cs" />
-    <Compile Include="DicomSharp\Server\TcpServer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomSharp\Server\ServerFactory.cs" />
-    <Compile Include="DicomSharp\ServiceClassProvider\AcceptorPolicyService.cs" />
-    <Compile Include="DicomSharp\ServiceClassProvider\DicomServer.cs" />
-    <Compile Include="DicomSharp\ServiceClassProvider\StoreSCP.cs" />
-    <Compile Include="DicomSharp\Utility\BEBinaryReader.cs" />
-    <Compile Include="DicomSharp\Utility\BEBinaryWriter.cs" />
-    <Compile Include="DicomSharp\Utility\ByteBuffer.cs" />
-    <Compile Include="DicomSharp\Utility\LeadFollowerThreadPool.cs" />
-    <Compile Include="DicomSharp\Utility\StringUtils.cs" />
-    <Compile Include="DicomSharp\Utility\Tokenizer.cs" />
-    <Compile Include="DicomSharp\Utility\UniqueIdGenerator.cs" />
+    <Compile Include="Server\ServerFactory.cs" />
+    <Compile Include="ServiceClassProvider\AcceptorPolicyService.cs" />
+    <Compile Include="ServiceClassProvider\DicomServer.cs" />
+    <Compile Include="ServiceClassProvider\StoreSCP.cs" />
+    <Compile Include="Utility\BEBinaryReader.cs" />
+    <Compile Include="Utility\BEBinaryWriter.cs" />
+    <Compile Include="Utility\ByteBuffer.cs" />
+    <Compile Include="Utility\LeadFollowerThreadPool.cs" />
+    <Compile Include="Utility\StringUtils.cs" />
+    <Compile Include="Utility\Tokenizer.cs" />
+    <Compile Include="Utility\UniqueIdGenerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -189,7 +190,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Binaries\log4net.dll" />
   </ItemGroup>
