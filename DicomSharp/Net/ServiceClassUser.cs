@@ -311,17 +311,26 @@ namespace DicomSharp.Net {
         /// <param name="applicationEntityDestination">The SCP that will store the files</param>
         /// </summary>
         public IList<DataSet> CMove(IEnumerable<string> studyInstanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
-            IList<DataSet> seriesDataSets = CFindSeries(seriesInstanceUniqueIds);
             IList<DataSet> studyDataSets = CFindSeriesForStudies(studyInstanceUniqueIds);
-            List<string> studyInstanceIds = studyDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.StudyInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList();
-            studyInstanceIds.AddRange(seriesDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.StudyInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList());
-            List<string> seriesInstanceIds = studyDataSets.AsParallel().SelectMany(dataSet => dataSet.GetElements().Where(element => element.Tag == Tags.SeriesInstanceUniqueId).Select(element => element.GetString(Encoding.ASCII))).ToList();
-            seriesInstanceIds.AddRange(seriesInstanceUniqueIds);
-            if (seriesInstanceIds.Any()) {
-                MoveSeries(studyInstanceIds, seriesInstanceIds, applicationEntityDestination);
-            }
+            IList<DataSet> seriesDataSets = CFindSeries(seriesInstanceUniqueIds);
             studyDataSets.AsParallel().ForAll(seriesDataSets.Add);
+            MoveSeries(seriesDataSets, applicationEntityDestination);
             return seriesDataSets;
+        }
+
+        private void MoveSeries(IEnumerable<DataSet> seriesDataSets, string applicationEntityDestination) {
+            IEnumerable<IGrouping<string, DataSet>> groupedSeries = from series in seriesDataSets
+                                                                    from dataSet in series.GetElements()
+                                                                    where dataSet.Tag == Tags.StudyInstanceUniqueId
+                                                                    group series by dataSet.GetString(Encoding.ASCII);
+            foreach (var grouping in groupedSeries) {
+                MoveSeriesSelectedWithinStudy(applicationEntityDestination, grouping);
+            }
+        }
+
+        private void MoveSeriesSelectedWithinStudy(string applicationEntityDestination, IGrouping<string, DataSet> study) {
+            IEnumerable<string> seriesInstanceUniqueIds = from dataSet in study from element in dataSet.GetElements() where element.Tag == Tags.SeriesInstanceUniqueId select element.GetString(Encoding.ASCII);
+            MoveSeries(study.Key, seriesInstanceUniqueIds, applicationEntityDestination);
         }
 
         /// <summary>
@@ -380,11 +389,11 @@ namespace DicomSharp.Net {
             Logger.Info(seriesDataSets.GetElementsAsString());
         }
 
-        private void MoveSeries(IEnumerable<string> instanceUniqueIds, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
+        private void MoveSeries(string studyInstanceUniqueId, IEnumerable<string> seriesInstanceUniqueIds, string applicationEntityDestination) {
             DataSet seriesCMoveDataset = new DataSet();
             seriesCMoveDataset.FileMetaInfo = GenerateFileMetaInfo(UIDs.StudyRootQueryRetrieveInformationModelMOVE);
             seriesCMoveDataset.PutCS(Tags.QueryRetrieveLevel, "SERIES");
-            seriesCMoveDataset.PutUI(Tags.StudyInstanceUniqueId, instanceUniqueIds.Distinct().ToArray());
+            seriesCMoveDataset.PutUI(Tags.StudyInstanceUniqueId, studyInstanceUniqueId);
             seriesCMoveDataset.PutUI(Tags.SeriesInstanceUniqueId, seriesInstanceUniqueIds.Distinct().ToArray());
             LogDataSetValues(seriesCMoveDataset);
             CMoveDataSet(seriesCMoveDataset, applicationEntityDestination);
