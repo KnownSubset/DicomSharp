@@ -175,7 +175,7 @@ namespace DicomSharp.Tests
         public void CMoveForSeries()
         {
             SetUpCFind();
-            SetUpCMove(1);
+            //SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
             var seriesInstanceUIDs = new List<string> { "1.2.840.114165.8192.3.1.10.4005887757780752754.2" };
@@ -190,7 +190,7 @@ namespace DicomSharp.Tests
         {
             SetUpCFind();
             SetUpCFind();
-            SetUpCMove(1);
+            //SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
             var studyInstanceUIDs = new List<string> { "1.2.840.114165.8192.3.1.10.8047921150017449681.1" };
@@ -217,7 +217,7 @@ namespace DicomSharp.Tests
         {
             SetUpCFind();
             SetUpCFind();
-            SetUpCMove(1);
+            //SetUpCMove(1);
             mockRepository.ReplayAll();
             var scu = new ServiceClassUser(unityContainer, "NEWTON", "DCM4CHEE", HOSTNAME, PORT);
             var studyInstanceUIDs = new List<string> {
