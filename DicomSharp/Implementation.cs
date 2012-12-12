@@ -32,16 +32,20 @@
 using System;
 using System.Collections;
 
-namespace DicomSharp {
-    public static class Implementation {
+namespace DicomSharp
+{
+    public static class Implementation
+    {
         public static Hashtable rb = new Hashtable() { { "dicomSharp.ImplementationClassUID", "1.0.0.0.168" }, { "dicomSharp.ImplementationVersionName", "dicomSharp20120310" } };
 
-        public static String ClassUID {
+        public static String ClassUID
+        {
             get { return (String)rb["dicomSharp.ImplementationClassUID"]; }
         }
 
-        public static String VersionName {
-            get { return (String)rb["dicomSharpf.ImplementationVersionName"]; }
+        public static String VersionName
+        {
+            get { return (String)rb["dicomSharp.ImplementationVersionName"]; }
         }
     }
 }

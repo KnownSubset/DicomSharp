@@ -94,9 +94,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DicomSharp\dicomSharp.csproj">
       <Project>{4ED465F6-CE85-45E1-8964-8F4ACB93CE2C}</Project>
       <Name>dicomSharp</Name>
